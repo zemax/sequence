@@ -1,0 +1,48 @@
+@use "@zemax/mf-ui/src/css/lib/fonts-sizes";
+@use "@zemax/mf-ui/src/css/lib/mediaqueries";
+
+@use "./colors";
+@use "./fonts";
+
+/**************************************************
+* CTA
+**************************************************/
+
+@mixin cta-sizing {
+	padding:         fonts-sizes.rem(8px) fonts-sizes.rem(12px);
+
+	min-width:       column(1);
+
+	text-decoration: none;
+
+	font-size:       fonts.font-size("cta", "small");
+	line-height:     fonts.line-height("default", "small") * fonts.font-size("cta", "small");
+
+	@include mediaqueries.large-or-more {
+		font-size:   fonts.font-size("cta", "large");
+		line-height: fonts.line-height("default", "large") * fonts.font-size("cta", "large");
+	}
+}
+
+@mixin cta-color($color: white, $background: colors.$color-primary, $border: colors.$color-primary) {
+	color:         $color;
+	background:    $background;
+	border:        border-width() solid $border;
+	border-radius: border-width();
+}
+
+@mixin cta($color: white, $background: colors.$color-primary, $border: colors.$color-primary) {
+	@include cta-sizing;
+	@include cta-color($color, $background, $border);
+
+	text-align: center;
+
+	cursor:     pointer;
+
+	&:focus {
+		@include cta-color($background, $color, $border);
+
+		outline:    none;
+		box-shadow: colors.$outline-box-shadow;
+	}
+}

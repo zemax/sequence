@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="400" viewBox="0 0 28 400">
+    <symbol id="border">
+        <path d="M0 0h28v28h-28z"/>
+    </symbol>
+    <symbol id="background">
+        <path d="M4 4h20v20h-20z"/>
+    </symbol>
+    <symbol id="mark">
+        <path d="M22 11l-2.828-2.828-6.768 6.982-3.576-3.576L6 14.406l6.404 6.406L22 11z"/>
+    </symbol>
+
+    <use xlink:href="#border" fill="$color-border"></use>
+    <use xlink:href="#background" fill="$color-background"></use>
+
+    <use xlink:href="#border" y="100" fill="$color-border"></use>
+    <use xlink:href="#background" y="100" fill="$color-background"></use>
+    <use xlink:href="#mark" y="100" fill="$color-mark"></use>
+
+    <use xlink:href="#border" y="200" fill="$color-border-focus"></use>
+    <use xlink:href="#background" y="200" fill="$color-background-focus"></use>
+
+    <use xlink:href="#border" y="300" fill="$color-border-focus"></use>
+    <use xlink:href="#background" y="300" fill="$color-background-focus"></use>
+    <use xlink:href="#mark" y="300" fill="$color-mark-focus"></use>
+</svg>

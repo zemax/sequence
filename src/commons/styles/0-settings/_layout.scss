@@ -1,0 +1,27 @@
+/**************************************************
+* PADDING & GAPS
+**************************************************/
+
+@function gap($n: 1) {
+	@return $n * rem(20px);
+}
+
+@function border-width() {
+	@return rem(2px);
+}
+
+/**************************************************
+* LAYOUT SIZE
+**************************************************/
+
+@function column($n: 1) {
+	@return $n * rem(63px);
+}
+
+@function region-size($id) {
+	@if ($id == "content") {
+		@return gap() + column(12) + gap(2 * 11) + gap();
+	}
+
+	@return 0;
+}

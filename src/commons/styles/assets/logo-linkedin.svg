@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="700" viewBox="0 0 32 700">
+    <symbol id="icon-linkedin">
+        <rect x="0.62" y="10.67" width="6.62" height="21.33"/>
+        <circle cx="3.89" cy="3.89" r="3.89"/>
+        <path d="M17.75,20.79c0-3,1.4-4.75,4-4.75,2.41,0,3.58,1.71,3.58,4.75V32h6.54V18.53c0-5.68-3.27-8.49-7.79-8.49a7.34,7.34,0,0,0-6.38,3.5V10.67H11.45V31.92h6.31Z"/>
+    </symbol>
+    <use xlink:href="#icon-linkedin" fill="#0077B5"></use>
+    <use xlink:href="#icon-linkedin" y="100" fill="white"></use>
+    <use xlink:href="#icon-linkedin" y="200" fill="$color-violet"></use>
+    <use xlink:href="#icon-linkedin" y="300" fill="$color-cyan"></use>
+    <use xlink:href="#icon-linkedin" y="400" fill="$color-beige"></use>
+    <use xlink:href="#icon-linkedin" y="500" fill="$color-orange"></use>
+    <use xlink:href="#icon-linkedin" y="600" fill="$color-salmon"></use>
+</svg>

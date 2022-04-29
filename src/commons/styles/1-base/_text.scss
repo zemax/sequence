@@ -1,0 +1,240 @@
+@use "@zemax/mf-ui/src/css/lib/mediaqueries";
+
+@use "../0-settings/colors";
+@use "../0-settings/fonts";
+
+/**************************************************
+* FONT FACES
+**************************************************/
+
+// @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Open+Sans:ital,wght@0,400;0,700;1,400&display=swap");
+
+/**************************************************
+* TEXT ELEMENTS
+**************************************************/
+
+body {
+	margin:           0;
+	padding:          0;
+
+	color:            colors.$color-default;
+	background-color: colors.$color-background-default;
+
+	@include fonts.font("default");
+	font-size:        fonts.font-size("default");
+	line-height:      fonts.line-height("default");
+}
+
+dialog {
+	color:            colors.$color-default;
+	background-color: white;
+
+	@include fonts.font("default");
+	font-size:        fonts.font-size("default");
+	line-height:      fonts.line-height("default");
+}
+
+$paragraph-margin: fonts.font-size() * fonts.line-height();
+
+p,
+ul {
+	margin:  0;
+	padding: 0;
+
+	& + h1,
+	& + .h1,
+	& + h2,
+	& + .h2,
+	& + h3,
+	& + .h3 {
+		margin-top: $paragraph-margin;
+	}
+
+	& + p {
+		margin-top: $paragraph-margin;
+	}
+}
+
+a {
+	color:                 inherit;
+	text-decoration-color: colors.$color_primary;
+
+	&:hover {
+		text-decoration-color: currentColor;
+	}
+}
+
+a[href=""],
+a[href="#"] {
+	pointer-events: none;
+}
+
+strong {
+	@include fonts.font("bold");
+}
+
+h1,
+.h1,
+h2,
+.h2 {
+	margin:      0 0 $paragraph-margin;
+	padding:     0;
+
+	@include fonts.font("title");
+	font-size:   fonts.font-size("title", "small");
+	line-height: fonts.line-height("title");
+
+	color:       colors.$color-primary;
+
+	em {
+		@include fonts.font("title");
+	}
+
+	@include mediaqueries.large-or-more {
+		font-size: fonts.font-size("title", "large");
+	}
+}
+
+h3,
+.h3 {
+	margin:    0 0 $paragraph-margin;
+	padding:   0;
+
+	@include fonts.font("title");
+	font-size: fonts.font-size("h3", "small");
+
+	em {
+		@include fonts.font("title");
+	}
+
+	color:     colors.$color-default;
+
+	@include mediaqueries.large-or-more {
+		font-size: fonts.font-size("h3", "large");
+	}
+}
+
+h4,
+.h4 {
+	margin:           0;
+	padding:          0;
+
+	@include fonts.font("bold");
+	font-size:        fonts.font-size();
+	line-height:      fonts.line-height();
+
+	color:            currentColor;
+	background-color: transparent;
+}
+
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4 {
+	a {
+		text-decoration: none;
+	}
+}
+
+/**************************************************
+* QUOTE
+**************************************************/
+
+blockquote {
+	position:   relative;
+
+	margin:     gap();
+
+	@include mediaqueries.medium-or-more {
+		margin: gap() column();
+	}
+
+	text-align: center;
+
+	@include fonts.font("quote");
+	font-size:  fonts.font-size("quote");
+
+	&::before,
+	&::after {
+		position:    relative;
+		top:         0.2em;
+
+		@include fonts.font("title");
+		font-size:   2em;
+		line-height: 0.5em;
+		color:       colors.$color-primary;
+	}
+
+	&::before {
+		content: "“";
+	}
+
+	&::after {
+		content: "”";
+	}
+}
+
+/**************************************************
+* TABLE
+**************************************************/
+
+table {
+	border-spacing: 0;
+
+	width:          100%;
+	border:         1px solid colors.$color-default;
+
+	th,
+	td {
+		padding:          0.5em;
+		background-color: white;
+		border:           1px solid colors.$color-default;
+	}
+
+	tr:hover td {
+	}
+
+	th {
+		color:            white;
+		background-color: colors.$color-default;
+
+		@include fonts.font("title");
+		padding-top:      1em;
+	}
+}
+
+/**************************************************
+* IMAGES
+**************************************************/
+
+img {
+	max-width: 100%;
+	height:    auto;
+}
+
+/**************************************************
+* ARTICLE
+**************************************************/
+
+article ul {
+	margin:     0;
+	padding:    0;
+	list-style: none;
+
+	li {
+		position: relative;
+		margin:   0;
+		padding:  0 0 0 gap();
+
+		&::before {
+			content:  "•";
+			position: absolute;
+			top:      0;
+			left:     0;
+		}
+	}
+}

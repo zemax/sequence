@@ -1,0 +1,30 @@
+/**************************************************
+* COLORS SETTINGS
+**************************************************/
+
+$color1:                       #586ba4;
+$color2:                       #324376;
+$color3:                       #f5dd90;
+$color4:                       #f68e5f;
+$color5:                       #f76c5e;
+
+$color-grey-light:             #f0f0f0;
+$color-grey-medium:            #333333;
+
+$color-blue:                   #112ef4;
+$color-green:                  #00cc33;
+$color-orange:                 #ffb041;
+$color-orangered:              #ff4000;
+$color-red:                    #8b0000;
+
+$color-default:                $color1;
+$color-background-default:     #ffffff;
+$color-primary:                $color2;
+$color-secondary:              $color3;
+
+$color-input-background:       $color-background-default;
+$color-input-border:           $color1;
+$color-input-background-focus: $color-background-default;
+$color-input-border-focus:     $color2;
+
+$outline-box-shadow:           0 3px 5px -2px rgba($color-default, 0.35);

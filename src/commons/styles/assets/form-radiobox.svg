@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="400" viewBox="0 0 28 400">
+    <symbol id="border">
+        <circle cx="14" cy="14" r="14"/>
+    </symbol>
+    <symbol id="background">
+        <circle cx="14" cy="14" r="10"/>
+    </symbol>
+    <symbol id="mark">
+        <circle cx="14" cy="14" r="5"/>
+    </symbol>
+
+    <use xlink:href="#border" fill="$color-border"></use>
+    <use xlink:href="#background" fill="$color-background"></use>
+
+    <use xlink:href="#border" y="100" fill="$color-border"></use>
+    <use xlink:href="#background" y="100" fill="$color-background"></use>
+    <use xlink:href="#mark" y="100" fill="$color-mark"></use>
+
+    <use xlink:href="#border" y="200" fill="$color-border-focus"></use>
+    <use xlink:href="#background" y="200" fill="$color-background-focus"></use>
+
+    <use xlink:href="#border" y="300" fill="$color-border-focus"></use>
+    <use xlink:href="#background" y="300" fill="$color-background-focus"></use>
+    <use xlink:href="#mark" y="300" fill="$color-mark-focus"></use>
+</svg>

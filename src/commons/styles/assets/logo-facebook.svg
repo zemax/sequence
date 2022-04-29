@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="300" viewBox="0 0 32 300">
+    <symbol id="icon-facebook">
+        <path d="M19 6h5v-6h-5c-3.86 0-7 3.14-7 7v3h-4v6h4v16h6v-16h5l1-6h-6v-3c0-0.542 0.458-1 1-1z"></path>
+    </symbol>
+    <use xlink:href="#icon-facebook" fill="$color1"></use>
+    <use xlink:href="#icon-facebook" y="100" fill="$color2"></use>
+    <use xlink:href="#icon-facebook" y="200" fill="$color3"></use>
+</svg>

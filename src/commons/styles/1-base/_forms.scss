@@ -1,0 +1,306 @@
+@use "@zemax/mf-ui/src/css/lib/mediaqueries";
+@use "@zemax/mf-ui/src/css/lib/fonts-sizes";
+@use "@zemax/mf-ui/src/css/lib/a11y";
+@use "@zemax/mf-ui/src/css/lib/sprites";
+@use "@zemax/mf-ui/src/css/lib/layout";
+@use "../0-settings/colors";
+@use "../0-settings/fonts";
+@use "../0-settings/buttons";
+@use "../0-settings/forms";
+
+/**************************************************
+* FORM INPUTS
+**************************************************/
+
+* {
+	outline-color:  colors.$color-primary;
+	outline-offset: 2px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="search"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+.algolia-autocomplete input,
+textarea,
+select {
+	@include forms.input;
+
+	&::placeholder {
+		color: colors.$color-input-border;
+	}
+
+	&.set-blank[data-blank="false"],
+	&:focus {
+		background-color: colors.$color-input-background-focus;
+		border-color:     colors.$color-input-border-focus;
+
+		outline:          none;
+		box-shadow:       colors.$outline-box-shadow;
+	}
+
+	&:-webkit-autofill {
+		&,
+		&:hover,
+		&:focus {
+			box-shadow: 0 0 0 1000px #e8f7f7 inset;
+		}
+	}
+
+	&[readonly] {
+		color: colors.$color-default;
+
+		&:focus {
+			border-color: colors.$color-background-default;
+		}
+	}
+}
+
+input[type="date"],
+input[type="time"] {
+	padding-right: fonts-sizes.rem(2px);
+}
+
+textarea {
+	display: block;
+	resize:  vertical;
+}
+
+select {
+	box-sizing:          border-box;
+	padding-right:       2em;
+
+	-webkit-appearance:  none;
+	-moz-appearance:     none;
+	appearance:          none;
+
+	background-image:    svg-triangle-down(colors.$color-default, 10, 5);
+	background-repeat:   no-repeat, repeat;
+	background-position: right 0.7em center;
+	background-size:     0.65em auto, 100%;
+
+	&::-ms-expand {
+		display: none;
+	}
+}
+
+input[type="submit"],
+button[type="submit"] {
+	@include buttons.cta();
+
+	&:disabled {
+		color:            colors.$color-background-default;
+		border-color:     colors.$color-default;
+		background-color: colors.$color-default;
+	}
+}
+
+/**************************************************
+* LABELS
+**************************************************/
+
+label,
+.label {
+	display:       block;
+	@include forms.input-vertical-sizing;
+
+	@include fonts.font("label");
+	font-size:     fonts.font-size("label");
+	line-height:   fonts.line-height("input") * fonts.font-size("input");
+
+	color:         colors.$color-default;
+	background:    transparent;
+
+	border-top:    border-width() solid transparent;
+	border-bottom: border-width() solid transparent;
+
+	sup {
+		vertical-align: baseline;
+	}
+}
+
+/**************************************************
+* CHECKBOX
+**************************************************/
+
+.form-row--checkbox input[type="checkbox"],
+.checkbox--before input[type="checkbox"],
+input[type="checkbox"].checkbox--before {
+	@include a11y.visually-hidden;
+
+	& + label {
+		cursor: pointer;
+		@include forms.checkbox(false);
+	}
+
+	&:checked + label {
+		@include forms.checkbox(true);
+	}
+
+	&:focus + label {
+		@include forms.checkbox(false, 1);
+		@include forms.checkbox-outline;
+	}
+
+	&:focus:checked + label {
+		@include forms.checkbox(true, 1);
+	}
+}
+
+label.checkbox--inside {
+	input[type="checkbox"] {
+		@include a11y.visually-hidden;
+	}
+
+	span {
+		cursor: pointer;
+		@include forms.checkbox(false);
+	}
+
+	input:checked + span {
+		@include forms.checkbox(true);
+	}
+
+	input:focus + span {
+		@include forms.checkbox(false, 1);
+		@include forms.checkbox-outline;
+	}
+
+	input:focus:checked + span {
+		@include forms.checkbox(true, 1);
+	}
+}
+
+/**************************************************
+* RADIO
+**************************************************/
+
+.form-row--radiobox input[type="radio"],
+.form-row--radioboxes input[type="radio"],
+.radiobox--before input[type="radio"],
+input[type="radio"].radiobox--before {
+	@include a11y.visually-hidden;
+
+	& + label {
+		cursor: pointer;
+		@include forms.radiobox(false);
+	}
+
+	&:checked + label {
+		@include forms.radiobox(true);
+	}
+
+	&:focus + label {
+		@include forms.radiobox(false, 1);
+		@include forms.radiobox-outline;
+	}
+
+	&:focus:checked + label {
+		@include forms.radiobox(true, 1);
+	}
+}
+
+label.radiobox--inside {
+	input[type="radio"] {
+		@include a11y.visually-hidden;
+	}
+
+	span {
+		cursor: pointer;
+		@include forms.radiobox(false);
+	}
+
+	input:checked + span {
+		@include forms.radiobox(true);
+	}
+
+	input:focus + span {
+		@include forms.radiobox(false, 1);
+		@include forms.radiobox-outline;
+	}
+
+	input:focus:checked + span {
+		@include forms.radiobox(true, 1);
+	}
+}
+
+.form-row--radioboxes-inline {
+	label {
+		display:      inline-block;
+		margin-right: gap();
+	}
+}
+
+/**************************************************
+* FORM ROW
+**************************************************/
+
+.form-row {
+	margin-bottom: gap();
+}
+
+@include mediaqueries.medium-or-more {
+	.form-row--inline {
+		display:         flex;
+		flex-flow:       row wrap;
+		justify-content: space-between;
+		align-items:     flex-start;
+
+		> :nth-child(2n + 1) {
+			text-align: right;
+			@include layout.flex-width(column-width(1, 4, gap()));
+		}
+
+		> :nth-child(2n + 2) {
+			@include layout.flex-width(column-width(3, 4, gap()));
+		}
+	}
+
+	.form-row--inline-input {
+		padding-left: calc(#{column-width(1, 4, gap())} + #{gap()});
+	}
+}
+
+/**************************************************
+* SUBMIT
+**************************************************/
+
+.form-row--submit {
+	a,
+	button,
+	input[type="submit"] {
+		&:not(:last-child) {
+			margin-right: gap();
+		}
+	}
+}
+
+/**************************************************
+* ERROR
+**************************************************/
+
+.form-errors {
+	> ul {
+		margin:           gap() 0;
+		padding:          gap();
+		list-style:       none;
+
+		li {
+			margin:  0;
+			padding: 0;
+		}
+
+		li + li {
+			margin-top: gap();
+		}
+
+		color:            black;
+		background-color: rgba(colors.$color-orangered, 0.1);
+		border:           border-width() solid colors.$color-orangered;
+		border-radius:    border-width();
+	}
+}
