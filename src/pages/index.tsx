@@ -1,4 +1,4 @@
 import React from "react";
-import {Home} from "../domains/home/Home";
+import { List } from "../domains/sequence/List";
 
-export default () => <Home/>;
+export default () => <List />;
