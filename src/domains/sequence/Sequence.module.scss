@@ -1,0 +1,35 @@
+@use "/src/styles/settings.scss";
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.listItem {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+
+  margin-bottom: settings.gap();
+
+  border-radius: 0.5 * settings.$icon-size;
+  background-color: settings.$color-chip-background;
+  box-shadow: settings.$light-box-shadow;
+}
+
+.listItemTitle {
+  flex: 1;
+
+  line-height: settings.$icon-size;
+  padding: 0 1em;
+
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}

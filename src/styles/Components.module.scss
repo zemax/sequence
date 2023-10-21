@@ -1,0 +1,50 @@
+@use "./0-settings/colors";
+@use "./0-settings/icons";
+@use "./0-settings/layout";
+
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0;
+  width: icons.$icon-size;
+  height: icons.$icon-size;
+  border-radius: 50%;
+
+  text-decoration: none;
+  background-color: rgba(white, 0);
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.25s ease;
+
+  &:active {
+    background-color: rgba(white, 0.5);
+  }
+}
+
+.floating {
+  position: fixed;
+  bottom: layout.gap();
+  right: layout.gap();
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0;
+  width: icons.$icon-size;
+  height: icons.$icon-size;
+  border-radius: 50%;
+
+  text-decoration: none;
+  color: white;
+  background-color: colors.$color2;
+  box-shadow: colors.$light-box-shadow;
+
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.25s ease;
+
+  &:active {
+    background-color: colors.$color-chip-background;
+  }
+}

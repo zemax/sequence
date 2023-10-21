@@ -40,6 +40,7 @@ export const { addSequence, removeSequence, updateSequence } = sequencesSlice.ac
 export default sequencesSlice.reducer;
 
 export const selectSequences = (state: any): Sequence[] => state.sequences;
+
 export const selectSequence =
   (id: string) =>
   (state: any): Sequence =>

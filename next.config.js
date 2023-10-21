@@ -1,5 +1,7 @@
-const withPWA = require("next-pwa");
 const svg_function = require("@zemax/sass-svg/svg-function");
+const withPWA = require("next-pwa")({
+  dest: "public",
+});
 
 module.exports = withPWA({
   sassOptions: {
@@ -12,8 +14,5 @@ module.exports = withPWA({
         destination: "/api/manifest.json",
       },
     ];
-  },
-  pwa: {
-    dest: "public",
   },
 });

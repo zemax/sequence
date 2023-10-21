@@ -1,0 +1,20 @@
+@use "/src/styles/settings.scss";
+
+.page {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  max-width: 100vw;
+  min-height: 100vh;
+
+  color: settings.$color-primary;
+  background-color: settings.$color-background-default;
+}
+
+.main {
+  flex: 1;
+
+  padding: settings.gap();
+}

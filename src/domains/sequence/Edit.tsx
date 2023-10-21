@@ -5,14 +5,14 @@ type Props = PropsWithChildren<Record<never, any>> & {
   sequence?: Sequence;
 };
 
-export const View: FunctionComponent<Props> = ({ sequence }) => {
+export const Edit: FunctionComponent<Props> = ({ sequence }) => {
   if (!sequence) {
     return null;
   }
 
   return (
     <>
-      <h1>View</h1>
+      <h1>Edit</h1>
     </>
   );
 };

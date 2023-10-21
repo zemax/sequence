@@ -15,4 +15,5 @@ export const getTheme = () => ({
 
 export const getUI = () => ({
   back: "Retour",
+  title: "Séquences",
 });

@@ -1,13 +1,15 @@
+@use "@zemax/mf-ui/src/css/lib/fonts-sizes";
+
 /**************************************************
 * PADDING & GAPS
 **************************************************/
 
 @function gap($n: 1) {
-	@return $n * rem(20px);
+	@return $n * fonts-sizes.rem(16px);
 }
 
 @function border-width() {
-	@return rem(2px);
+	@return fonts-sizes.rem(2px);
 }
 
 /**************************************************
@@ -15,7 +17,7 @@
 **************************************************/
 
 @function column($n: 1) {
-	@return $n * rem(63px);
+	@return $n * fonts-sizes.rem(63px);
 }
 
 @function region-size($id) {
