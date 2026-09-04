@@ -1,5 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import { Sequence } from "../../data/sequences/sequencesSlice";
+import { Form } from "./Form";
 
 type Props = PropsWithChildren<Record<never, any>> & {
   sequence?: Sequence;
@@ -11,8 +12,6 @@ export const Edit: FunctionComponent<Props> = ({ sequence }) => {
   }
 
   return (
-    <>
-      <h1>Edit</h1>
-    </>
+      <Form sequence={sequence} />
   );
 };

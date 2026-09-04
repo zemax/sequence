@@ -2,11 +2,12 @@
 @use "@zemax/mf-ui/src/css/lib/fonts-sizes";
 @use "@zemax/mf-ui/src/css/lib/a11y";
 @use "@zemax/mf-ui/src/css/lib/sprites";
-@use "@zemax/mf-ui/src/css/lib/layout";
+@use "@zemax/mf-ui/src/css/lib/layout" as mfuilayout;
 @use "../0-settings/colors";
 @use "../0-settings/fonts";
 @use "../0-settings/buttons";
 @use "../0-settings/forms";
+@use "../0-settings/layout";
 
 /**************************************************
 * FORM INPUTS
@@ -115,8 +116,8 @@ label,
 	color:         colors.$color-default;
 	background:    transparent;
 
-	border-top:    border-width() solid transparent;
-	border-bottom: border-width() solid transparent;
+	border-top:    layout.border-width() solid transparent;
+	border-bottom: layout.border-width() solid transparent;
 
 	sup {
 		vertical-align: baseline;
@@ -252,11 +253,11 @@ label.radiobox--inside {
 
 		> :nth-child(2n + 1) {
 			text-align: right;
-			@include layout.flex-width(column-width(1, 4, gap()));
+			@include mfuilayout.flex-width(column-width(1, 4, gap()));
 		}
 
 		> :nth-child(2n + 2) {
-			@include layout.flex-width(column-width(3, 4, gap()));
+			@include mfuilayout.flex-width(column-width(3, 4, gap()));
 		}
 	}
 
@@ -300,7 +301,7 @@ label.radiobox--inside {
 
 		color:            black;
 		background-color: rgba(colors.$color-orangered, 0.1);
-		border:           border-width() solid colors.$color-orangered;
-		border-radius:    border-width();
+		border:           layout.border-width() solid colors.$color-orangered;
+		border-radius:    layout.border-width();
 	}
 }

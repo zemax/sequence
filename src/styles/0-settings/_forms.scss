@@ -2,10 +2,10 @@
 @use "@zemax/mf-ui/src/css/lib/fonts-sizes";
 @use "@zemax/mf-ui/src/css/lib/a11y";
 @use "@zemax/mf-ui/src/css/lib/sprites";
-@use "@zemax/mf-ui/src/css/lib/layout";
 @use "../0-settings/colors";
 @use "../0-settings/fonts";
 @use "../0-settings/buttons";
+@use "../0-settings/layout";
 
 /**************************************************
 * FORM INPUTS
@@ -34,7 +34,7 @@
 
   color: colors.$color-default;
   background: colors.$color-input-background;
-  border: border-width() solid colors.$color-input-border;
+  border: layout.border-width() solid colors.$color-input-border;
   border-radius: fonts-sizes.rem(4px);
 
   transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;

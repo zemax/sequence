@@ -1,10 +1,10 @@
 import Head from "next/head";
-import React from "react";
 import { Provider } from "react-redux";
 import { getApp } from "../data/informations";
 import store from "../data/store";
 import { AppMetas } from "../domains/head/AppMetas";
 import { ThemeMetas } from "../domains/head/ThemeMetas";
+
 import "../styles/global.scss";
 
 export default function App({ Component, pageProps }) {

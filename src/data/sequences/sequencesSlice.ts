@@ -30,8 +30,13 @@ export const sequencesSlice = createSlice({
     addSequence: (state, action) => {
       state.push(action.payload);
     },
-    removeSequence: (state, action) => {},
-    updateSequence: (state, action) => {},
+    updateSequence: (state, action) => {
+      const i = state.findIndex((s) => s.id === action.payload.id);
+      state[i] = action.payload;
+    },
+    removeSequence: (state, action) => {
+      state = state.filter((s) => s.id !== action.payload.id);
+    },
   },
 });
 
@@ -45,3 +50,9 @@ export const selectSequence =
   (id: string) =>
   (state: any): Sequence =>
     state.sequences.filter((sequence: Sequence) => sequence.id === id)[0];
+
+export const emptySequence = () => ({
+  id: (typeof window !== "undefined" && window.crypto.randomUUID()) || "",
+  name: "",
+  steps: [],
+});
