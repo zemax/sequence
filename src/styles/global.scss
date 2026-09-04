@@ -2,6 +2,6 @@
 * SETUP : Create theme-agnostic implementations
 **************************************************/
 
-@import "1-base/reset";
-@import "1-base/text";
-@import "1-base/forms";
+@use "1-base/reset";
+@use "1-base/text";
+@use "1-base/forms";

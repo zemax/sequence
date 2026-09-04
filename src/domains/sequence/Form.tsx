@@ -1,9 +1,11 @@
+"use client";
+
 import SaveIcon from "@mui/icons-material/Save";
 import { useState } from "react";
 import { getUI } from "../../data/informations";
 import { Sequence, addSequence, emptySequence, updateSequence } from "../../data/sequences/sequencesSlice";
 import store from "../../data/store";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const Form = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
   const [sequence, setSequence] = useState(initialSequence || emptySequence());

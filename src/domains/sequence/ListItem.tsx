@@ -7,13 +7,11 @@ import styles from "./Sequence.module.scss";
 export const ListItem = ({ sequence }) => {
   return (
     <li className={styles.listItem}>
-      <Link href={`/sequence/${sequence.id}`}>
-        <a className={styles.listItemTitle}>{sequence.name}</a>
+      <Link href={`/sequence/${sequence.id}`} className={styles.listItemTitle}>
+        {sequence.name}
       </Link>
-      <Link href={`/sequence/${sequence.id}/edit`}>
-        <a className={components.icon}>
-          <EditIcon />
-        </a>
+      <Link href={`/sequence/${sequence.id}/edit`} className={components.icon}>
+        <EditIcon />
       </Link>
     </li>
   );

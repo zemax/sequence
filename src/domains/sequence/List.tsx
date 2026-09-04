@@ -1,3 +1,5 @@
+"use client";
+
 import { useSelector } from "react-redux";
 import { selectSequences } from "../../data/sequences/sequencesSlice";
 import { ListItem } from "./ListItem";

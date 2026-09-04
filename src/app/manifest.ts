@@ -1,6 +1,7 @@
-import { getApp, getTheme } from "../../data/informations";
+import type { MetadataRoute } from "next";
+import { getApp, getTheme } from "../data/informations";
 
-const getManifest = () => {
+export default function manifest(): MetadataRoute.Manifest {
   const { title } = getApp();
   const { color2 } = getTheme();
 
@@ -26,9 +27,4 @@ const getManifest = () => {
       },
     ],
   };
-};
-
-export default function handler(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  res.send(getManifest());
 }

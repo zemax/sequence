@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /**************************************************
 * COLORS SETTINGS
 **************************************************/
@@ -30,7 +32,7 @@ $color-input-border-focus: $color2;
 $color-menu: white;
 $color-menu-background: $color2;
 
-$color-chip-background: lighten($color1, 35);
+$color-chip-background: color.adjust($color1, $lightness: 35%);
 
 $light-box-shadow: 0 4px 8px rgba($color-primary, 0.25);
 

@@ -11,12 +11,19 @@
 # next.js
 /.next/
 /dist/
+/out/
+
+# serwist
+/public/sw.js*
+/public/swe-worker*
+/public/manifest.json
 
 # production
 /build
 
 # misc
 .DS_Store
+*.tsbuildinfo
 
 # debug
 npm-debug.log*
