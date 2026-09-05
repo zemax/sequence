@@ -1,15 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { CountdownStep } from "../../domains/steps/countdown/CountdownStep";
+import { PauseStep } from "../../domains/steps/pause/PauseStep";
 
-export interface Step {
+// Union of every Step type. Extend here when adding a new Step type.
+export type Step = CountdownStep | PauseStep;
+
+export interface Loop {
   id: string;
-  name: string;
-  duration: number;
+  type: "loop";
+  steps: Step[];
+  repeatCount: number;
 }
+
+export type SequenceItem = Step | Loop;
+
+export const isLoop = (item: SequenceItem): item is Loop => item.type === "loop";
 
 export interface Sequence {
   id: string;
   name: string;
-  steps: Step[];
+  items: SequenceItem[];
 }
 
 export const sequencesSlice = createSlice({
@@ -18,12 +28,12 @@ export const sequencesSlice = createSlice({
     {
       id: "1",
       name: "Sequence 1",
-      steps: [],
+      items: [],
     },
     {
       id: "2",
       name: "Sequence 2",
-      steps: [],
+      items: [],
     },
   ],
   reducers: {
@@ -51,8 +61,8 @@ export const selectSequence =
   (state: any): Sequence =>
     state.sequences.filter((sequence: Sequence) => sequence.id === id)[0];
 
-export const emptySequence = () => ({
+export const emptySequence = (): Sequence => ({
   id: (typeof window !== "undefined" && window.crypto.randomUUID()) || "",
   name: "",
-  steps: [],
+  items: [],
 });

@@ -28,14 +28,40 @@ Every Step has:
 ### Step types
 
 The application is designed to support multiple Step types. Each type shows its own
-screen and defines its own configurable fields. The first and reference type is:
+screen and defines its own configurable fields.
 
 - **Countdown** — displays its title on screen for a configurable `duration`
   (e.g. seconds), then automatically advances to the next item in the Sequence.
+- **Pause** — displays its title on screen and waits indefinitely; the user must
+  tap/press to advance to the next item in the Sequence.
 
-Other Step types (e.g. a manual "tap to continue" step, a message/instruction step,
-a rest step) can be added later following the same pattern: a title, one or more
-type-specific fields, and a defined on-screen behavior.
+Other Step types (e.g. a message/instruction step) can be added later following the
+same pattern: a title, zero or more type-specific fields, and a defined on-screen
+behavior.
+
+### Step components
+
+Each Step type lives in its own directory under `src/domains/steps/<type>/` and
+owns its own interface (e.g. `CountdownStep`, `PauseStep`) plus three components,
+named after the type to avoid ambiguity:
+- **`<Type>Edit`** — the fields used to create/edit a Step of that type in the
+  Sequence authoring form.
+- **`<Type>Preview`** — a compact, read-only summary of the Step, shown in a
+  Sequence's item list while a different Step is being edited.
+- **`<Type>View`** — the full-screen component used during playback; it renders
+  the Step and calls `onDone()` once its condition to advance is met (a
+  Countdown's timer elapsing, a Pause's tap/press).
+
+`src/domains/steps/common/StepEdit.tsx`, `StepPreview.tsx`, and `StepView.tsx` each
+dispatch to the right type's component based on the Step's `type` discriminant, so
+callers (the Form, and later the Sequence player) don't need to know about
+individual Step types. The `Step` union itself stays in
+[sequencesSlice.ts](../src/data/sequences/sequencesSlice.ts), which imports each
+type's interface from its directory.
+
+No `index.ts` barrel files are used in this codebase — every file is named after
+its main export (`CountdownEdit.tsx` exports `CountdownEdit`, etc.) and imported
+by its explicit path.
 
 ## Loop
 
@@ -68,14 +94,27 @@ five times in a row, then "Cool down" (30s).
 
 Playing a Sequence walks through its items (Steps and Loops) in order:
 - a Step is displayed until its own condition ends it (e.g. a Countdown's duration
-  elapses), then the next item plays
+  elapses, or a Pause's tap/press), then the next item plays
 - a Loop replays its contained Steps in order, `repeatCount` times, before moving on
   to the next item in the parent Sequence
 
 ## Current implementation status
 
-As of now, the data model implemented in the codebase
-([sequencesSlice.ts](../src/data/sequences/sequencesSlice.ts)) covers a `Sequence`
-made of `Step { id, name, duration }` — the Countdown behavior described above,
-without a `type` discriminator or Loop support yet. The concepts above describe the
-target model this implementation is being built towards.
+The data model described above is implemented across
+[sequencesSlice.ts](../src/data/sequences/sequencesSlice.ts) (a `Sequence` holds an
+ordered `items: SequenceItem[]`, where `SequenceItem` is a `Step` or a `Loop { id,
+type: "loop", steps, repeatCount }`) and each Step type's own directory under
+[src/domains/steps](../src/domains/steps) (`CountdownStep { id, type: "countdown",
+title, duration }` in `steps/countdown/`, `PauseStep { id, type: "pause", title }`
+in `steps/pause/`).
+
+The authoring UI ([Form.tsx](../src/domains/sequence/Form.tsx)) lets a user edit a
+Sequence's `name` and add or remove Countdown or Pause Steps, using `StepEdit`/
+`StepPreview` from [src/domains/steps](../src/domains/steps).
+
+Each Step type's `View` component is implemented and self-contained (Countdown
+counts down and calls `onDone`; Pause waits for a tap), but nothing wires them
+together yet: editing an existing Step in place, reordering Steps, creating or
+editing Loops, and the Sequence-level playback screen
+([View.tsx](../src/domains/sequence/View.tsx)) that would walk through a
+Sequence's items and render each Step's `View` are not implemented yet.

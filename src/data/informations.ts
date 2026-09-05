@@ -18,4 +18,14 @@ export const getUI = () => ({
   title: "Séquences",
 
   nameLabel: "Nom de la séquence",
+
+  stepsTitle: "Étapes",
+  stepTypeLabel: "Type d'étape",
+  stepTypeCountdownLabel: "Compte à rebours",
+  stepTypePauseLabel: "Pause",
+  stepTitleLabel: "Titre de l'étape",
+  stepDurationLabel: "Durée (secondes)",
+
+  countdownDefaultTitle: "Compte à rebours",
+  pauseDefaultTitle: "Appuyez pour continuer",
 });
