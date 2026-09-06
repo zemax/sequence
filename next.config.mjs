@@ -11,9 +11,11 @@ const withSerwist = withSerwistInit({
 });
 
 const isStaticExport = process.env.NEXT_OUTPUT_MODE === "export";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default withSerwist({
   ...(isStaticExport ? { output: "export" } : {}),
+  ...(basePath ? { basePath, assetPrefix: basePath } : {}),
   sassOptions: {
     functions: Object.assign({}, svg_function(__dirname)),
   },

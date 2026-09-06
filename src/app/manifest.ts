@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
+import { basePath } from "../data/basePath";
 import { getApp, getTheme } from "../data/informations";
+
+export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   const { title } = getApp();
@@ -8,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: title,
     short_name: title,
-    start_url: "/",
+    start_url: `${basePath}/`,
     display: "standalone",
     orientation: "portrait",
     theme_color: color2,
@@ -16,12 +19,12 @@ export default function manifest(): MetadataRoute.Manifest {
 
     icons: [
       {
-        src: "/favicons/android-chrome-192x192.png",
+        src: `${basePath}/favicons/android-chrome-192x192.png`,
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/favicons/android-chrome-512x512.png",
+        src: `${basePath}/favicons/android-chrome-512x512.png`,
         sizes: "512x512",
         type: "image/png",
       },

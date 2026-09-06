@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { PropsWithChildren } from "react";
+import { basePath } from "../data/basePath";
 import { getApp, getTheme } from "../data/informations";
 import { Providers } from "./providers";
+import { SpaRedirect } from "./SpaRedirect";
 
 import "../styles/global.scss";
 
@@ -20,17 +22,17 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: `${basePath}/favicons/favicon-32x32.png`, sizes: "32x32", type: "image/png" },
+      { url: `${basePath}/favicons/favicon-16x16.png`, sizes: "16x16", type: "image/png" },
     ],
-    shortcut: "/favicons/favicon.ico",
-    apple: "/favicons/apple-touch-icon.png",
-    other: [{ rel: "mask-icon", url: "/favicons/safari-pinned-tab.svg", color: "#324376" }],
+    shortcut: `${basePath}/favicons/favicon.ico`,
+    apple: `${basePath}/favicons/apple-touch-icon.png`,
+    other: [{ rel: "mask-icon", url: `${basePath}/favicons/safari-pinned-tab.svg`, color: "#324376" }],
   },
   other: {
     "mobile-web-app-capable": "yes",
     "msapplication-TileColor": color2,
-    "msapplication-config": "/favicons/browserconfig.xml",
+    "msapplication-config": `${basePath}/favicons/browserconfig.xml`,
   },
 };
 
@@ -44,6 +46,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang={language}>
       <body>
+        <SpaRedirect />
         <Providers>{children}</Providers>
       </body>
     </html>
