@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { CountdownStep } from "../../domains/steps/countdown/CountdownStep";
 import { PauseStep } from "../../domains/steps/pause/PauseStep";
 
@@ -25,7 +25,7 @@ export interface Sequence {
 const initialSequences: Sequence[] = [
   {
     id: "1",
-    name: "Exercices quotidien",
+    name: "Exercices au quotidien",
     items: [
       { id: "1", type: "pause", title: "Appuyez quand vous êtes prêt" },
       { id: "2", type: "countdown", title: "C'est parti pour la planche, bras gauche au sol", duration: 5 },
@@ -50,6 +50,17 @@ const initialSequences: Sequence[] = [
       { id: "15", type: "pause", title: "Écalez les œufs délicatement, sous un filet d'eau froide" },
     ],
   },
+  {
+    id: "3",
+    name: "Méditation guidée",
+    items: [
+      { id: "16", type: "pause", title: "Installez-vous confortablement et fermez les yeux" },
+      { id: "17", type: "countdown", title: "Respirez profondément, concentrez-vous sur votre souffle", duration: 60 },
+      { id: "18", type: "countdown", title: "Laissez vos pensées passer sans les juger", duration: 120 },
+      { id: "19", type: "countdown", title: "Détendez chaque partie de votre corps", duration: 60 },
+      { id: "20", type: "pause", title: "Ouvrez les yeux doucement quand vous êtes prêt" },
+    ],
+  },
 ];
 
 export const sequencesSlice = createSlice({
@@ -66,10 +77,19 @@ export const sequencesSlice = createSlice({
     removeSequence: (state, action) => {
       state = state.filter((s) => s.id !== action.payload.id);
     },
+    moveSequence: (state, action: PayloadAction<{ id: string; toIndex: number }>) => {
+      const { id, toIndex } = action.payload;
+      const fromIndex = state.findIndex((s) => s.id === id);
+      if (fromIndex === -1) {
+        return;
+      }
+      const [sequence] = state.splice(fromIndex, 1);
+      state.splice(toIndex, 0, sequence);
+    },
   },
 });
 
-export const { addSequence, removeSequence, updateSequence } = sequencesSlice.actions;
+export const { addSequence, removeSequence, updateSequence, moveSequence } = sequencesSlice.actions;
 
 export default sequencesSlice.reducer;
 

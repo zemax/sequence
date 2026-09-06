@@ -115,9 +115,14 @@ Like the Step components, every file under `src/domains/sequence/` is named afte
 its main export (`SequenceForm.tsx` exports `SequenceForm`, `SequenceList.tsx`
 exports `SequenceList`, etc.) — no generic `Form`/`List`/`Edit` names.
 
+On the home screen, [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)
+supports drag-and-drop reordering of Sequences: a picked-up card follows the
+pointer and tilts based on horizontal movement, a drop indicator shows where it
+would land, and releasing it commits the new order via the `moveSequence` action.
+
 Each Step type's `View` component is implemented and self-contained (Countdown
 counts down and calls `onDone`; Pause waits for a tap), but nothing wires them
-together yet: editing an existing Step in place, reordering Steps, creating or
-editing Loops, and the Sequence-level playback screen
+together yet: editing an existing Step in place, reordering Steps within a
+Sequence, creating or editing Loops, and the Sequence-level playback screen
 ([SequenceView.tsx](../src/domains/sequence/SequenceView.tsx)) that would walk
 through a Sequence's items and render each Step's `View` are not implemented yet.

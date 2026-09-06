@@ -8,6 +8,7 @@
 
   max-width: 100vw;
   min-height: 100vh;
+  overflow-x: hidden;
 
   color: settings.$color-primary;
   background-color: settings.$color-background-default;
