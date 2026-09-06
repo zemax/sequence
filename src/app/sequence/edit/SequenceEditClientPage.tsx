@@ -1,13 +1,13 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectSequence } from "../../../data/sequences/sequencesSlice";
-import { SequenceView } from "../../../domains/sequence/SequenceView";
+import { SequenceEdit } from "../../../domains/sequence/SequenceEdit";
 import { Page } from "../../../domains/ui/components/Page/Page";
 
-export const SequenceClientPage = () => {
-  const { id } = useParams<{ id: string }>();
+export const SequenceEditClientPage = () => {
+  const id = useSearchParams().get("id") ?? "";
   const sequence = useSelector(selectSequence(id));
 
   if (!sequence) {
@@ -16,7 +16,7 @@ export const SequenceClientPage = () => {
 
   return (
     <Page back>
-      <SequenceView sequence={sequence} />
+      <SequenceEdit sequence={sequence} />
     </Page>
   );
 };

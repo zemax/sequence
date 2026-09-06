@@ -15,13 +15,13 @@ export const SequencePreview = ({ sequence }) => {
   return (
     <>
       <Link
-        href={`/sequence/${sequence.id}/edit`}
+        href={`/sequence/edit?id=${sequence.id}`}
         className={classNames(styles.cardTitle, styles.stretchedLink)}
       >
         <span className={styles.cardTitleText}>{sequence.name}</span>
         {durationLabel && <span className={styles.cardDuration}>{durationLabel}</span>}
       </Link>
-      <Link href={`/sequence/${sequence.id}`} className={classNames(components.round, styles.play)} aria-label={play}>
+      <Link href={`/sequence/view?id=${sequence.id}`} className={classNames(components.round, styles.play)} aria-label={play}>
         <PlayArrowIcon />
       </Link>
     </>

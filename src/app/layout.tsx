@@ -3,7 +3,6 @@ import { PropsWithChildren } from "react";
 import { basePath } from "../data/basePath";
 import { getApp, getTheme } from "../data/informations";
 import { Providers } from "./providers";
-import { SpaRedirect } from "./SpaRedirect";
 
 import "../styles/global.scss";
 
@@ -46,7 +45,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang={language}>
       <body>
-        <SpaRedirect />
         <Providers>{children}</Providers>
       </body>
     </html>
