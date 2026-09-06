@@ -1,12 +1,12 @@
-import { List } from "../domains/sequence/List";
+import { SequenceList } from "../domains/sequence/SequenceList";
 import { Page } from "../domains/ui/components/Page/Page";
-import { CreateButton } from "../domains/sequence/CreateButton";
+import { SequenceCreateButton } from "../domains/sequence/SequenceCreateButton";
 
 export default function HomePage() {
   return (
     <Page>
-      <List />
-      <CreateButton />
+      <SequenceList />
+      <SequenceCreateButton />
     </Page>
   );
 }

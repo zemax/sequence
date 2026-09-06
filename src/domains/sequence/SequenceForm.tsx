@@ -16,7 +16,7 @@ import { stepTypeOptionLabel, stepTypes } from "../steps/common/stepTypes";
 import components from "../../styles/Components.module.scss";
 import styles from "./Sequence.module.scss";
 
-export const Form = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
+export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
   const [sequence, setSequence] = useState(initialSequence || emptySequence());
   const [newStep, setNewStep] = useState<Step>(emptyStep("countdown"));
   const router = useRouter();

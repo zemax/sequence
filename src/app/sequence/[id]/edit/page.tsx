@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectSequence } from "../../../../data/sequences/sequencesSlice";
-import { Edit } from "../../../../domains/sequence/Edit";
+import { SequenceEdit } from "../../../../domains/sequence/SequenceEdit";
 import { Page } from "../../../../domains/ui/components/Page/Page";
 
 export default function EditSequencePage() {
@@ -16,7 +16,7 @@ export default function EditSequencePage() {
 
   return (
     <Page title={sequence.name} back>
-      <Edit sequence={sequence} />
+      <SequenceEdit sequence={sequence} />
     </Page>
   );
 }

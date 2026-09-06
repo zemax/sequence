@@ -2,17 +2,19 @@
 
 import { useSelector } from "react-redux";
 import { selectSequences } from "../../data/sequences/sequencesSlice";
-import { ListItem } from "./ListItem";
+import { SequencePreview } from "./SequencePreview";
 
 import styles from "./Sequence.module.scss";
 
-export const List = () => {
+export const SequenceList = () => {
   const sequences = useSelector(selectSequences);
 
   return (
     <ul className={styles.list}>
       {sequences.map((sequence) => (
-        <ListItem key={sequence.id} sequence={sequence} />
+        <li key={sequence.id} className={styles.listItem}>
+          <SequencePreview sequence={sequence} />
+        </li>
       ))}
     </ul>
   );

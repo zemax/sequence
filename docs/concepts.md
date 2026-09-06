@@ -108,13 +108,16 @@ type: "loop", steps, repeatCount }`) and each Step type's own directory under
 title, duration }` in `steps/countdown/`, `PauseStep { id, type: "pause", title }`
 in `steps/pause/`).
 
-The authoring UI ([Form.tsx](../src/domains/sequence/Form.tsx)) lets a user edit a
-Sequence's `name` and add or remove Countdown or Pause Steps, using `StepEdit`/
-`StepPreview` from [src/domains/steps](../src/domains/steps).
+The authoring UI ([SequenceForm.tsx](../src/domains/sequence/SequenceForm.tsx))
+lets a user edit a Sequence's `name` and add or remove Countdown or Pause Steps,
+using `StepEdit`/`StepPreview` from [src/domains/steps](../src/domains/steps).
+Like the Step components, every file under `src/domains/sequence/` is named after
+its main export (`SequenceForm.tsx` exports `SequenceForm`, `SequenceList.tsx`
+exports `SequenceList`, etc.) — no generic `Form`/`List`/`Edit` names.
 
 Each Step type's `View` component is implemented and self-contained (Countdown
 counts down and calls `onDone`; Pause waits for a tap), but nothing wires them
 together yet: editing an existing Step in place, reordering Steps, creating or
 editing Loops, and the Sequence-level playback screen
-([View.tsx](../src/domains/sequence/View.tsx)) that would walk through a
-Sequence's items and render each Step's `View` are not implemented yet.
+([SequenceView.tsx](../src/domains/sequence/SequenceView.tsx)) that would walk
+through a Sequence's items and render each Step's `View` are not implemented yet.

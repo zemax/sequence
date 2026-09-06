@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import components from "../../styles/Components.module.scss";
 
-export const CreateButton = () => (
+export const SequenceCreateButton = () => (
   <Link href="/sequence/create" className={components.floating}>
     <AddIcon />
   </Link>

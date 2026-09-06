@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectSequence } from "../../../data/sequences/sequencesSlice";
-import { View } from "../../../domains/sequence/View";
+import { SequenceView } from "../../../domains/sequence/SequenceView";
 import { Page } from "../../../domains/ui/components/Page/Page";
 
 export default function SequencePage() {
@@ -16,7 +16,7 @@ export default function SequencePage() {
 
   return (
     <Page title={sequence.name} back>
-      <View sequence={sequence} />
+      <SequenceView sequence={sequence} />
     </Page>
   );
 }
