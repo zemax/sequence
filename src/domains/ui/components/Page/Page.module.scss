@@ -21,5 +21,5 @@
 }
 
 .mainWithBack {
-  padding-top: calc(#{settings.gap(2)} + #{settings.$icon-size});
+  padding-bottom: calc(#{settings.gap(2)} + #{settings.$icon-size});
 }

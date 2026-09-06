@@ -9,7 +9,7 @@ export const BackButton: FunctionComponent = () => {
   const { back } = getUI();
 
   return (
-    <Link href="/" className={classNames(components.round, components.floating, components.floatingTopLeft)} aria-label={back}>
+    <Link href="/" className={classNames(components.round, components.floating, components.floatingBottomLeft)} aria-label={back}>
       <ArrowBackIcon />
     </Link>
   );
