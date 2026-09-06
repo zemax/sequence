@@ -12,31 +12,25 @@
   align-items: stretch;
 }
 
-.listItem {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  align-items: center;
+input.nameInput {
+  display: block;
+  width: 100%;
 
-  margin-bottom: settings.gap();
+  margin: settings.gap() 0;
+  padding: 0 0 settings.gap(0.5);
+  border: none;
+  border-bottom: settings.border-width() solid settings.$color-input-border;
+  border-radius: 0;
+  background-color: transparent;
 
-  border-radius: 0.5 * settings.$icon-size;
-  background-color: settings.$color-chip-background;
-  box-shadow: settings.$light-box-shadow;
-}
+  font-size: 1.5rem;
 
-.listItemDragging {
-  box-shadow: 0 12px 24px rgba(settings.$color-primary, 0.3);
-}
-
-.listItemTitle {
-  flex: 1;
-
-  line-height: settings.$icon-size;
-  padding: 0 1em;
-
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
+  &:focus {
+    border-bottom-color: settings.$color-input-border-focus;
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 .card {

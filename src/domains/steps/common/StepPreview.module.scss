@@ -1,0 +1,54 @@
+@use "/src/styles/settings";
+
+.stepPreview {
+  position: relative;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: settings.gap(0.5);
+
+  padding: settings.gap();
+
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: settings.$light-box-shadow;
+}
+
+.elevated {
+  box-shadow: 0 12px 24px rgba(settings.$color-primary, 0.3);
+}
+
+.icon {
+  display: flex;
+
+  color: settings.$color-primary;
+}
+
+.content {
+  flex: 1;
+}
+
+.deleteOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 settings.gap();
+
+  border-radius: 8px 0 0 8px;
+  background-color: settings.$color-action;
+  color: white;
+
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 150ms ease;
+}
+
+.deleteOverlayVisible {
+  clip-path: inset(0 0 0 0);
+}

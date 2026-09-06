@@ -2,27 +2,28 @@
 
 import SaveIcon from "@mui/icons-material/Save";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import { getUI } from "../../data/informations";
 import { Sequence, Step, addSequence, emptySequence, isLoop, updateSequence } from "../../data/sequences/sequencesSlice";
 import store from "../../data/store";
 import { useRouter } from "next/navigation";
 import { StepEdit } from "../steps/common/StepEdit";
-import { StepPreview } from "../steps/common/StepPreview";
 import { emptyStep } from "../steps/common/emptyStep";
 import { stepTypeOptionLabel, stepTypes } from "../steps/common/stepTypes";
+import { CountdownPreview } from "../steps/countdown/CountdownPreview";
+import { PausePreview } from "../steps/pause/PausePreview";
 import { SortableList } from "../ui/sortableList/SortableList";
 import { SortableItem } from "../ui/sortableList/SortableItem";
 
-import components from "../../styles/Components.module.scss";
 import styles from "./Sequence.module.scss";
+
+const STEP_DELETE_EDGE_THRESHOLD_PX = 100;
 
 export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
   const [sequence, setSequence] = useState(initialSequence || emptySequence());
   const [newStep, setNewStep] = useState<Step>(emptyStep("countdown"));
   const router = useRouter();
-  const { nameLabel, stepsTitle, stepTypeLabel } = getUI();
+  const { nameLabel, stepTypeLabel } = getUI();
 
   const save = () => {
     initialSequence ? store.dispatch(updateSequence(sequence)) : store.dispatch(addSequence(sequence));
@@ -61,32 +62,41 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
   return (
     <>
       <div className="form-row">
-        <label>{nameLabel}</label>
         <input
           type="text"
+          className={styles.nameInput}
           value={sequence.name}
           onChange={(e) => setSequence({ ...sequence, name: e.target.value })}
+          placeholder={nameLabel}
+          aria-label={nameLabel}
         />
       </div>
-
-      <h2>{stepsTitle}</h2>
 
       <SortableList
         items={sequence.items}
         getId={(item) => item.id}
         onReorder={moveItem}
-        paddingX={48}
+        paddingX={8}
         paddingY={8}
+        edgeActionThreshold={STEP_DELETE_EDGE_THRESHOLD_PX}
+        onEdgeAction={(id, edge) => {
+          if (edge !== "right") {
+            return false;
+          }
+          removeItem(id);
+          return true;
+        }}
         className={styles.list}
       >
         {(item, entry) => (
-          <SortableItem key={item.id} entry={entry} className={styles.listItem} draggingClassName={styles.listItemDragging}>
-            <span className={styles.listItemTitle}>
-              {isLoop(item) ? `Loop x${item.repeatCount}` : <StepPreview step={item} />}
-            </span>
-            <button type="button" className={components.icon} onClick={() => removeItem(item.id)}>
-              <DeleteIcon />
-            </button>
+          <SortableItem key={item.id} entry={entry}>
+            {isLoop(item) ? (
+              `Loop x${item.repeatCount}`
+            ) : item.type === "countdown" ? (
+              <CountdownPreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} />
+            ) : (
+              <PausePreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} />
+            )}
           </SortableItem>
         )}
       </SortableList>
