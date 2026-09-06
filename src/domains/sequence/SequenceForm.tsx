@@ -2,6 +2,9 @@
 
 import SaveIcon from "@mui/icons-material/Save";
 import AddIcon from "@mui/icons-material/Add";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import classNames from "classnames";
+import Link from "next/link";
 import { useState } from "react";
 import { getUI } from "../../data/informations";
 import { Sequence, Step, addSequence, emptySequence, isLoop, updateSequence } from "../../data/sequences/sequencesSlice";
@@ -15,19 +18,28 @@ import { PausePreview } from "../steps/pause/PausePreview";
 import { SortableList } from "../ui/sortableList/SortableList";
 import { SortableItem } from "../ui/sortableList/SortableItem";
 
+import components from "../../styles/Components.module.scss";
 import styles from "./Sequence.module.scss";
 
-const STEP_DELETE_EDGE_THRESHOLD_PX = 100;
+const STEP_DELETE_EDGE_THRESHOLD_PX = 50;
 
 export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
   const [sequence, setSequence] = useState(initialSequence || emptySequence());
+  const [savedSequence, setSavedSequence] = useState(sequence);
   const [newStep, setNewStep] = useState<Step>(emptyStep("countdown"));
   const router = useRouter();
-  const { nameLabel, stepTypeLabel } = getUI();
+  const { nameLabel, stepTypeLabel, play, save: saveLabel } = getUI();
+
+  const isDirty = JSON.stringify(sequence) !== JSON.stringify(savedSequence);
 
   const save = () => {
-    initialSequence ? store.dispatch(updateSequence(sequence)) : store.dispatch(addSequence(sequence));
-    router.push("/");
+    if (initialSequence) {
+      store.dispatch(updateSequence(sequence));
+      setSavedSequence(sequence);
+    } else {
+      store.dispatch(addSequence(sequence));
+      router.push("/");
+    }
   };
 
   const changeStepType = (type: Step["type"]) => {
@@ -120,11 +132,24 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
         </button>
       </div>
 
-      <div className="form-row form-row--submit">
-        <button type="button" onClick={save}>
+      {initialSequence && !isDirty ? (
+        <Link
+          href={`/sequence/view?id=${sequence.id}`}
+          className={classNames(components.round, components.floating, components.floatingBottomRight, styles.actionButton)}
+          aria-label={play}
+        >
+          <PlayArrowIcon />
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className={classNames(components.round, components.floating, components.floatingBottomRight, styles.actionButton)}
+          onClick={save}
+          aria-label={saveLabel}
+        >
           <SaveIcon />
         </button>
-      </div>
+      )}
     </>
   );
 };

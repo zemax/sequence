@@ -2,6 +2,7 @@
 @use "@zemax/mf-ui/src/css/lib/fonts-sizes";
 @use "@zemax/mf-ui/src/css/lib/a11y";
 @use "@zemax/mf-ui/src/css/lib/sprites";
+@use "@zemax/mf-ui/src/css/lib/svg-shapes";
 @use "@zemax/mf-ui/src/css/lib/layout" as mfuilayout;
 @use "../0-settings/colors";
 @use "../0-settings/fonts";
@@ -79,7 +80,7 @@ select {
 	-moz-appearance:     none;
 	appearance:          none;
 
-	background-image:    svg-triangle-down(colors.$color-default, 10, 5);
+	background-image:    svg-shapes.svg-triangle-down(colors.$color-default, 10, 5);
 	background-repeat:   no-repeat, repeat;
 	background-position: right 0.7em center;
 	background-size:     0.65em auto, 100%;
@@ -232,7 +233,7 @@ label.radiobox--inside {
 .form-row--radioboxes-inline {
 	label {
 		display:      inline-block;
-		margin-right: gap();
+		margin-right: layout.gap();
 	}
 }
 
@@ -241,7 +242,7 @@ label.radiobox--inside {
 **************************************************/
 
 .form-row {
-	margin-bottom: gap();
+	margin-bottom: layout.gap();
 }
 
 @include mediaqueries.medium-or-more {
@@ -253,16 +254,16 @@ label.radiobox--inside {
 
 		> :nth-child(2n + 1) {
 			text-align: right;
-			@include mfuilayout.flex-width(column-width(1, 4, gap()));
+			@include mfuilayout.flex-width(mfuilayout.column-width(1, 4, layout.gap()));
 		}
 
 		> :nth-child(2n + 2) {
-			@include mfuilayout.flex-width(column-width(3, 4, gap()));
+			@include mfuilayout.flex-width(mfuilayout.column-width(3, 4, layout.gap()));
 		}
 	}
 
 	.form-row--inline-input {
-		padding-left: calc(#{column-width(1, 4, gap())} + #{gap()});
+		padding-left: calc(#{mfuilayout.column-width(1, 4, layout.gap())} + #{layout.gap()});
 	}
 }
 
@@ -275,7 +276,7 @@ label.radiobox--inside {
 	button,
 	input[type="submit"] {
 		&:not(:last-child) {
-			margin-right: gap();
+			margin-right: layout.gap();
 		}
 	}
 }
@@ -286,8 +287,8 @@ label.radiobox--inside {
 
 .form-errors {
 	> ul {
-		margin:           gap() 0;
-		padding:          gap();
+		margin:           layout.gap() 0;
+		padding:          layout.gap();
 		list-style:       none;
 
 		li {
@@ -296,7 +297,7 @@ label.radiobox--inside {
 		}
 
 		li + li {
-			margin-top: gap();
+			margin-top: layout.gap();
 		}
 
 		color:            black;

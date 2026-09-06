@@ -1,4 +1,4 @@
-import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import TimerIcon from "@mui/icons-material/TimerOutlined";
 import { SortableEdge } from "../../ui/sortableList/useSortableList";
 import { StepPreview } from "../common/StepPreview";
 import { CountdownStep } from "./CountdownStep";
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const CountdownPreview = ({ step, elevated, edgeAction }: Props) => (
-  <StepPreview icon={<HourglassEmptyIcon />} elevated={elevated} edgeAction={edgeAction}>
+  <StepPreview icon={<TimerIcon />} elevated={elevated} edgeAction={edgeAction}>
     {step.title} ({step.duration}s)
   </StepPreview>
 );

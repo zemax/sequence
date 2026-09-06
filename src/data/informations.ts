@@ -16,6 +16,7 @@ export const getTheme = () => ({
 export const getUI = () => ({
   back: "Retour",
   play: "Lire",
+  save: "Enregistrer",
 
   nameLabel: "Nom de la séquence",
 
@@ -28,5 +29,14 @@ export const getUI = () => ({
   countdownDefaultTitle: "Compte à rebours",
   pauseDefaultTitle: "Appuyez pour continuer",
 
-  durationLabel: (minutes: number, seconds: number) => `Durée: ${minutes} minutes et ${seconds} secondes`,
+  durationLabel: (minutes: number, seconds: number) => {
+    const parts = [];
+    if (minutes > 0) {
+      parts.push(`${minutes} minutes`);
+    }
+    if (seconds > 0 || minutes === 0) {
+      parts.push(`${seconds} secondes`);
+    }
+    return `Durée: ${parts.join(" et ")}`;
+  },
 });

@@ -108,3 +108,11 @@ input.nameInput {
     background-color: color.adjust(settings.$color-action, $lightness: -10%);
   }
 }
+
+.actionButton {
+  background-color: settings.$color-action;
+
+  &:active {
+    background-color: color.adjust(settings.$color-action, $lightness: -10%);
+  }
+}
