@@ -7,10 +7,11 @@ type Props = {
   step: PauseStep;
   elevated?: boolean;
   edgeAction?: SortableEdge | null;
+  onClick?: () => void;
 };
 
-export const PausePreview = ({ step, elevated, edgeAction }: Props) => (
-  <StepPreview icon={<PauseIcon />} elevated={elevated} edgeAction={edgeAction}>
+export const PausePreview = ({ step, elevated, edgeAction, onClick }: Props) => (
+  <StepPreview icon={<PauseIcon />} elevated={elevated} edgeAction={edgeAction} onClick={onClick}>
     {step.title}
   </StepPreview>
 );

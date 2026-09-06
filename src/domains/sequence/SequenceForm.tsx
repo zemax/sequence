@@ -1,22 +1,24 @@
 "use client";
 
 import SaveIcon from "@mui/icons-material/Save";
-import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import classNames from "classnames";
 import Link from "next/link";
 import { useState } from "react";
 import { getUI } from "../../data/informations";
-import { Sequence, Step, addSequence, emptySequence, isLoop, updateSequence } from "../../data/sequences/sequencesSlice";
+import { Sequence, SequenceItem, Step, addSequence, emptySequence, isLoop, updateSequence } from "../../data/sequences/sequencesSlice";
 import store from "../../data/store";
 import { useRouter } from "next/navigation";
-import { StepEdit } from "../steps/common/StepEdit";
 import { emptyStep } from "../steps/common/emptyStep";
-import { stepTypeOptionLabel, stepTypes } from "../steps/common/stepTypes";
+import { CountdownButton } from "../steps/countdown/CountdownButton";
 import { CountdownPreview } from "../steps/countdown/CountdownPreview";
+import { CountdownPreviewEdit } from "../steps/countdown/CountdownPreviewEdit";
+import { PauseButton } from "../steps/pause/PauseButton";
 import { PausePreview } from "../steps/pause/PausePreview";
+import { PausePreviewEdit } from "../steps/pause/PausePreviewEdit";
 import { SortableList } from "../ui/sortableList/SortableList";
 import { SortableItem } from "../ui/sortableList/SortableItem";
+import { SortableEntry } from "../ui/sortableList/useSortableList";
 
 import components from "../../styles/Components.module.scss";
 import styles from "./Sequence.module.scss";
@@ -26,9 +28,9 @@ const STEP_DELETE_EDGE_THRESHOLD_PX = 50;
 export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
   const [sequence, setSequence] = useState(initialSequence || emptySequence());
   const [savedSequence, setSavedSequence] = useState(sequence);
-  const [newStep, setNewStep] = useState<Step>(emptyStep("countdown"));
+  const [editingId, setEditingId] = useState<string | null>(null);
   const router = useRouter();
-  const { nameLabel, stepTypeLabel, play, save: saveLabel } = getUI();
+  const { nameLabel, addStepLabel, play, save: saveLabel } = getUI();
 
   const isDirty = JSON.stringify(sequence) !== JSON.stringify(savedSequence);
 
@@ -42,22 +44,15 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
     }
   };
 
-  const changeStepType = (type: Step["type"]) => {
-    const isCustomTitle = newStep.title !== emptyStep(newStep.type).title;
-    const next = emptyStep(type);
-    setNewStep(isCustomTitle ? { ...next, title: newStep.title } : next);
-  };
-
-  const addStep = () => {
-    if (!newStep.title) {
-      return;
-    }
-    setSequence({ ...sequence, items: [...sequence.items, newStep] });
-    setNewStep(emptyStep(newStep.type));
+  const addStep = (type: Step["type"]) => {
+    const step = emptyStep(type);
+    setSequence({ ...sequence, items: [...sequence.items, step] });
+    setEditingId(step.id);
   };
 
   const removeItem = (id: string) => {
     setSequence({ ...sequence, items: sequence.items.filter((item) => item.id !== id) });
+    setEditingId((current) => (current === id ? null : current));
   };
 
   const moveItem = (id: string, toIndex: number) => {
@@ -69,6 +64,30 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
     const [item] = items.splice(fromIndex, 1);
     items.splice(toIndex, 0, item);
     setSequence({ ...sequence, items });
+  };
+
+  const updateItem = (updated: SequenceItem) => {
+    setSequence({ ...sequence, items: sequence.items.map((item) => (item.id === updated.id ? updated : item)) });
+  };
+
+  const renderItem = (item: SequenceItem, entry: SortableEntry) => {
+    if (isLoop(item)) {
+      return `Loop x${item.repeatCount}`;
+    }
+
+    if (editingId === item.id) {
+      return item.type === "countdown" ? (
+        <CountdownPreviewEdit step={item} onChange={updateItem} edgeAction={entry.edgeAction} onClick={() => setEditingId(null)} />
+      ) : (
+        <PausePreviewEdit step={item} onChange={updateItem} edgeAction={entry.edgeAction} onClick={() => setEditingId(null)} />
+      );
+    }
+
+    return item.type === "countdown" ? (
+      <CountdownPreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} onClick={() => setEditingId(item.id)} />
+    ) : (
+      <PausePreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} onClick={() => setEditingId(item.id)} />
+    );
   };
 
   return (
@@ -102,34 +121,15 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
       >
         {(item, entry) => (
           <SortableItem key={item.id} entry={entry}>
-            {isLoop(item) ? (
-              `Loop x${item.repeatCount}`
-            ) : item.type === "countdown" ? (
-              <CountdownPreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} />
-            ) : (
-              <PausePreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} />
-            )}
+            {renderItem(item, entry)}
           </SortableItem>
         )}
       </SortableList>
 
-      <div className="form-row">
-        <label>{stepTypeLabel}</label>
-        <select value={newStep.type} onChange={(e) => changeStepType(e.target.value as Step["type"])}>
-          {stepTypes.map((type) => (
-            <option key={type} value={type}>
-              {stepTypeOptionLabel(type)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <StepEdit step={newStep} onChange={setNewStep} />
-
-      <div className="form-row form-row--submit">
-        <button type="button" onClick={addStep}>
-          <AddIcon />
-        </button>
+      <div className={classNames("form-row", styles.addStepRow)}>
+        <span>{addStepLabel}</span>
+        <CountdownButton onClick={() => addStep("countdown")} />
+        <PauseButton onClick={() => addStep("pause")} />
       </div>
 
       {initialSequence && !isDirty ? (

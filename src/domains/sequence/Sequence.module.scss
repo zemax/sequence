@@ -109,6 +109,15 @@ input.nameInput {
   }
 }
 
+.addStepRow {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: settings.gap(0.5);
+
+  margin-top: settings.gap();
+}
+
 .actionButton {
   background-color: settings.$color-action;
 

@@ -1,6 +1,6 @@
-import { getUI } from "../../data/informations";
+import { getUI } from "../../../data/informations";
 
-export const sequenceDurationLabel = (duration: number | undefined): string => {
+export const durationLabel = (duration: number | undefined): string => {
   if (duration === undefined) {
     return "";
   }

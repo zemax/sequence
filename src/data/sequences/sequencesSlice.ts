@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { CountdownStep } from "../../domains/steps/countdown/CountdownStep";
 import { PauseStep } from "../../domains/steps/pause/PauseStep";
+import { getUI } from "../informations";
 
 // Union of every Step type. Extend here when adding a new Step type.
 export type Step = CountdownStep | PauseStep;
@@ -105,6 +106,6 @@ export const selectSequence =
 
 export const emptySequence = (): Sequence => ({
   id: (typeof window !== "undefined" && window.crypto.randomUUID()) || "",
-  name: "",
+  name: getUI().defaultSequenceName,
   items: [],
 });

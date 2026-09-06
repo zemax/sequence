@@ -19,23 +19,24 @@ export const getUI = () => ({
   save: "Enregistrer",
 
   nameLabel: "Nom de la séquence",
+  addStepLabel: "Ajouter",
 
-  stepTypeLabel: "Type d'étape",
   stepTypeCountdownLabel: "Compte à rebours",
   stepTypePauseLabel: "Pause",
   stepTitleLabel: "Titre de l'étape",
   stepDurationLabel: "Durée (secondes)",
 
+  defaultSequenceName: "Ma séquence",
   countdownDefaultTitle: "Compte à rebours",
   pauseDefaultTitle: "Appuyez pour continuer",
 
   durationLabel: (minutes: number, seconds: number) => {
     const parts = [];
     if (minutes > 0) {
-      parts.push(`${minutes} minutes`);
+      parts.push(`${minutes} minute${minutes > 1 ? "s" : ""}`);
     }
     if (seconds > 0 || minutes === 0) {
-      parts.push(`${seconds} secondes`);
+      parts.push(`${seconds} seconde${seconds > 1 ? "s" : ""}`);
     }
     return `Durée: ${parts.join(" et ")}`;
   },

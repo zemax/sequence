@@ -27,7 +27,70 @@
 }
 
 .content {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+
   flex: 1;
+  min-width: 0;
+}
+
+.previewFields {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.25em;
+
+  flex: 1;
+  min-width: 0;
+}
+
+.editFields {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: settings.gap(0.5);
+
+  flex: 1;
+  min-width: 0;
+}
+
+.durationField {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+  gap: settings.gap(0.25);
+}
+
+.secondaryText {
+  font-size: 0.85em;
+  color: settings.$color-grey;
+}
+
+input.titleInput,
+input.durationInput {
+  padding: 0;
+  border: none;
+  border-bottom: settings.border-width() solid settings.$color-input-border;
+  border-radius: 0;
+  background-color: transparent;
+
+  font: inherit;
+  color: inherit;
+
+  &:focus {
+    border-bottom-color: settings.$color-input-border-focus;
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+input.titleInput {
+  flex: 1;
+  min-width: 0;
+}
+
+input.durationInput {
+  width: 4em;
 }
 
 .deleteOverlay {
