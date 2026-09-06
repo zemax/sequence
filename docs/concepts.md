@@ -116,9 +116,9 @@ its main export (`SequenceForm.tsx` exports `SequenceForm`, `SequenceList.tsx`
 exports `SequenceList`, etc.) — no generic `Form`/`List`/`Edit` names.
 
 On the home screen, [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)
-supports drag-and-drop reordering of Sequences: a picked-up card follows the
-pointer and tilts based on horizontal movement, a drop indicator shows where it
-would land, and releasing it commits the new order via the `moveSequence` action.
+supports drag-and-drop reordering of Sequences, via the reusable
+`useSortableList` hook — see [drag-reorder.md](drag-reorder.md) for how that
+interaction works and how to reuse it elsewhere.
 
 Each Step type's `View` component is implemented and self-contained (Countdown
 counts down and calls `onDone`; Pause waits for a tap), but nothing wires them

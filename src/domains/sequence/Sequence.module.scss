@@ -25,6 +25,10 @@
   box-shadow: settings.$light-box-shadow;
 }
 
+.listItemDragging {
+  box-shadow: 0 12px 24px rgba(settings.$color-primary, 0.3);
+}
+
 .listItemTitle {
   flex: 1;
 
@@ -35,20 +39,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.listRow {
-  position: relative;
-
-  margin-bottom: settings.gap();
-
-  touch-action: none;
-  user-select: none;
-}
-
-.listRowElevated {
-  z-index: 2;
-  will-change: transform;
-}
-
 .card {
   position: relative;
 
@@ -57,30 +47,10 @@
   border-radius: 8px;
   background-color: white;
   box-shadow: settings.$light-box-shadow;
-
-  cursor: grab;
 }
 
 .cardDragging {
   box-shadow: 0 12px 24px rgba(settings.$color-primary, 0.3);
-  cursor: grabbing;
-}
-
-.dropIndicator {
-  height: 0;
-  margin-bottom: 0;
-  opacity: 0;
-
-  border-radius: 2px;
-  background-color: settings.$color-action;
-
-  transition: height 150ms ease, margin-bottom 150ms ease, opacity 150ms ease;
-}
-
-.dropIndicatorActive {
-  height: 4px;
-  margin-bottom: settings.gap(0.5);
-  opacity: 1;
 }
 
 .cardTitle {

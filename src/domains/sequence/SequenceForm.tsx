@@ -12,6 +12,8 @@ import { StepEdit } from "../steps/common/StepEdit";
 import { StepPreview } from "../steps/common/StepPreview";
 import { emptyStep } from "../steps/common/emptyStep";
 import { stepTypeOptionLabel, stepTypes } from "../steps/common/stepTypes";
+import { SortableList } from "../ui/sortableList/SortableList";
+import { SortableItem } from "../ui/sortableList/SortableItem";
 
 import components from "../../styles/Components.module.scss";
 import styles from "./Sequence.module.scss";
@@ -45,6 +47,17 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
     setSequence({ ...sequence, items: sequence.items.filter((item) => item.id !== id) });
   };
 
+  const moveItem = (id: string, toIndex: number) => {
+    const items = [...sequence.items];
+    const fromIndex = items.findIndex((item) => item.id === id);
+    if (fromIndex === -1) {
+      return;
+    }
+    const [item] = items.splice(fromIndex, 1);
+    items.splice(toIndex, 0, item);
+    setSequence({ ...sequence, items });
+  };
+
   return (
     <>
       <div className="form-row">
@@ -58,18 +71,25 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
 
       <h2>{stepsTitle}</h2>
 
-      <ul className={styles.list}>
-        {sequence.items.map((item) => (
-          <li key={item.id} className={styles.listItem}>
+      <SortableList
+        items={sequence.items}
+        getId={(item) => item.id}
+        onReorder={moveItem}
+        paddingX={48}
+        paddingY={8}
+        className={styles.list}
+      >
+        {(item, entry) => (
+          <SortableItem key={item.id} entry={entry} className={styles.listItem} draggingClassName={styles.listItemDragging}>
             <span className={styles.listItemTitle}>
               {isLoop(item) ? `Loop x${item.repeatCount}` : <StepPreview step={item} />}
             </span>
             <button type="button" className={components.icon} onClick={() => removeItem(item.id)}>
               <DeleteIcon />
             </button>
-          </li>
-        ))}
-      </ul>
+          </SortableItem>
+        )}
+      </SortableList>
 
       <div className="form-row">
         <label>{stepTypeLabel}</label>

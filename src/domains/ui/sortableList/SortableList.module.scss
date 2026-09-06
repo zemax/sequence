@@ -1,0 +1,36 @@
+@use "sass:color";
+@use "/src/styles/settings";
+
+.row {
+  position: relative;
+
+  margin-bottom: settings.gap();
+}
+
+.rowElevated {
+  z-index: 2;
+  will-change: transform;
+}
+
+.item {
+  // Permanently none, not just while dragging — see docs/drag-reorder.md.
+  touch-action: none;
+  user-select: none;
+}
+
+.dropIndicator {
+  height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+
+  border-radius: 2px;
+  background-color: settings.$color-action;
+
+  transition: height 150ms ease, margin-bottom 150ms ease, opacity 150ms ease;
+}
+
+.dropIndicatorActive {
+  height: 4px;
+  margin-bottom: settings.gap(0.5);
+  opacity: 1;
+}
