@@ -9,6 +9,8 @@ const TILT_LERP = 0.25;
 const REORDER_TRANSITION_MS = 250;
 const DRAG_ACTIVATION_PX = 20;
 
+export type SortableEdge = "left" | "right";
+
 type DragState = {
   id: string;
   startX: number;
@@ -19,6 +21,7 @@ type DragState = {
   offsetX: number;
   offsetY: number;
   tilt: number;
+  edgeAction: SortableEdge | null;
 };
 
 type PendingCardSettle = {
@@ -52,11 +55,14 @@ export type SortableItemProps = {
 export type SortableListOptions = {
   paddingX?: number;
   paddingY?: number;
+  edgeActionThreshold?: number;
+  onEdgeAction?: (id: string, edge: SortableEdge) => boolean;
 };
 
 export type SortableEntry = {
   isDragging: boolean;
   showDropIndicatorBefore: boolean;
+  edgeAction: SortableEdge | null;
   rowProps: SortableRowProps;
   itemProps: SortableItemProps;
 };
@@ -66,7 +72,7 @@ export const useSortableList = <T,>(
   items: T[],
   getId: (item: T) => string,
   onReorder: (id: string, toIndex: number) => void,
-  { paddingX = 0, paddingY = 0 }: SortableListOptions = {},
+  { paddingX = 0, paddingY = 0, edgeActionThreshold, onEdgeAction }: SortableListOptions = {},
 ) => {
   const [dragId, setDragId] = useState<string | null>(null);
   const [elevatedId, setElevatedId] = useState<string | null>(null);
@@ -74,6 +80,7 @@ export const useSortableList = <T,>(
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [tilt, setTilt] = useState(0);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [edgeAction, setEdgeAction] = useState<SortableEdge | null>(null);
 
   const dragState = useRef<DragState | null>(null);
   const elevationTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -180,6 +187,7 @@ export const useSortableList = <T,>(
     setDragOffset({ x: 0, y: 0 });
     setTilt(0);
     setDropIndex(null);
+    setEdgeAction(null);
   };
 
   const onPointerMove = (e: PointerEvent) => {
@@ -197,20 +205,36 @@ export const useSortableList = <T,>(
     const nextDropIndex = Math.max(0, Math.min(items.length - 1, drag.originalIndex + slotOffset));
     drag.dropIndex = nextDropIndex;
     setDropIndex(nextDropIndex);
+
+    const nextEdgeAction =
+      edgeActionThreshold === undefined
+        ? null
+        : e.clientX < edgeActionThreshold
+          ? "left"
+          : window.innerWidth - e.clientX < edgeActionThreshold
+            ? "right"
+            : null;
+    drag.edgeAction = nextEdgeAction;
+    setEdgeAction(nextEdgeAction);
   };
 
   const onPointerUp = () => {
     const drag = dragState.current;
     if (drag) {
-      if (drag.dropIndex !== drag.originalIndex) {
-        const row = rowRefs.current.get(drag.id);
-        if (row) {
-          rowPositions.current.set(drag.id, row.getBoundingClientRect().top);
+      // The edge action, if it handled the drop, is presumed to remove the item —
+      // nothing left to animate here, unlike the reorder/settle cases below.
+      const handledByEdgeAction = drag.edgeAction !== null && (onEdgeAction?.(drag.id, drag.edgeAction) ?? false);
+      if (!handledByEdgeAction) {
+        if (drag.dropIndex !== drag.originalIndex) {
+          const row = rowRefs.current.get(drag.id);
+          if (row) {
+            rowPositions.current.set(drag.id, row.getBoundingClientRect().top);
+          }
+          pendingCardSettle.current = { id: drag.id, offsetX: drag.offsetX, tilt: drag.tilt };
+          onReorder(drag.id, drag.dropIndex);
+        } else {
+          settleDraggedItemInPlace(drag.id, drag.offsetX, drag.offsetY, drag.tilt);
         }
-        pendingCardSettle.current = { id: drag.id, offsetX: drag.offsetX, tilt: drag.tilt };
-        onReorder(drag.id, drag.dropIndex);
-      } else {
-        settleDraggedItemInPlace(drag.id, drag.offsetX, drag.offsetY, drag.tilt);
       }
     }
     endDrag();
@@ -255,6 +279,7 @@ export const useSortableList = <T,>(
       offsetX: 0,
       offsetY: 0,
       tilt: 0,
+      edgeAction: null,
     };
 
     pointerX.current = startX;
@@ -337,6 +362,7 @@ export const useSortableList = <T,>(
     return {
       isDragging,
       showDropIndicatorBefore: indicatorIndex === index,
+      edgeAction: isDragging ? edgeAction : null,
       rowProps: {
         ref: (el) => {
           if (el) {

@@ -78,6 +78,31 @@ matters when an item packs its own interactive controls close to an edge
 press on that control could rack up more than 20px of incidental movement
 and arm a drag instead of hitting the button.
 
+## Edge actions: dragging to the side of the viewport
+
+Besides reordering, a drag can also trigger a one-off action by carrying the
+item to the edge of the *viewport* (not the list) — e.g. dragging far enough
+right to delete it, the way [SequenceList](../src/domains/sequence/SequenceList.tsx)
+does. This is opt-in via `edgeActionThreshold` (a pixel distance from
+`window`'s left/right edge) and `onEdgeAction(id, edge)`, both left unset by
+default (the feature is entirely inert unless both are supplied).
+
+While dragging, every `pointermove` compares the pointer's `clientX` against
+`window.innerWidth`; crossing into either margin sets `entry.edgeAction` to
+`"left"` or `"right"` (`null` otherwise, and always `null` while not
+dragging) so the item being dragged can render whatever feedback makes sense
+(SequenceList overlays a trash icon — see [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)).
+
+`onEdgeAction` **returns a `boolean`**: `true` means it acted on this edge
+(the item is presumed to be leaving the list, e.g. deleted) and skips the
+normal reorder/settle logic entirely — there's nothing left to animate back
+into place. `false` means it declined (wrong edge, or this list doesn't
+support an action there), and release falls through to the usual
+reorder-or-settle behavior exactly as if `edgeAction` had never been set.
+This is why SequenceList's handler returns `false` for `"left"`: it only
+deletes on `"right"`, so releasing on the left settles the item back in
+place like a normal aborted drag, instead of leaving it stranded.
+
 ## Using it elsewhere
 
 ```tsx
@@ -87,11 +112,18 @@ and arm a drag instead of hitting the button.
   onReorder={(id, toIndex) => dispatchYourReorderAction(id, toIndex)}
   paddingX={8} // optional; both default to 0 — see above
   paddingY={8}
+  edgeActionThreshold={100} // optional; see "Edge actions" above
+  onEdgeAction={(id, edge) => {
+    if (edge !== "right") return false; // let "left" settle back normally
+    dispatchYourDeleteAction(id);
+    return true;
+  }}
   className={yourOwnListStyles}
 >
   {(item, entry) => (
     <SortableItem key={item.id} entry={entry} className={yourOwnItemStyles} draggingClassName={yourOwnDraggingStyles}>
       {/* your item's content */}
+      {entry.edgeAction === "right" && <YourOwnDeleteOverlay />}
     </SortableItem>
   )}
 </SortableList>

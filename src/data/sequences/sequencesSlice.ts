@@ -75,7 +75,10 @@ export const sequencesSlice = createSlice({
       state[i] = action.payload;
     },
     removeSequence: (state, action) => {
-      state = state.filter((s) => s.id !== action.payload.id);
+      const index = state.findIndex((s) => s.id === action.payload.id);
+      if (index !== -1) {
+        state.splice(index, 1);
+      }
     },
     moveSequence: (state, action: PayloadAction<{ id: string; toIndex: number }>) => {
       const { id, toIndex } = action.payload;

@@ -80,6 +80,29 @@
   inset: 0;
 }
 
+.deleteOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 settings.gap();
+
+  border-radius: 8px 0 0 8px;
+  background-color: settings.$color-action;
+  color: white;
+
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 150ms ease;
+}
+
+.deleteOverlayVisible {
+  clip-path: inset(0 0 0 0);
+}
+
 .play {
   position: absolute;
   right: settings.gap(0.5);

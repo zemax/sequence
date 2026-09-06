@@ -11,8 +11,18 @@ type Props<T> = SortableListOptions & {
 };
 
 // A reorderable <ul> — pair with SortableItem for each <li>. See docs/drag-reorder.md.
-export const SortableList = <T,>({ items, getId, onReorder, paddingX, paddingY, className, children }: Props<T>) => {
-  const sortable = useSortableList(items, getId, onReorder, { paddingX, paddingY });
+export const SortableList = <T,>({
+  items,
+  getId,
+  onReorder,
+  paddingX,
+  paddingY,
+  edgeActionThreshold,
+  onEdgeAction,
+  className,
+  children,
+}: Props<T>) => {
+  const sortable = useSortableList(items, getId, onReorder, { paddingX, paddingY, edgeActionThreshold, onEdgeAction });
 
   return (
     <ul className={className}>
