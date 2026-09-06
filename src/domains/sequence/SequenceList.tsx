@@ -12,7 +12,7 @@ export const SequenceList = () => {
   return (
     <ul className={styles.list}>
       {sequences.map((sequence) => (
-        <li key={sequence.id} className={styles.listItem}>
+        <li key={sequence.id} className={styles.card}>
           <SequencePreview sequence={sequence} />
         </li>
       ))}

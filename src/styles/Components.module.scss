@@ -22,11 +22,7 @@
   }
 }
 
-.floating {
-  position: fixed;
-  bottom: layout.gap();
-  right: layout.gap();
-
+.round {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,4 +43,19 @@
   &:active {
     background-color: colors.$color-chip-background;
   }
+}
+
+.floating {
+  position: fixed;
+  z-index: 1;
+}
+
+.floatingBottomRight {
+  bottom: layout.gap();
+  right: layout.gap();
+}
+
+.floatingTopLeft {
+  top: layout.gap();
+  left: layout.gap();
 }

@@ -1,18 +1,18 @@
 import { FunctionComponent, PropsWithChildren } from "react";
-import { Header } from "../Header/Header";
+import classNames from "classnames";
+import { BackButton } from "../Back/Back";
 
 import styles from "./Page.module.scss";
 
 type Props = PropsWithChildren<Record<never, any>> & {
-  title?: string;
   back?: boolean;
 };
 
-export const Page: FunctionComponent<Props> = ({ children, title, back }) => {
+export const Page: FunctionComponent<Props> = ({ children, back }) => {
   return (
     <div className={styles.page}>
-      <Header title={title} back={back} />
-      <main className={styles.main}>{children}</main>
+      {back && <BackButton />}
+      <main className={classNames(styles.main, back && styles.mainWithBack)}>{children}</main>
     </div>
   );
 };

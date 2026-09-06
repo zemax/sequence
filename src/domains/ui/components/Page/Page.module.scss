@@ -18,3 +18,7 @@
 
   padding: settings.gap();
 }
+
+.mainWithBack {
+  padding-top: calc(#{settings.gap(2)} + #{settings.$icon-size});
+}

@@ -15,7 +15,7 @@ export default function EditSequencePage() {
   }
 
   return (
-    <Page title={sequence.name} back>
+    <Page back>
       <SequenceEdit sequence={sequence} />
     </Page>
   );

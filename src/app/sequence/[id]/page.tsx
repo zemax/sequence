@@ -15,7 +15,7 @@ export default function SequencePage() {
   }
 
   return (
-    <Page title={sequence.name} back>
+    <Page back>
       <SequenceView sequence={sequence} />
     </Page>
   );
