@@ -1,39 +1,41 @@
 @use "sass:color";
 
 /**************************************************
-* COLORS SETTINGS
+* RAW COLORS
 **************************************************/
 
-$color1: #586ba4;
-$color2: #324376;
-$color3: #f5dd90;
-$color4: #f68e5f;
-
-$color-grey-light: #f0f0f0;
 $color-grey: #999999;
-$color-grey-medium: #333333;
 
-$color-blue: #112ef4;
-$color-green: #00cc33;
-$color-orange: #ffb041;
 $color-orangered: #ff4000;
-$color-red: #8b0000;
+$color-coral: #f68e5f;
+$color-gold: #f5dd90;
+$color-navy: #324376;
+$color-indigo: #586ba4;
 
-$color-default: $color1;
+/**************************************************
+* SEMANTIC COLORS
+**************************************************/
+
+$color-default: $color-indigo;
 $color-background-default: #f6f6f6;
-$color-primary: $color2;
-$color-secondary: $color3;
+$color-primary: $color-navy;
+$color-secondary: $color-gold;
 $color-action: $color-orangered;
+$color-error: $color-orangered;
+$color-text-secondary: $color-grey;
+
+$color-background-gradient-start: $color-gold;
+$color-background-gradient-end: $color-coral;
 
 $color-input-background: white;
-$color-input-border: $color1;
+$color-input-border: $color-indigo;
 $color-input-background-focus: white;
-$color-input-border-focus: $color2;
+$color-input-border-focus: $color-navy;
 
 $color-menu: white;
-$color-menu-background: $color2;
+$color-menu-background: $color-navy;
 
-$color-chip-background: color.adjust($color1, $lightness: 35%);
+$color-chip-background: color.adjust($color-indigo, $lightness: 35%);
 
 $light-box-shadow: 0 4px 8px rgba($color-primary, 0.25);
 

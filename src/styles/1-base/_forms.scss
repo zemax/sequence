@@ -301,8 +301,8 @@ label.radiobox--inside {
 		}
 
 		color:            black;
-		background-color: rgba(colors.$color-orangered, 0.1);
-		border:           layout.border-width() solid colors.$color-orangered;
+		background-color: rgba(colors.$color-error, 0.1);
+		border:           layout.border-width() solid colors.$color-error;
 		border-radius:    layout.border-width();
 	}
 }
