@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { HashRouter, Route, Routes } from "react-router";
 import { getSerwist } from "virtual:serwist";
-import { basePath } from "./data/basePath";
 import store from "./data/store";
 import { HomePage } from "./routes/HomePage";
 import { SequenceCreatePage } from "./routes/SequenceCreatePage";
@@ -20,15 +19,15 @@ export const App = () => {
 
   return (
     <Provider store={store}>
-      <BrowserRouter basename={basePath}>
+      <HashRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/sequence/create" element={<SequenceCreatePage />} />
-          <Route path="/sequence/edit" element={<SequenceEditPage />} />
-          <Route path="/sequence/view" element={<SequenceViewPage />} />
+          <Route path="/sequence/edit/:id" element={<SequenceEditPage />} />
+          <Route path="/sequence/view/:id" element={<SequenceViewPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </Provider>
   );
 };

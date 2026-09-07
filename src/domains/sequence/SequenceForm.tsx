@@ -131,7 +131,7 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
 
       {initialSequence && !isDirty ? (
         <Link
-          to={`/sequence/view?id=${sequence.id}`}
+          to={`/sequence/view/${sequence.id}`}
           className={classNames(components.round, components.floating, components.floatingBottomRight, styles.actionButton)}
           aria-label={play}
         >
