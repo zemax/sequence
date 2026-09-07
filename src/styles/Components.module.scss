@@ -20,6 +20,11 @@
   &:active {
     background-color: rgba(white, 0.5);
   }
+
+  svg {
+    width: icons.$button-icon-size;
+    height: icons.$button-icon-size;
+  }
 }
 
 .round {
@@ -43,6 +48,11 @@
 
   &:active {
     background-color: colors.$color-chip-background;
+  }
+
+  svg {
+    width: icons.$button-icon-size;
+    height: icons.$button-icon-size;
   }
 }
 

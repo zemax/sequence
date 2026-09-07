@@ -12,6 +12,7 @@
 
   color: settings.$color-primary;
   background-color: settings.$color-background-default;
+  background-image: linear-gradient(180deg, settings.$color3 0%, settings.$color4 55%, settings.$color5 100%);
 }
 
 .main {
