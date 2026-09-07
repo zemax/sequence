@@ -20,7 +20,7 @@ import { SortableEntry } from "../ui/sortableList/useSortableList";
 import components from "../../styles/Components.module.scss";
 import styles from "./Sequence.module.scss";
 
-const STEP_DELETE_EDGE_THRESHOLD_PX = 50;
+const STEP_DELETE_EDGE_THRESHOLD_PX = 20;
 
 export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequence }) => {
   const [sequence, setSequence] = useState(initialSequence || emptySequence());

@@ -101,7 +101,8 @@ h3,
 	padding:   0;
 
 	@include fonts.font("title");
-	font-size: fonts.font-size("h3", "small");
+	font-size:   fonts.font-size("h3", "small");
+	line-height: fonts.line-height("title");
 
 	em {
 		@include fonts.font("title");

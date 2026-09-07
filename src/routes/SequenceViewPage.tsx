@@ -14,7 +14,7 @@ export const SequenceViewPage = () => {
   }
 
   return (
-    <Page back>
+    <Page>
       <SequenceView sequence={sequence} />
     </Page>
   );

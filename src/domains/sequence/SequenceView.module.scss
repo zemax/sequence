@@ -1,0 +1,11 @@
+@use "/src/styles/settings";
+
+.controls {
+  position: fixed;
+  z-index: 1;
+  bottom: settings.gap();
+  right: settings.gap();
+
+  display: flex;
+  gap: settings.gap(0.5);
+}

@@ -7,6 +7,8 @@
 @function line-height($id: "default", $layout: "small") {
 	@if ($id == "input") {
 		@return (1.3);
+	} @else if ($id == "title") {
+		@return (1.2);
 	} @else {
 		@return (1.5);
 	}

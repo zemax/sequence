@@ -1,0 +1,79 @@
+@use "/src/styles/settings";
+
+.countdown {
+  display: grid;
+  grid-template-rows: 1fr 200px 1fr;
+  justify-items: center;
+
+  flex: 1;
+  width: 100%;
+  text-align: center;
+}
+
+.titleZone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  align-self: center;
+  width: 100%;
+}
+
+.progress {
+  position: relative;
+
+  width: 200px;
+  height: 200px;
+}
+
+.progressSvg {
+  width: 100%;
+  height: 100%;
+
+  transform: rotate(-90deg);
+}
+
+.progressTrack {
+  fill: none;
+  stroke: rgba(settings.$color-primary, 0.15);
+  stroke-width: 12;
+}
+
+.progressBar {
+  fill: none;
+  stroke: white;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.clock {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: white;
+}
+
+.blinking {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.toggleZone {
+  display: flex;
+  justify-content: center;
+
+  align-self: start;
+  width: 100%;
+  padding-top: settings.gap();
+}

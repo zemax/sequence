@@ -9,7 +9,7 @@ import { SequencePreview } from "./SequencePreview";
 
 import styles from "./Sequence.module.scss";
 
-const DELETE_EDGE_THRESHOLD_PX = 50;
+const DELETE_EDGE_THRESHOLD_PX = 20;
 
 export const SequenceList = () => {
   const sequences = useSelector(selectSequences);

@@ -17,6 +17,10 @@ export const getUI = () => ({
   play: "Lire",
   save: "Enregistrer",
   settings: "Paramètres",
+  previous: "Précédent",
+  next: "Suivant",
+  pause: "Mettre en pause",
+  resume: "Reprendre",
 
   nameLabel: "Nom de la séquence",
   addStepLabel: "Ajouter",
