@@ -8,6 +8,7 @@ import { HomePage } from "./routes/HomePage";
 import { SequenceCreatePage } from "./routes/SequenceCreatePage";
 import { SequenceEditPage } from "./routes/SequenceEditPage";
 import { SequenceViewPage } from "./routes/SequenceViewPage";
+import { SettingsPage } from "./routes/SettingsPage";
 
 export const App = () => {
   useEffect(() => {
@@ -25,6 +26,7 @@ export const App = () => {
           <Route path="/sequence/create" element={<SequenceCreatePage />} />
           <Route path="/sequence/edit" element={<SequenceEditPage />} />
           <Route path="/sequence/view" element={<SequenceViewPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </BrowserRouter>
     </Provider>

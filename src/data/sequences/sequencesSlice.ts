@@ -55,11 +55,11 @@ const initialSequences: Sequence[] = [
     id: "3",
     name: "Méditation guidée",
     items: [
-      { id: "16", type: "pause", title: "Installez-vous confortablement et fermez les yeux" },
+      { id: "16", type: "pause", title: "Installez-vous confortablement et relâchez vos épaules" },
       { id: "17", type: "countdown", title: "Respirez profondément, concentrez-vous sur votre souffle", duration: 60 },
       { id: "18", type: "countdown", title: "Laissez vos pensées passer sans les juger", duration: 120 },
       { id: "19", type: "countdown", title: "Détendez chaque partie de votre corps", duration: 60 },
-      { id: "20", type: "pause", title: "Ouvrez les yeux doucement quand vous êtes prêt" },
+      { id: "20", type: "pause", title: "Revenez doucement à l'instant présent quand vous êtes prêt" },
     ],
   },
 ];

@@ -10,13 +10,13 @@ export const getTheme = () => ({
   color2: "#324376",
   color3: "#f5dd90",
   color4: "#f68e5f",
-  color5: "#f76c5e",
 });
 
 export const getUI = () => ({
   back: "Retour",
   play: "Lire",
   save: "Enregistrer",
+  settings: "Paramètres",
 
   nameLabel: "Nom de la séquence",
   addStepLabel: "Ajouter",
