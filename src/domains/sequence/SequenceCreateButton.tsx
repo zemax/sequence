@@ -1,11 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
-import Link from "next/link";
+import { Link } from "react-router";
 import classNames from "classnames";
 
 import components from "../../styles/Components.module.scss";
 
 export const SequenceCreateButton = () => (
-  <Link href="/sequence/create" className={classNames(components.round, components.floating, components.floatingBottomRight)}>
+  <Link to="/sequence/create" className={classNames(components.round, components.floating, components.floatingBottomRight)}>
     <AddIcon />
   </Link>
 );

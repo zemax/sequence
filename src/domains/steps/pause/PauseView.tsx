@@ -1,5 +1,3 @@
-"use client";
-
 import { PauseStep } from "./PauseStep";
 
 type Props = {

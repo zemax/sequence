@@ -1,14 +1,11 @@
-"use client";
-
 import SaveIcon from "@mui/icons-material/Save";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import classNames from "classnames";
-import Link from "next/link";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { getUI } from "../../data/informations";
 import { Sequence, SequenceItem, Step, addSequence, emptySequence, isLoop, updateSequence } from "../../data/sequences/sequencesSlice";
 import store from "../../data/store";
-import { useRouter } from "next/navigation";
 import { emptyStep } from "../steps/common/emptyStep";
 import { CountdownButton } from "../steps/countdown/CountdownButton";
 import { CountdownPreview } from "../steps/countdown/CountdownPreview";
@@ -29,7 +26,7 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
   const [sequence, setSequence] = useState(initialSequence || emptySequence());
   const [savedSequence, setSavedSequence] = useState(sequence);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const router = useRouter();
+  const navigate = useNavigate();
   const { nameLabel, addStepLabel, play, save: saveLabel } = getUI();
 
   const isDirty = JSON.stringify(sequence) !== JSON.stringify(savedSequence);
@@ -40,7 +37,7 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
       setSavedSequence(sequence);
     } else {
       store.dispatch(addSequence(sequence));
-      router.push("/");
+      navigate("/");
     }
   };
 
@@ -134,7 +131,7 @@ export const SequenceForm = ({ sequence: initialSequence }: { sequence?: Sequenc
 
       {initialSequence && !isDirty ? (
         <Link
-          href={`/sequence/view?id=${sequence.id}`}
+          to={`/sequence/view?id=${sequence.id}`}
           className={classNames(components.round, components.floating, components.floatingBottomRight, styles.actionButton)}
           aria-label={play}
         >

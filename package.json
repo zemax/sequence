@@ -1,11 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build --webpack",
-    "start": "next start",
-    "export": "NEXT_OUTPUT_MODE=export next build --webpack && rm -rf dist && mv out dist",
-    "clean": "rm -rf dist out public/manifest.json public/sw.js* public/swe-worker*"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -13,30 +12,32 @@
     "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.4.0",
     "@reduxjs/toolkit": "^2.12.0",
-    "@serwist/next": "^9.5.12",
     "@zemax/mf-ui": "^1.1.0",
     "classnames": "^2.5.1",
-    "next": "^16.3.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-redux": "^9.3.0"
+    "react-redux": "^9.3.0",
+    "@serwist/window": "^9.5.12",
+    "react-router": "^7.9.6",
+    "serwist": "^9.5.12"
   },
   "devDependencies": {
+    "@serwist/vite": "^9.5.12",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
     "@types/node": "^26.4.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^5.1.0",
     "@zemax/sass-svg": "^3.0.0",
-    "eslint-config-next": "^16.3.4",
     "jest": "^30.5.1",
     "jest-css-modules-transform": "^4.4.2",
     "sass": "^1.104.0",
-    "serwist": "^9.5.12",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^7.1.5"
   },
   "overrides": {
     "browserslist": "^4.28.9"

@@ -14,7 +14,8 @@ See [docs/vision.md](docs/vision.md) for the product goals and
 
 ## Tech stack
 
-- [Next.js](https://nextjs.org/) 16 (React 19) — app router
+- [Vite](https://vite.dev/) + [React](https://react.dev/) 19
+- [React Router](https://reactrouter.com/) — routing
 - [Redux Toolkit](https://redux-toolkit.js.org/) + React Redux — state management
 - [MUI](https://mui.com/) (Material UI) + Emotion — UI components
 - [Sass](https://sass-lang.com/) — styling
@@ -47,19 +48,21 @@ The app is available at [http://localhost:3000](http://localhost:3000).
 
 | Script | Description |
 | --- | --- |
-| `npm run dev` | Start the Next.js development server |
-| `npm run build` | Build the app for production |
-| `npm start` | Start the production server (after `npm run build`) |
-| `npm run export` | Build a static export of the app into `dist/` (for offline/PWA deployment) |
-| `npm run clean` | Remove build artifacts (`dist`, `out`, generated PWA/manifest files) |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Build a static production bundle into `dist/` |
+| `npm run preview` | Serve the production build from `dist/` locally |
+| `npm run clean` | Remove build artifacts (`dist`) |
 
 ## Project structure
 
 ```
 src/
-  app/            Next.js app router pages (routes)
+  routes/         Top-level route components (React Router)
   data/           Redux store, slices, and static app data/copy
   domains/        Feature domains (e.g. sequence) and shared UI components
   styles/         Global Sass styles and assets
+  App.tsx         Router + Redux provider setup
+  main.tsx        App entry point
+  sw.ts           Service worker source (built by @serwist/vite)
 docs/             Project documentation
 ```

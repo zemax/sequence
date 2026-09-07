@@ -8,15 +8,13 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# build
 /dist/
-/out/
 
 # serwist
 /public/sw.js*
 /public/swe-worker*
-/public/manifest.json
+/public/manifest.webmanifest
 
 # production
 /build

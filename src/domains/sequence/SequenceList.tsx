@@ -1,5 +1,3 @@
-"use client";
-
 import DeleteIcon from "@mui/icons-material/Delete";
 import classNames from "classnames";
 import { useSelector } from "react-redux";
