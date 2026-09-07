@@ -108,21 +108,56 @@ type: "loop", steps, repeatCount }`) and each Step type's own directory under
 title, duration }` in `steps/countdown/`, `PauseStep { id, type: "pause", title }`
 in `steps/pause/`).
 
-The authoring UI ([SequenceForm.tsx](../src/domains/sequence/SequenceForm.tsx))
-lets a user edit a Sequence's `name` and add or remove Countdown or Pause Steps,
-using `StepEdit`/`StepPreview` from [src/domains/steps](../src/domains/steps).
-Like the Step components, every file under `src/domains/sequence/` is named after
-its main export (`SequenceForm.tsx` exports `SequenceForm`, `SequenceList.tsx`
-exports `SequenceList`, etc.) — no generic `Form`/`List`/`Edit` names.
+### Authoring — done
+
+[SequenceForm.tsx](../src/domains/sequence/SequenceForm.tsx) lets a user edit a
+Sequence's `name`, add Countdown or Pause Steps, edit an existing Step in place
+(tapping a `<Type>Preview` swaps it for its `<Type>PreviewEdit`), delete a Step by
+dragging it to the screen edge, and reorder Steps by dragging — all via the same
+[SortableList](../src/domains/ui/sortableList) used for Sequences on the home
+screen (see [drag-reorder.md](drag-reorder.md)).
 
 On the home screen, [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)
-supports drag-and-drop reordering of Sequences, via the reusable
-`useSortableList` hook — see [drag-reorder.md](drag-reorder.md) for how that
-interaction works and how to reuse it elsewhere.
+supports the same drag-and-drop reordering for Sequences themselves.
 
-Each Step type's `View` component is implemented and self-contained (Countdown
-counts down and calls `onDone`; Pause waits for a tap), but nothing wires them
-together yet: editing an existing Step in place, reordering Steps within a
-Sequence, creating or editing Loops, and the Sequence-level playback screen
-([SequenceView.tsx](../src/domains/sequence/SequenceView.tsx)) that would walk
-through a Sequence's items and render each Step's `View` are not implemented yet.
+### Authoring — not done
+
+**Loops cannot be created or edited.** The `Loop` type is fully modeled and
+handled correctly wherever it's read (see Playback below), but there is no UI
+path to produce one — `SequenceForm`'s "add step" row only offers Countdown and
+Pause, and a `Loop` item, if one existed, would render as an inert `"Loop x{n}"`
+string in the item list rather than an editable row.
+
+### Playback — done
+
+[SequenceView.tsx](../src/domains/sequence/SequenceView.tsx) is the full-screen
+player, routed at `/sequence/view/:id`. It flattens a Sequence's `items` into a
+single ordered list of Steps up front — a `Loop` expands into its contained
+Steps repeated `repeatCount` times, so the player itself never needs to know
+about Loops as a distinct concept during playback — and walks through that list
+one `StepView` at a time.
+
+Alongside the current Step, three floating controls are always present:
+**Back** (bottom-left, exits to the home screen), and **Previous**/**Next**
+(bottom-right; Previous is hidden on the first Step). Next doubles as the
+"skip" affordance described in [vision.md](vision.md) — it forces the current
+Step to end immediately, the same way a Countdown's timer elapsing or a
+Pause's tap does. Passing the last Step navigates back to the home screen
+automatically, with no intermediate "sequence complete" screen.
+
+`CountdownView` shows a circular progress ring around an mm:ss clock, and a
+pause/resume button that freezes the ring and blinks the clock while paused.
+Its timer is driven by comparing `Date.now()` against a recorded start time on
+every `requestAnimationFrame` tick, rather than counting `setTimeout` firings —
+this keeps it accurate (no drift, no stalling) even if the tab is throttled in
+the background, at the cost of only updating when a frame is actually painted.
+`PauseView` fills the full screen as its tap target and shows a "next" icon to
+hint that tapping advances.
+
+### Not done
+
+- **Skip a Loop entirely** (per [vision.md](vision.md)) — since Loops are
+  flattened before playback starts, the player has no notion of "the current
+  loop" to skip past; Next only ever advances one Step at a time. Revisit once
+  Loops can actually be authored.
+- **Export/Import as JSON** — not started.

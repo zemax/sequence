@@ -147,7 +147,7 @@ place like a normal aborted drag, instead of leaving it stranded.
   builds internally.
 - Any link rendered inside a sortable item should use
   [`NoDragLink`](../src/domains/ui/sortableList/NoDragLink.tsx) instead of
-  `next/link`'s `Link` directly — Firefox starts its own native link-drag on a
+  React Router's `Link` directly — Firefox starts its own native link-drag on a
   mousedown-and-move over a plain `<a>`, which otherwise hijacks the gesture
   before this hook ever sees it.
 - Need something `SortableList`/`SortableItem` don't offer (a different root
