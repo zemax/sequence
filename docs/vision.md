@@ -36,7 +36,7 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
 
 ## Desired features
 
-- **Improve the Settings page UI**: the page is currently three plain CTA
+- **Improve the Settings page UI**: the page is currently a flat stack of CTA
   buttons (Export, Import, Reset) under the title — no visual hierarchy, no
   grouping, no indication of what each one does beyond its label. Worth a
   proper design pass once more Settings entries (sound, mute) land, rather

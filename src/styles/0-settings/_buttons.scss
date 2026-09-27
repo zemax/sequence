@@ -3,6 +3,7 @@
 
 @use "./colors";
 @use "./fonts";
+@use "./layout";
 
 /**************************************************
 * CTA
@@ -11,7 +12,7 @@
 @mixin cta-sizing {
 	padding:         fonts-sizes.rem(8px) fonts-sizes.rem(12px);
 
-	min-width:       column(1);
+	min-width:       layout.column(1);
 
 	text-decoration: none;
 
@@ -24,23 +25,24 @@
 	}
 }
 
-@mixin cta-color($color: white, $background: colors.$color-primary, $border: colors.$color-primary) {
+@mixin cta-color($color: white, $background: colors.$color-primary) {
 	color:         $color;
 	background:    $background;
-	border:        border-width() solid $border;
-	border-radius: border-width();
+	border:        none;
+	border-radius: layout.card-radius();
+	box-shadow:    colors.$light-box-shadow;
 }
 
-@mixin cta($color: white, $background: colors.$color-primary, $border: colors.$color-primary) {
+@mixin cta($color: white, $background: colors.$color-primary) {
 	@include cta-sizing;
-	@include cta-color($color, $background, $border);
+	@include cta-color($color, $background);
 
 	text-align: center;
 
 	cursor:     pointer;
 
 	&:focus {
-		@include cta-color($background, $color, $border);
+		@include cta-color($background, $color);
 
 		outline:    none;
 		box-shadow: colors.$outline-box-shadow;

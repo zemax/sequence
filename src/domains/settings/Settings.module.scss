@@ -14,5 +14,5 @@
 }
 
 .danger {
-  @include buttons.cta($background: settings.$color-error, $border: settings.$color-error);
+  @include buttons.cta($background: settings.$color-error);
 }

@@ -38,7 +38,7 @@ input.nameInput {
 
   height: 120px;
 
-  border-radius: 8px;
+  border-radius: settings.card-radius();
   background-color: white;
   box-shadow: settings.$light-box-shadow;
 }
@@ -85,7 +85,7 @@ input.nameInput {
 
   padding: 0 settings.gap();
 
-  border-radius: 8px 0 0 8px;
+  border-radius: settings.card-radius() 0 0 settings.card-radius();
   background-color: settings.$color-action;
   color: white;
 
