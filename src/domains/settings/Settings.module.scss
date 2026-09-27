@@ -1,0 +1,18 @@
+@use "/src/styles/settings";
+@use "/src/styles/0-settings/buttons";
+
+.actions {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: settings.gap();
+
+  margin-top: settings.gap(2);
+}
+
+.button {
+  @include buttons.cta();
+}
+
+.danger {
+  @include buttons.cta($background: settings.$color-error, $border: settings.$color-error);
+}

@@ -22,6 +22,13 @@ export const getUI = () => ({
   pause: "Mettre en pause",
   resume: "Reprendre",
 
+  settingsExport: "Exporter les séquences",
+  settingsImport: "Importer des séquences",
+  settingsImportConfirm: "Cela remplacera toutes les séquences actuelles par celles du fichier importé. Continuer ?",
+  settingsImportInvalid: "Ce fichier n'est pas un export de séquences valide.",
+  settingsReset: "Réinitialiser",
+  settingsResetConfirm: "Cela supprimera toutes vos séquences et restaurera les exemples par défaut. Continuer ?",
+
   nameLabel: "Nom de la séquence",
   addStepLabel: "Ajouter",
 

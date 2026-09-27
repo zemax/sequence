@@ -23,7 +23,7 @@ export interface Sequence {
   items: SequenceItem[];
 }
 
-const initialSequences: Sequence[] = [
+export const initialSequences: Sequence[] = [
   {
     id: "1",
     name: "Exercices au quotidien",
@@ -90,10 +90,12 @@ export const sequencesSlice = createSlice({
       const [sequence] = state.splice(fromIndex, 1);
       state.splice(toIndex, 0, sequence);
     },
+    setSequences: (_state, action: PayloadAction<Sequence[]>) => action.payload,
+    resetSequences: () => structuredClone(initialSequences),
   },
 });
 
-export const { addSequence, removeSequence, updateSequence, moveSequence } = sequencesSlice.actions;
+export const { addSequence, removeSequence, updateSequence, moveSequence, setSequences, resetSequences } = sequencesSlice.actions;
 
 export default sequencesSlice.reducer;
 

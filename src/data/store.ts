@@ -1,11 +1,17 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { loadSequences, saveSequences } from "./localStorageSequences";
 import sequencesReducer from "./sequences/sequencesSlice";
+
+const preloadedSequences = loadSequences();
 
 const store = configureStore({
   reducer: {
     sequences: sequencesReducer,
   },
+  preloadedState: preloadedSequences ? { sequences: preloadedSequences } : undefined,
 });
+
+store.subscribe(() => saveSequences(store.getState().sequences));
 
 export default store;
 

@@ -154,10 +154,27 @@ the background, at the cost of only updating when a frame is actually painted.
 `PauseView` fills the full screen as its tap target and shows a "next" icon to
 hint that tapping advances.
 
+### Data & Settings — done
+
+Sequence data is persisted to `localStorage`
+([localStorageSequences.ts](../src/data/localStorageSequences.ts)): the Redux
+store preloads from it on startup and
+[store.ts](../src/data/store.ts) writes the full `sequences` state back on
+every change via `store.subscribe`. A missing or invalid value falls back to
+the built-in example Sequences (`initialSequences`, exported from
+[sequencesSlice.ts](../src/data/sequences/sequencesSlice.ts)).
+
+[Settings.tsx](../src/domains/settings/Settings.tsx) adds three actions on
+top of that: **Export** downloads all Sequences as a single JSON file
+(the raw `Sequence[]` array, no envelope); **Import** reads a JSON file,
+confirms with the user, then replaces the entire local Sequence list with
+its contents (`setSequences`) — there is no merge option; **Reset** confirms,
+then restores `initialSequences` (`resetSequences`, deep-cloned so the
+fixtures object itself is never mutated across resets).
+
 ### Not done
 
 - **Skip a Loop entirely** (per [vision.md](vision.md)) — since Loops are
   flattened before playback starts, the player has no notion of "the current
   loop" to skip past; Next only ever advances one Step at a time. Revisit once
   Loops can actually be authored.
-- **Export/Import as JSON** — not started.
