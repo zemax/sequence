@@ -154,6 +154,14 @@ the background, at the cost of only updating when a frame is actually painted.
 `PauseView` fills the full screen as its tap target and shows a "next" icon to
 hint that tapping advances.
 
+`SequenceView` also holds a screen wake lock for as long as it's mounted, via
+[useWakeLock.ts](../src/domains/sequence/useWakeLock.ts): it requests one on
+mount and re-requests on `visibilitychange` (the OS releases any wake lock
+the moment a tab goes hidden, so it doesn't survive being backgrounded on its
+own), and releases it on unmount. Acquisition failures (unsupported browser,
+non-visible document, low battery mode, etc.) are swallowed silently —
+playback works the same either way, it just risks the screen sleeping.
+
 ### Data & Settings — done
 
 Sequence data is persisted to `localStorage`

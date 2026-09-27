@@ -33,6 +33,10 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   backed up or moved between devices without requiring a cloud account.
 - **Factory reset, from Settings**: a Settings action wipes all local
   Sequence data and restores the built-in example Sequences.
+- **Keep the screen awake during playback**: while a Sequence is playing, the
+  app requests a wake lock (Screen Wake Lock API) so the device doesn't lock
+  itself mid-way through — see
+  [concepts.md](concepts.md#current-implementation-status).
 
 ## Desired features
 
@@ -45,10 +49,6 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   stays legible without having to look at the screen.
 - **Sound customization & mute, in Settings**: let the user pick which sound
   plays, or turn it off entirely, from the Settings page.
-- **Keep the screen awake during playback**: detect whether the browser
-  would let the screen sleep while a Sequence is playing and, if so, request
-  a wake lock (Screen Wake Lock API) to prevent it — a Sequence shouldn't get
-  interrupted by the device locking itself mid-way through.
 
 ## Non-goals
 

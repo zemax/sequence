@@ -6,6 +6,7 @@ import { StepView } from "../steps/common/StepView";
 import { flattenSequenceItems } from "./flattenSequenceItems";
 import { NextButton } from "./NextButton";
 import { PreviousButton } from "./PreviousButton";
+import { useWakeLock } from "./useWakeLock";
 
 import styles from "./SequenceView.module.scss";
 
@@ -16,6 +17,8 @@ type Props = {
 export const SequenceView = ({ sequence }: Props) => {
   const [index, setIndex] = useState(0);
   const navigate = useNavigate();
+
+  useWakeLock();
 
   const steps = sequence ? flattenSequenceItems(sequence.items) : [];
   const step = steps[index];
