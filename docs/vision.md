@@ -37,18 +37,19 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   app requests a wake lock (Screen Wake Lock API) so the device doesn't lock
   itself mid-way through — see
   [concepts.md](concepts.md#current-implementation-status).
+- **Sound per Step**: a short beep plays whenever a Step ends (Countdown
+  elapsing, a Pause tap, or Next), and a Settings checkbox mutes it — see
+  [concepts.md](concepts.md#current-implementation-status).
 
 ## Desired features
 
-- **Improve the Settings page UI**: the page is currently a flat stack of CTA
-  buttons (Export, Import, Reset) under the title — no visual hierarchy, no
-  grouping, no indication of what each one does beyond its label. Worth a
-  proper design pass once more Settings entries (sound, mute) land, rather
-  than growing the same flat button stack indefinitely.
-- **Sound per Step**: play a sound when a Step starts (or ends), so playback
-  stays legible without having to look at the screen.
-- **Sound customization & mute, in Settings**: let the user pick which sound
-  plays, or turn it off entirely, from the Settings page.
+- **Improve the Settings page UI**: the page is currently a flat stack of a
+  checkbox and CTA buttons (Export, Import, Reset) under the title — no
+  visual hierarchy, no grouping, no indication of what each one does beyond
+  its label. Worth a proper design pass once more Settings entries land,
+  rather than growing the same flat stack indefinitely.
+- **Sound customization, in Settings**: let the user pick which sound plays
+  per Step, instead of the one built-in beep.
 
 ## Non-goals
 

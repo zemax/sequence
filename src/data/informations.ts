@@ -22,6 +22,7 @@ export const getUI = () => ({
   pause: "Mettre en pause",
   resume: "Reprendre",
 
+  settingsMuteSounds: "Couper les sons",
   settingsExport: "Exporter les séquences",
   settingsImport: "Importer des séquences",
   settingsImportConfirm: "Cela remplacera toutes les séquences actuelles par celles du fichier importé. Continuer ?",

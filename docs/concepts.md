@@ -162,6 +162,12 @@ own), and releases it on unmount. Acquisition failures (unsupported browser,
 non-visible document, low battery mode, etc.) are swallowed silently —
 playback works the same either way, it just risks the screen sleeping.
 
+Every time a Step ends — a Countdown elapsing, a Pause tap, or Next —
+`SequenceView`'s `goToNext` plays a short synthesized beep via
+[playStepEndSound.ts](../src/domains/sequence/playStepEndSound.ts) (a plain
+Web Audio oscillator, no audio asset to ship), unless the `soundMuted`
+setting (see Data & Settings below) is on.
+
 ### Data & Settings — done
 
 Sequence data is persisted to `localStorage`
@@ -179,6 +185,12 @@ confirms with the user, then replaces the entire local Sequence list with
 its contents (`setSequences`) — there is no merge option; **Reset** confirms,
 then restores `initialSequences` (`resetSequences`, deep-cloned so the
 fixtures object itself is never mutated across resets).
+
+A separate `settings` slice
+([settingsSlice.ts](../src/data/settings/settingsSlice.ts)), persisted the
+same way via [localStorageSettings.ts](../src/data/localStorageSettings.ts),
+holds the one `soundMuted` flag — toggled by the "Couper les sons" checkbox
+at the top of the Settings page.
 
 ### Not done
 

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import { Sequence } from "../../data/sequences/sequencesSlice";
+import { selectSoundMuted } from "../../data/settings/settingsSlice";
 import { BackButton } from "../ui/components/Back/Back";
 import { StepView } from "../steps/common/StepView";
 import { flattenSequenceItems } from "./flattenSequenceItems";
 import { NextButton } from "./NextButton";
+import { playStepEndSound } from "./playStepEndSound";
 import { PreviousButton } from "./PreviousButton";
 import { useWakeLock } from "./useWakeLock";
 
@@ -17,6 +20,7 @@ type Props = {
 export const SequenceView = ({ sequence }: Props) => {
   const [index, setIndex] = useState(0);
   const navigate = useNavigate();
+  const soundMuted = useSelector(selectSoundMuted);
 
   useWakeLock();
 
@@ -33,7 +37,12 @@ export const SequenceView = ({ sequence }: Props) => {
     return null;
   }
 
-  const goToNext = () => setIndex((i) => i + 1);
+  const goToNext = () => {
+    if (!soundMuted) {
+      playStepEndSound();
+    }
+    setIndex((i) => i + 1);
+  };
   const goToPrevious = () => setIndex((i) => i - 1);
 
   return (

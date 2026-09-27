@@ -2,6 +2,7 @@ import { ChangeEvent, useRef } from "react";
 import { useSelector } from "react-redux";
 import { getUI } from "../../data/informations";
 import { Sequence, resetSequences, selectSequences, setSequences } from "../../data/sequences/sequencesSlice";
+import { selectSoundMuted, setSoundMuted } from "../../data/settings/settingsSlice";
 import store from "../../data/store";
 
 import styles from "./Settings.module.scss";
@@ -9,6 +10,7 @@ import styles from "./Settings.module.scss";
 export const Settings = () => {
   const {
     settings,
+    settingsMuteSounds,
     settingsExport,
     settingsImport,
     settingsImportConfirm,
@@ -17,6 +19,7 @@ export const Settings = () => {
     settingsResetConfirm,
   } = getUI();
   const sequences = useSelector(selectSequences);
+  const soundMuted = useSelector(selectSoundMuted);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
@@ -60,6 +63,11 @@ export const Settings = () => {
       <h1>{settings}</h1>
 
       <div className={styles.actions}>
+        <label className="checkbox--inside">
+          <input type="checkbox" checked={soundMuted} onChange={(e) => store.dispatch(setSoundMuted(e.target.checked))} />
+          <span>{settingsMuteSounds}</span>
+        </label>
+
         <button type="button" className={styles.button} onClick={handleExport}>
           {settingsExport}
         </button>
