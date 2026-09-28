@@ -1,4 +1,12 @@
-import { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent, useLayoutEffect, useRef, useState } from "react";
+import {
+  CSSProperties,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+  RefObject,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import classNames from "classnames";
 
 import styles from "./SortableList.module.scss";
@@ -22,6 +30,8 @@ type DragState = {
   offsetY: number;
   tilt: number;
   edgeAction: SortableEdge | null;
+  hoveredTargetId: string | null;
+  escapedContainer: boolean;
 };
 
 type PendingCardSettle = {
@@ -52,15 +62,26 @@ export type SortableItemProps = {
   onContextMenu: (e: ReactMouseEvent) => void;
 };
 
-export type SortableListOptions = {
+export type SortableListOptions<T> = {
   paddingX?: number;
   paddingY?: number;
   edgeActionThreshold?: number;
   onEdgeAction?: (id: string, edge: SortableEdge) => boolean;
+  // Lets other rows in the same list act as drop targets — e.g. dragging a Step onto a Loop
+  // row nests it there instead of just reordering. Checked after edgeAction, before a normal
+  // reorder. See docs/drag-reorder.md.
+  isDropTarget?: (item: T) => boolean;
+  onDropInto?: (draggedId: string, targetId: string) => boolean;
+  // Lets this list detect the dragged item leaving some ancestor container's bounds (not the
+  // list's own bounds) — e.g. a Loop's own nested list uses this to eject a Step dragged out
+  // past the Loop's envelope. Checked after edgeAction, before a normal reorder.
+  containerRef?: RefObject<Element | null>;
+  onEscapeContainer?: (id: string) => boolean;
 };
 
 export type SortableEntry = {
   isDragging: boolean;
+  isHovered: boolean;
   showDropIndicatorBefore: boolean;
   edgeAction: SortableEdge | null;
   rowProps: SortableRowProps;
@@ -72,7 +93,16 @@ export const useSortableList = <T,>(
   items: T[],
   getId: (item: T) => string,
   onReorder: (id: string, toIndex: number) => void,
-  { paddingX = 0, paddingY = 0, edgeActionThreshold, onEdgeAction }: SortableListOptions = {},
+  {
+    paddingX = 0,
+    paddingY = 0,
+    edgeActionThreshold,
+    onEdgeAction,
+    isDropTarget,
+    onDropInto,
+    containerRef,
+    onEscapeContainer,
+  }: SortableListOptions<T> = {},
 ) => {
   const [dragId, setDragId] = useState<string | null>(null);
   const [elevatedId, setElevatedId] = useState<string | null>(null);
@@ -81,6 +111,7 @@ export const useSortableList = <T,>(
   const [tilt, setTilt] = useState(0);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [edgeAction, setEdgeAction] = useState<SortableEdge | null>(null);
+  const [hoveredTargetId, setHoveredTargetId] = useState<string | null>(null);
 
   const dragState = useRef<DragState | null>(null);
   const elevationTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -188,6 +219,7 @@ export const useSortableList = <T,>(
     setTilt(0);
     setDropIndex(null);
     setEdgeAction(null);
+    setHoveredTargetId(null);
   };
 
   const onPointerMove = (e: PointerEvent) => {
@@ -216,15 +248,46 @@ export const useSortableList = <T,>(
             : null;
     drag.edgeAction = nextEdgeAction;
     setEdgeAction(nextEdgeAction);
+
+    if (isDropTarget) {
+      let nextHoveredId: string | null = null;
+      for (const [otherId, otherRow] of rowRefs.current.entries()) {
+        if (otherId === drag.id) {
+          continue;
+        }
+        const otherItem = items.find((item) => getId(item) === otherId);
+        if (!otherItem || !isDropTarget(otherItem)) {
+          continue;
+        }
+        const rect = otherRow.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          nextHoveredId = otherId;
+          break;
+        }
+      }
+      drag.hoveredTargetId = nextHoveredId;
+      setHoveredTargetId(nextHoveredId);
+    }
+
+    if (containerRef) {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      drag.escapedContainer = containerRect
+        ? e.clientX < containerRect.left || e.clientX > containerRect.right || e.clientY < containerRect.top || e.clientY > containerRect.bottom
+        : false;
+    }
   };
 
   const onPointerUp = () => {
     const drag = dragState.current;
     if (drag) {
-      // The edge action, if it handled the drop, is presumed to remove the item —
-      // nothing left to animate here, unlike the reorder/settle cases below.
-      const handledByEdgeAction = drag.edgeAction !== null && (onEdgeAction?.(drag.id, drag.edgeAction) ?? false);
-      if (!handledByEdgeAction) {
+      // Each of these, if it applies, is presumed to fully own the item's fate (moved
+      // elsewhere or removed) — nothing left to animate here, unlike reorder/settle below.
+      const handled =
+        (drag.edgeAction !== null && (onEdgeAction?.(drag.id, drag.edgeAction) ?? false)) ||
+        (drag.hoveredTargetId !== null && (onDropInto?.(drag.id, drag.hoveredTargetId) ?? false)) ||
+        (drag.escapedContainer && (onEscapeContainer?.(drag.id) ?? false));
+
+      if (!handled) {
         if (drag.dropIndex !== drag.originalIndex) {
           const row = rowRefs.current.get(drag.id);
           if (row) {
@@ -280,6 +343,8 @@ export const useSortableList = <T,>(
       offsetY: 0,
       tilt: 0,
       edgeAction: null,
+      hoveredTargetId: null,
+      escapedContainer: false,
     };
 
     pointerX.current = startX;
@@ -326,6 +391,11 @@ export const useSortableList = <T,>(
   };
 
   const handlePointerDown = (id: string, index: number, e: ReactPointerEvent<HTMLDivElement>) => {
+    // A nested SortableList (e.g. a Loop's own steps inside the Sequence's list) sits inside
+    // this list's item div — without this, a pointerdown on a nested row would also reach this
+    // (outer) list's handler and arm two drags from a single press.
+    e.stopPropagation();
+
     const row = rowRefs.current.get(id);
     if (!row) {
       return;
@@ -361,6 +431,7 @@ export const useSortableList = <T,>(
 
     return {
       isDragging,
+      isHovered: !isDragging && id === hoveredTargetId,
       showDropIndicatorBefore: indicatorIndex === index,
       edgeAction: isDragging ? edgeAction : null,
       rowProps: {

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { SortableEntry, SortableListOptions, useSortableList } from "./useSortableList";
 import { SortableDropIndicator } from "./SortableDropIndicator";
 
-type Props<T> = SortableListOptions & {
+type Props<T> = SortableListOptions<T> & {
   items: T[];
   getId: (item: T) => string;
   onReorder: (id: string, toIndex: number) => void;
@@ -19,10 +19,23 @@ export const SortableList = <T,>({
   paddingY,
   edgeActionThreshold,
   onEdgeAction,
+  isDropTarget,
+  onDropInto,
+  containerRef,
+  onEscapeContainer,
   className,
   children,
 }: Props<T>) => {
-  const sortable = useSortableList(items, getId, onReorder, { paddingX, paddingY, edgeActionThreshold, onEdgeAction });
+  const sortable = useSortableList(items, getId, onReorder, {
+    paddingX,
+    paddingY,
+    edgeActionThreshold,
+    onEdgeAction,
+    isDropTarget,
+    onDropInto,
+    containerRef,
+    onEscapeContainer,
+  });
 
   return (
     <ul className={className}>

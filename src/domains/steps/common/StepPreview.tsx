@@ -10,13 +10,14 @@ type Props = {
   elevated?: boolean;
   edgeAction?: SortableEdge | null;
   onClick?: () => void;
+  className?: string;
   children: ReactNode;
 };
 
 // Generic visual shell for a step's preview — extended by CountdownPreview/PausePreview
 // (and their editable counterparts, CountdownPreviewEdit/PausePreviewEdit).
-export const StepPreview = ({ icon, elevated, edgeAction, onClick, children }: Props) => (
-  <div className={classNames(styles.stepPreview, elevated && styles.elevated)} onClick={onClick}>
+export const StepPreview = ({ icon, elevated, edgeAction, onClick, className, children }: Props) => (
+  <div className={classNames(styles.stepPreview, elevated && styles.elevated, className)} onClick={onClick}>
     <span className={styles.icon}>{icon}</span>
     <span className={styles.content}>{children}</span>
     <div className={classNames(styles.deleteOverlay, edgeAction === "right" && styles.deleteOverlayVisible)}>

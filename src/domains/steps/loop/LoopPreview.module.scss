@@ -1,0 +1,30 @@
+@use "/src/styles/settings";
+
+.loopWrapper {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+// Squared off at the bottom so it sits flush against .loopBody below, with no gap.
+.loopHeader {
+  border-radius: settings.card-radius() settings.card-radius() 0 0;
+}
+
+// Squared off at the top (touches .loopHeader directly) and dashed everywhere else, so the
+// two together read as a single card with a dashed drop-zone folded into its lower half.
+.loopBody {
+  // Each Step row already carries its own margin-bottom (see SortableList.module.scss), the
+  // same gap used between top-level items — so padding-top matches it for a consistent gap
+  // above the first Step, while padding-bottom stays 0 to avoid stacking on top of that margin.
+  padding: settings.gap() settings.gap(0.5) 0;
+  border: 3px dashed white;
+  border-top: none;
+  border-radius: 0 0 settings.card-radius() settings.card-radius();
+
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.loopBodyHovered {
+  background-color: rgba(settings.$color-primary, 0.08);
+  border-color: settings.$color-action;
+}

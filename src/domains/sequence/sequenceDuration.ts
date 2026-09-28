@@ -1,10 +1,12 @@
-import { Sequence, SequenceItem, isLoop } from "../../data/sequences/sequencesSlice";
+import { Sequence, Step } from "../../data/sequences/sequencesSlice";
+import { flattenSequenceItems } from "./flattenSequenceItems";
 
-const hasDuration = (item: SequenceItem): item is SequenceItem & { duration: number } =>
-  !isLoop(item) && "duration" in item;
+const hasDuration = (item: Step): item is Step & { duration: number } => "duration" in item;
 
 export const sequenceDuration = (sequence: Sequence): number | undefined => {
-  const durations = sequence.items.filter(hasDuration).map((item) => item.duration);
+  const durations = flattenSequenceItems(sequence.items)
+    .filter(hasDuration)
+    .map((item) => item.duration);
 
   if (durations.length === 0) {
     return undefined;

@@ -35,8 +35,10 @@ export const getUI = () => ({
 
   stepTypeCountdownLabel: "Compte à rebours",
   stepTypePauseLabel: "Pause",
+  stepTypeLoopLabel: "Boucle",
   stepTitleLabel: "Titre de l'étape",
   stepDurationLabel: "Durée (secondes)",
+  loopRepeatCountLabel: "Répétitions",
 
   defaultSequenceName: "Ma séquence",
   countdownDefaultTitle: "Compte à rebours",
