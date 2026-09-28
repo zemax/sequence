@@ -103,6 +103,45 @@ This is why SequenceList's handler returns `false` for `"left"`: it only
 deletes on `"right"`, so releasing on the left settles the item back in
 place like a normal aborted drag, instead of leaving it stranded.
 
+## Nesting: dropping one item onto another, and escaping a container
+
+Beyond plain reordering, two more opt-in behaviors — both used to let a Step be
+dragged into or out of a Loop in [StepList](../src/domains/steps/common/StepList.tsx)
+— let a `SortableList` interact with something other than its own row order:
+
+- **`isDropTarget` / `onDropInto`** let other rows *in the same list* act as
+  drop targets instead of just reorder slots. While dragging, every
+  `pointermove` checks the dragged item's position against each other row for
+  which `isDropTarget(item)` is `true`; landing inside one sets
+  `entry.isHovered` on that row (so it can render hover feedback — see
+  [LoopPreview](../src/domains/steps/loop/LoopPreview.tsx)'s dashed body).
+  Releasing there calls `onDropInto(draggedId, targetId)`, which — like
+  `onEdgeAction` — returns a `boolean`: `true` means it took ownership of the
+  item (StepList removes it from the flat list and appends it to the target
+  Loop's `steps`), skipping the normal reorder/settle entirely; `false` falls
+  through to a normal reorder, exactly as if nothing were hovered.
+- **`containerRef` / `onEscapeContainer`** let a list detect the dragged item
+  leaving some *ancestor* element's bounds — not the list's own bounds, which
+  is otherwise unbounded. This is for the reverse direction: a Loop's nested
+  `StepList` (the one rendering its `steps`) passes the Loop's own envelope
+  `<div>` as `containerRef`; once a drag's pointer crosses outside that
+  rect, `escapedContainer` is armed, and releasing calls
+  `onEscapeContainer(id)` — StepList's handler removes the Step from the
+  Loop and re-inserts it into the parent list right after the Loop. Same
+  `boolean` contract as the other two: `false` means decline and fall
+  through to a normal reorder/settle.
+
+Both checks run in `onPointerUp` alongside `onEdgeAction`, in the order
+edge action → drop-into → escape-container → plain reorder — the first one
+that returns `true` wins, and none of them fire while not dragging.
+
+One consequence of nesting a `SortableList` inside another list's item (a
+Loop's body sits inside the outer list's `<li>`): a `pointerdown` on a row of
+the *inner* list would otherwise bubble up and arm a drag on the *outer* list
+too. `handlePointerDown` calls `e.stopPropagation()` for exactly this reason
+— without it, dragging a Step inside a Loop would simultaneously try to drag
+the Loop itself.
+
 ## Using it elsewhere
 
 ```tsx

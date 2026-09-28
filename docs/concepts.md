@@ -111,22 +111,34 @@ in `steps/pause/`).
 ### Authoring — done
 
 [SequenceForm.tsx](../src/domains/sequence/SequenceForm.tsx) lets a user edit a
-Sequence's `name`, add Countdown or Pause Steps, edit an existing Step in place
-(tapping a `<Type>Preview` swaps it for its `<Type>PreviewEdit`), delete a Step by
-dragging it to the screen edge, and reorder Steps by dragging — all via the same
+Sequence's `name`, and delegates its `items` to
+[StepList.tsx](../src/domains/steps/common/StepList.tsx), which handles adding
+Steps or Loops, editing an existing item in place (tapping a `<Type>Preview`
+swaps it for its `<Type>PreviewEdit`), deleting an item by dragging it to the
+screen edge, and reordering items by dragging — all via the same
 [SortableList](../src/domains/ui/sortableList) used for Sequences on the home
 screen (see [drag-reorder.md](drag-reorder.md)).
 
 On the home screen, [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)
 supports the same drag-and-drop reordering for Sequences themselves.
 
-### Authoring — not done
-
-**Loops cannot be created or edited.** The `Loop` type is fully modeled and
-handled correctly wherever it's read (see Playback below), but there is no UI
-path to produce one — `SequenceForm`'s "add step" row only offers Countdown and
-Pause, and a `Loop` item, if one existed, would render as an inert `"Loop x{n}"`
-string in the item list rather than an editable row.
+**Loops can be created and edited.** `StepList` is shared between a Sequence's
+top-level items (passed `allowLoop`) and, nested, a Loop's own Steps. With
+`allowLoop`, its "add" row includes a
+[LoopButton](../src/domains/steps/loop/LoopButton.tsx) alongside Countdown and
+Pause, which adds an empty Loop (`emptyLoop()` — `repeatCount: 2`, no Steps)
+and opens it for editing immediately.
+[LoopPreview.tsx](../src/domains/steps/loop/LoopPreview.tsx) renders a Loop as
+an always-editable `repeatCount` field on its header card, above a
+permanently-expanded body holding a second, nested `StepList` for its Steps.
+That nested list never sets `allowLoop` — Loops can't contain Loops — and has
+no add row of its own: Steps only ever populate a Loop's body by being dragged
+into it. Two `SortableList` capabilities (see
+[drag-reorder.md](drag-reorder.md)) make that possible: dragging an existing
+Step onto a Loop row nests it there (`isDropTarget`/`onDropInto`), and
+dragging a Step in a Loop's body out past the Loop's own bounds ejects it back
+into the parent list, right after that Loop (`containerRef`/
+`onEscapeContainer`).
 
 ### Playback — done
 
@@ -176,7 +188,8 @@ store preloads from it on startup and
 [store.ts](../src/data/store.ts) writes the full `sequences` state back on
 every change via `store.subscribe`. A missing or invalid value falls back to
 the built-in example Sequences (`initialSequences`, exported from
-[sequencesSlice.ts](../src/data/sequences/sequencesSlice.ts)).
+[sequencesSlice.ts](../src/data/sequences/sequencesSlice.ts), which imports
+its data from [fixtures/examples.json](../src/data/fixtures/examples.json)).
 
 [Settings.tsx](../src/domains/settings/Settings.tsx) adds three actions on
 top of that: **Export** downloads all Sequences as a single JSON file
@@ -196,5 +209,4 @@ at the top of the Settings page.
 
 - **Skip a Loop entirely** (per [vision.md](vision.md)) — since Loops are
   flattened before playback starts, the player has no notion of "the current
-  loop" to skip past; Next only ever advances one Step at a time. Revisit once
-  Loops can actually be authored.
+  loop" to skip past; Next only ever advances one Step at a time.
