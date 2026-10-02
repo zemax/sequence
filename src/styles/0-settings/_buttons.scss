@@ -16,6 +16,8 @@
 
 	text-decoration: none;
 
+	font-family:     inherit;
+	font-weight:     600;
 	font-size:       fonts.font-size("cta", "small");
 	line-height:     fonts.line-height("default", "small") * fonts.font-size("cta", "small");
 

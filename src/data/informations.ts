@@ -13,6 +13,8 @@ export const getTheme = () => ({
 });
 
 export const getUI = () => ({
+  sequences: "Séquences",
+  newSequence: "Nouvelle séquence",
   back: "Retour",
   play: "Lire",
   save: "Enregistrer",
@@ -22,6 +24,8 @@ export const getUI = () => ({
   pause: "Mettre en pause",
   resume: "Reprendre",
 
+  settingsSoundsTitle: "Sons",
+  settingsDataTitle: "Données",
   settingsMuteSounds: "Couper les sons",
   settingsExport: "Exporter les séquences",
   settingsImport: "Importer des séquences",
@@ -31,6 +35,9 @@ export const getUI = () => ({
   settingsResetConfirm: "Cela supprimera toutes vos séquences et restaurera les exemples par défaut. Continuer ?",
 
   nameLabel: "Nom de la séquence",
+  totalDurationLabel: "Durée totale",
+  upNextLabel: "À suivre",
+  progressLabel: "Progression de la séquence",
   addStepLabel: "Ajouter",
 
   stepTypeCountdownLabel: "Compte à rebours",
@@ -39,6 +46,8 @@ export const getUI = () => ({
   stepTitleLabel: "Titre de l'étape",
   stepDurationLabel: "Durée (secondes)",
   loopRepeatCountLabel: "Répétitions",
+  loopRepeatLessLabel: "Une répétition de moins",
+  loopRepeatMoreLabel: "Une répétition de plus",
 
   defaultSequenceName: "Ma séquence",
   countdownDefaultTitle: "Compte à rebours",
@@ -47,11 +56,11 @@ export const getUI = () => ({
   durationLabel: (minutes: number, seconds: number) => {
     const parts = [];
     if (minutes > 0) {
-      parts.push(`${minutes} minute${minutes > 1 ? "s" : ""}`);
+      parts.push(`${minutes} min`);
     }
     if (seconds > 0 || minutes === 0) {
-      parts.push(`${seconds} seconde${seconds > 1 ? "s" : ""}`);
+      parts.push(`${minutes > 0 ? String(seconds).padStart(2, "0") : seconds} s`);
     }
-    return `Durée: ${parts.join(" et ")}`;
+    return parts.join(" ");
   },
 });

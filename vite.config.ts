@@ -19,7 +19,7 @@ function webManifest(): Plugin {
     name: "web-manifest",
     buildStart() {
       const { title } = getApp();
-      const { color2 } = getTheme();
+      const { color2, color3 } = getTheme();
 
       const manifest = {
         name: title,
@@ -27,7 +27,7 @@ function webManifest(): Plugin {
         start_url: `${basePath}/`,
         display: "standalone",
         orientation: "portrait",
-        theme_color: color2,
+        theme_color: color3,
         background_color: color2,
         icons: [
           { src: `${basePath}/favicons/android-chrome-192x192.png`, sizes: "192x192", type: "image/png" },
@@ -47,7 +47,7 @@ function headMetadata(): Plugin {
     name: "head-metadata",
     transformIndexHtml() {
       const { title, description } = getApp();
-      const { color2 } = getTheme();
+      const { color2, color3 } = getTheme();
 
       return [
         { tag: "title", children: title, injectTo: "head" },
@@ -58,7 +58,7 @@ function headMetadata(): Plugin {
         { tag: "meta", attrs: { name: "apple-mobile-web-app-capable", content: "yes" }, injectTo: "head" },
         { tag: "meta", attrs: { name: "apple-mobile-web-app-title", content: title }, injectTo: "head" },
         { tag: "meta", attrs: { name: "apple-mobile-web-app-status-bar-style", content: "default" }, injectTo: "head" },
-        { tag: "meta", attrs: { name: "theme-color", content: color2 }, injectTo: "head" },
+        { tag: "meta", attrs: { name: "theme-color", content: color3 }, injectTo: "head" },
         { tag: "meta", attrs: { name: "msapplication-TileColor", content: color2 }, injectTo: "head" },
         { tag: "meta", attrs: { name: "msapplication-config", content: `${basePath}/favicons/browserconfig.xml` }, injectTo: "head" },
         { tag: "link", attrs: { rel: "manifest", href: `${basePath}/manifest.webmanifest` }, injectTo: "head" },
@@ -83,6 +83,7 @@ export default defineConfig({
       swSrc: "src/sw.ts",
       swDest: "sw.js",
       globDirectory: "dist",
+      globPatterns: ["**/*.{js,css,html,woff2}"],
       rollupFormat: "iife",
     }),
   ],

@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "./0-settings/colors";
 @use "./0-settings/icons";
 @use "./0-settings/layout";
@@ -41,7 +42,8 @@
   text-decoration: none;
   color: white;
   background-color: colors.$color-primary;
-  box-shadow: colors.$light-box-shadow;
+  box-shadow: colors.$button-box-shadow;
+  cursor: pointer;
 
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.25s ease;
@@ -56,14 +58,77 @@
   }
 }
 
+// Outlined, translucent round button for secondary controls (back, settings, previous, next).
+.ghost {
+  @extend .round;
+
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid colors.$color-ghost-border;
+  color: colors.$color-primary;
+  background-color: colors.$color-ghost-background;
+  box-shadow: none;
+
+  &:active {
+    background-color: rgba(white, 0.6);
+  }
+}
+
+.ghostLarge {
+  @extend .ghost;
+
+  width: icons.$icon-size;
+  height: icons.$icon-size;
+}
+
+// The one accent-colored control of a screen (play, pause/resume, save).
+.action {
+  @extend .round;
+
+  background-color: colors.$color-action;
+  box-shadow: colors.$action-box-shadow;
+
+  &:active {
+    background-color: color.adjust(colors.$color-action, $lightness: -10%);
+  }
+}
+
+.actionLarge {
+  @extend .action;
+
+  width: 76px;
+  height: 76px;
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+// Pill-shaped button carrying a label next to its icon.
+.extended {
+  @extend .round;
+
+  gap: 10px;
+  padding: 0 24px 0 20px;
+  width: auto;
+  height: icons.$icon-size;
+  border-radius: icons.$icon-size * 0.5;
+
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .floating {
   position: fixed;
   z-index: 1;
 }
 
 .floatingBottomRight {
-  bottom: layout.gap();
-  right: layout.gap();
+  bottom: layout.gap(1.5);
+  right: layout.gap(1.25);
 }
 
 .floatingTopLeft {

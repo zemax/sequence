@@ -16,7 +16,7 @@
 
 @function font-size($id: "default", $layout: "small") {
 	@if ($id == "title") {
-		@return fonts-sizes.rem(32px);
+		@return fonts-sizes.rem(34px);
 	} @else if ($id == "quote") {
 		@return fonts-sizes.rem(20px);
 	} @else if ($id == "label") {
@@ -32,27 +32,27 @@
 
 @mixin font($id: "default") {
 	@if ($id == "title") {
-		font-family: "Montserrat", sans-serif;
+		font-family: "Bricolage Grotesque Variable", sans-serif;
 		font-style:  normal;
-		font-weight: fonts-sizes.$weight-bold;
+		font-weight: 800;
 	} @else if ($id == "quote") {
-		font-family: "Open Sans", sans-serif;
+		font-family: "DM Sans Variable", sans-serif;
 		font-style:  italic;
 		font-weight: fonts-sizes.$weight-bold;
 	} @else if ($id == "label") {
-		font-family: "Open Sans", sans-serif;
+		font-family: "DM Sans Variable", sans-serif;
 		font-style:  normal;
 		font-weight: fonts-sizes.$weight-bold;
 	} @else if ($id == "input") {
-		font-family: "Open Sans", sans-serif;
+		font-family: "DM Sans Variable", sans-serif;
 		font-style:  normal;
 		font-weight: fonts-sizes.$weight-normal;
 	} @else if ($id == "bold") {
-		font-family: "Open Sans", sans-serif;
+		font-family: "DM Sans Variable", sans-serif;
 		font-style:  normal;
 		font-weight: fonts-sizes.$weight-bold;
 	} @else {
-		font-family: "Open Sans", sans-serif;
+		font-family: "DM Sans Variable", sans-serif;
 		font-style:  normal;
 		font-weight: fonts-sizes.$weight-normal;
 	}

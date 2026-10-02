@@ -1,4 +1,5 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import classNames from "classnames";
 import { getUI } from "../../data/informations";
 import { durationLabel } from "../steps/common/durationLabel";
@@ -14,14 +15,20 @@ export const SequencePreview = ({ sequence }) => {
 
   return (
     <>
-      <NoDragLink
-        to={`/sequence/edit/${sequence.id}`}
-        className={classNames(styles.cardTitle, styles.stretchedLink)}
-      >
+      <NoDragLink to={`/sequence/edit/${sequence.id}`} className={styles.cardTitle}>
         <span className={styles.cardTitleText}>{sequence.name}</span>
-        {durationText && <span className={styles.cardDuration}>{durationText}</span>}
+        {durationText && (
+          <span className={styles.cardDuration}>
+            <ScheduleIcon aria-hidden />
+            {durationText}
+          </span>
+        )}
       </NoDragLink>
-      <NoDragLink to={`/sequence/view/${sequence.id}`} className={classNames(components.round, styles.play)} aria-label={play}>
+      <NoDragLink
+        to={`/sequence/view/${sequence.id}`}
+        className={classNames(components.round, styles.play)}
+        aria-label={`${play} ${sequence.name}`}
+      >
         <PlayArrowIcon />
       </NoDragLink>
     </>

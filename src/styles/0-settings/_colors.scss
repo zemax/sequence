@@ -4,9 +4,11 @@
 * RAW COLORS
 **************************************************/
 
-$color-grey: #999999;
+$color-grey: #5b6478;
 
-$color-orangered: #ff4000;
+$color-vermilion: #d93a08;
+$color-ink: #1f2a4d;
+$color-night: #2a3868;
 $color-coral: #f68e5f;
 $color-gold: #f5dd90;
 $color-navy: #324376;
@@ -20,8 +22,8 @@ $color-default: $color-indigo;
 $color-background-default: #f6f6f6;
 $color-primary: $color-navy;
 $color-secondary: $color-gold;
-$color-action: $color-orangered;
-$color-error: $color-orangered;
+$color-action: $color-vermilion;
+$color-error: $color-vermilion;
 $color-text-secondary: $color-grey;
 
 $color-background-gradient-start: $color-gold;
@@ -32,11 +34,21 @@ $color-input-border: $color-indigo;
 $color-input-background-focus: white;
 $color-input-border-focus: $color-navy;
 
+$color-text: $color-ink;
+$color-title: $color-night;
+
+$color-ghost-border: rgba($color-navy, 0.45);
+$color-ghost-background: rgba(white, 0.35);
+$color-chip-soft: rgba($color-navy, 0.1);
+
 $color-menu: white;
 $color-menu-background: $color-navy;
 
 $color-chip-background: color.adjust($color-indigo, $lightness: 35%);
 
-$light-box-shadow: 0 4px 8px rgba($color-primary, 0.25);
+$light-box-shadow: 0 1px 2px rgba(120, 50, 20, 0.08), 0 8px 20px rgba(120, 50, 20, 0.12);
+
+$button-box-shadow: 0 8px 20px rgba($color-ink, 0.3);
+$action-box-shadow: 0 0 0 3px rgba(white, 0.85), 0 10px 24px rgba(160, 50, 10, 0.35);
 
 $outline-box-shadow: 0 3px 5px -2px rgba($color-default, 0.35);

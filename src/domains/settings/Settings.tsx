@@ -1,3 +1,8 @@
+import DownloadIcon from "@mui/icons-material/Download";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import UploadIcon from "@mui/icons-material/Upload";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import classNames from "classnames";
 import { ChangeEvent, useRef } from "react";
 import { useSelector } from "react-redux";
 import { getUI } from "../../data/informations";
@@ -10,6 +15,8 @@ import styles from "./Settings.module.scss";
 export const Settings = () => {
   const {
     settings,
+    settingsSoundsTitle,
+    settingsDataTitle,
     settingsMuteSounds,
     settingsExport,
     settingsImport,
@@ -62,25 +69,55 @@ export const Settings = () => {
     <>
       <h1>{settings}</h1>
 
-      <div className={styles.actions}>
-        <label className="checkbox--inside">
-          <input type="checkbox" checked={soundMuted} onChange={(e) => store.dispatch(setSoundMuted(e.target.checked))} />
-          <span>{settingsMuteSounds}</span>
-        </label>
+      <section className={styles.group}>
+        <h2 className={styles.groupTitle}>{settingsSoundsTitle}</h2>
+        <div className={styles.card}>
+          <label className={styles.row}>
+            <span className={styles.icon}>
+              <VolumeOffIcon />
+            </span>
+            <span className={styles.label}>{settingsMuteSounds}</span>
+            <input
+              type="checkbox"
+              role="switch"
+              className={styles.switch}
+              checked={soundMuted}
+              onChange={(e) => store.dispatch(setSoundMuted(e.target.checked))}
+            />
+          </label>
+        </div>
+      </section>
 
-        <button type="button" className={styles.button} onClick={handleExport}>
-          {settingsExport}
-        </button>
+      <section className={styles.group}>
+        <h2 className={styles.groupTitle}>{settingsDataTitle}</h2>
+        <div className={styles.card}>
+          <button type="button" className={styles.row} onClick={handleExport}>
+            <span className={styles.icon}>
+              <DownloadIcon />
+            </span>
+            <span className={styles.label}>{settingsExport}</span>
+          </button>
 
-        <button type="button" className={styles.button} onClick={() => fileInputRef.current?.click()}>
-          {settingsImport}
-        </button>
-        <input ref={fileInputRef} type="file" accept="application/json" hidden onChange={handleImportChange} />
+          <button type="button" className={styles.row} onClick={() => fileInputRef.current?.click()}>
+            <span className={styles.icon}>
+              <UploadIcon />
+            </span>
+            <span className={styles.label}>{settingsImport}</span>
+          </button>
+          <input ref={fileInputRef} type="file" accept="application/json" hidden onChange={handleImportChange} />
+        </div>
+      </section>
 
-        <button type="button" className={styles.danger} onClick={handleReset}>
-          {settingsReset}
-        </button>
-      </div>
+      <section className={styles.group}>
+        <div className={styles.card}>
+          <button type="button" className={classNames(styles.row, styles.danger)} onClick={handleReset}>
+            <span className={styles.icon}>
+              <RestartAltIcon />
+            </span>
+            <span className={styles.label}>{settingsReset}</span>
+          </button>
+        </div>
+      </section>
     </>
   );
 };

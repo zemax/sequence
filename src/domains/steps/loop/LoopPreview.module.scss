@@ -1,30 +1,97 @@
 @use "/src/styles/settings";
 
-.loopWrapper {
-  display: flex;
-  flex-flow: column nowrap;
-}
+.loop {
+  position: relative;
 
-// Squared off at the bottom so it sits flush against .loopBody below, with no gap.
-.loopHeader {
-  border-radius: settings.card-radius() settings.card-radius() 0 0;
-}
+  box-sizing: border-box;
+  padding: settings.gap(0.75);
 
-// Squared off at the top (touches .loopHeader directly) and dashed everywhere else, so the
-// two together read as a single card with a dashed drop-zone folded into its lower half.
-.loopBody {
-  // Each Step row already carries its own margin-bottom (see SortableList.module.scss), the
-  // same gap used between top-level items — so padding-top matches it for a consistent gap
-  // above the first Step, while padding-bottom stays 0 to avoid stacking on top of that margin.
-  padding: settings.gap() settings.gap(0.5) 0;
-  border: 3px dashed white;
-  border-top: none;
-  border-radius: 0 0 settings.card-radius() settings.card-radius();
+  border: 1.5px solid rgba(white, 0.7);
+  border-radius: 22px;
+  background-color: rgba(white, 0.32);
 
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.loopBodyHovered {
-  background-color: rgba(settings.$color-primary, 0.08);
+.loopHovered {
+  background-color: rgba(white, 0.6);
   border-color: settings.$color-action;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 48px;
+  padding-left: 4px;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-weight: 700;
+  color: settings.$color-title;
+
+  svg {
+    width: 22px;
+    height: 22px;
+
+    color: settings.$color-primary;
+  }
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  button {
+    width: 44px;
+    height: 44px;
+    background-color: rgba(white, 0.5);
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.count {
+  min-width: 28px;
+
+  text-align: center;
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: settings.$color-text;
+}
+
+// Each Step row already carries its own margin-bottom (see SortableList.module.scss); the
+// last one's is cancelled so the container's own padding is the only space under the list.
+.body {
+  margin-top: settings.gap(0.5);
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  li:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// A permanently visible drop zone, so an empty Loop still shows where Steps can be dropped.
+.bodyEmpty {
+  min-height: 56px;
+
+  border: 2px dashed rgba(white, 0.85);
+  border-radius: 14px;
+}
+
+.deleteOverlay {
+  border-radius: 22px 0 0 22px;
 }

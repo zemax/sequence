@@ -11,7 +11,7 @@ export const PreviousButton = ({ onClick }: Props) => {
   const { previous } = getUI();
 
   return (
-    <button type="button" className={components.round} onClick={onClick} aria-label={previous}>
+    <button type="button" className={components.ghostLarge} onClick={onClick} aria-label={previous}>
       <SkipPreviousIcon />
     </button>
   );

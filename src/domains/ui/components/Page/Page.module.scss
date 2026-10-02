@@ -10,19 +10,38 @@
   min-height: 100vh;
   overflow-x: hidden;
 
-  color: settings.$color-primary;
+  color: settings.$color-text;
   background-color: settings.$color-background-default;
   background-image: linear-gradient(180deg, settings.$color-background-gradient-start 0%, settings.$color-background-gradient-end 100%);
 }
 
+// Exactly one screen tall, never scrolling; the floor only lets very short viewports (landscape
+// phones) scroll rather than crush the content.
+.pageFullscreen {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 600px;
+  overflow-y: hidden;
+}
+
 .main {
+  min-height: 0;
+
   flex: 1;
   display: flex;
   flex-flow: column nowrap;
 
-  padding: settings.gap();
+  padding: settings.gap(1.25);
 }
 
-.mainWithBack {
-  padding-bottom: calc(#{settings.gap(2)} + #{settings.$icon-size});
+// Leaves room under the content for the floating action button(s) so they never cover it.
+.mainWithFloating {
+  padding-bottom: calc(#{settings.gap(3)} + #{settings.$icon-size});
+}
+
+.header {
+  display: flex;
+  align-items: center;
+
+  margin-bottom: settings.gap(0.75);
 }

@@ -13,7 +13,7 @@ export const SequenceViewPage = () => {
   }
 
   return (
-    <Page>
+    <Page fullscreen>
       <SequenceView sequence={sequence} />
     </Page>
   );

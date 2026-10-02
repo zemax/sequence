@@ -13,7 +13,7 @@ export const SequenceEditPage = () => {
   }
 
   return (
-    <Page back>
+    <Page back floating>
       <SequenceEdit sequence={sequence} />
     </Page>
   );

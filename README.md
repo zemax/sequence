@@ -19,6 +19,7 @@ See [docs/vision.md](docs/vision.md) for the product goals and
 - [Redux Toolkit](https://redux-toolkit.js.org/) + React Redux — state management
 - [MUI](https://mui.com/) (Material UI) + Emotion — UI components
 - [Sass](https://sass-lang.com/) — styling
+- [Fontsource](https://fontsource.org/) — self-hosted fonts (Bricolage Grotesque for titles, DM Sans for text), precached for offline use
 - [Serwist](https://serwist.pages.dev/) — service worker / PWA / offline support
 - [Jest](https://jestjs.io/) + Testing Library — unit/component tests
 - TypeScript

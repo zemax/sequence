@@ -1,19 +1,16 @@
-import PauseIcon from "@mui/icons-material/Pause";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { getUI } from "../../../data/informations";
 import { CountdownStep } from "./CountdownStep";
 
-import components from "../../../styles/Components.module.scss";
 import styles from "./CountdownView.module.scss";
 
 type Props = {
   step: CountdownStep;
+  paused: boolean;
   onDone: () => void;
 };
 
-const RADIUS = 90;
+const RADIUS = 126;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const formatClock = (totalSeconds: number): string => {
@@ -22,11 +19,10 @@ const formatClock = (totalSeconds: number): string => {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 };
 
-export const CountdownView = ({ step, onDone }: Props) => {
+export const CountdownView = ({ step, paused, onDone }: Props) => {
   const durationMs = step.duration * 1000;
 
   const [remainingMs, setRemainingMs] = useState(durationMs);
-  const [paused, setPaused] = useState(false);
   const elapsedBeforePauseRef = useRef(0);
   const segmentStartRef = useRef(Date.now());
   const onDoneRef = useRef(onDone);
@@ -71,21 +67,18 @@ export const CountdownView = ({ step, onDone }: Props) => {
   }, [remainingMs]);
 
   const remainingSeconds = Math.ceil(remainingMs / 1000);
-  const { pause: pauseLabel, resume: resumeLabel } = getUI();
   const progress = durationMs > 0 ? remainingMs / durationMs : 0;
 
   return (
     <div className={styles.countdown}>
-      <div className={styles.titleZone}>
-        <h1>{step.title}</h1>
-      </div>
+      <h1 className={styles.title}>{step.title}</h1>
 
       <div className={styles.progress}>
-        <svg viewBox="0 0 200 200" className={styles.progressSvg}>
-          <circle cx="100" cy="100" r={RADIUS} className={styles.progressTrack} />
+        <svg viewBox="0 0 280 280" className={styles.progressSvg}>
+          <circle cx="140" cy="140" r={RADIUS} className={styles.progressTrack} />
           <circle
-            cx="100"
-            cy="100"
+            cx="140"
+            cy="140"
             r={RADIUS}
             className={styles.progressBar}
             strokeDasharray={CIRCUMFERENCE}
@@ -93,17 +86,6 @@ export const CountdownView = ({ step, onDone }: Props) => {
           />
         </svg>
         <span className={classNames(styles.clock, paused && styles.blinking)}>{formatClock(remainingSeconds)}</span>
-      </div>
-
-      <div className={styles.toggleZone}>
-        <button
-          type="button"
-          className={components.round}
-          onClick={() => setPaused((p) => !p)}
-          aria-label={paused ? resumeLabel : pauseLabel}
-        >
-          {paused ? <PlayArrowIcon /> : <PauseIcon />}
-        </button>
       </div>
     </div>
   );

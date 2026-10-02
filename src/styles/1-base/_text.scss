@@ -7,8 +7,6 @@
 * FONT FACES
 **************************************************/
 
-// @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Open+Sans:ital,wght@0,400;0,700;1,400&display=swap");
-
 /**************************************************
 * TEXT ELEMENTS
 **************************************************/
@@ -17,7 +15,7 @@ body {
 	margin:           0;
 	padding:          0;
 
-	color:            colors.$color-default;
+	color:            colors.$color-text;
 	background-color: colors.$color-background-default;
 
 	@include fonts.font("default");
@@ -84,7 +82,7 @@ h2,
 	font-size:   fonts.font-size("title", "small");
 	line-height: fonts.line-height("title");
 
-	color:       colors.$color-primary;
+	color:       colors.$color-title;
 
 	em {
 		@include fonts.font("title");

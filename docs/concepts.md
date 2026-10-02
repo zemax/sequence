@@ -119,8 +119,12 @@ screen edge, and reordering items by dragging — all via the same
 [SortableList](../src/domains/ui/sortableList) used for Sequences on the home
 screen (see [drag-reorder.md](drag-reorder.md)).
 
-On the home screen, [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)
-supports the same drag-and-drop reordering for Sequences themselves.
+On the home screen ([HomePage.tsx](../src/routes/HomePage.tsx): a "Séquences"
+title with the Settings button on its right, then the list, then a floating
+"Nouvelle séquence" button),
+[SequenceList.tsx](../src/domains/sequence/SequenceList.tsx) supports the same
+drag-and-drop reordering for Sequences themselves. While editing, the form
+shows the Sequence's total duration under its name, recomputed live.
 
 **Loops can be created and edited.** `StepList` is shared between a Sequence's
 top-level items (passed `allowLoop`) and, nested, a Loop's own Steps. With
@@ -129,8 +133,9 @@ top-level items (passed `allowLoop`) and, nested, a Loop's own Steps. With
 Pause, which adds an empty Loop (`emptyLoop()` — `repeatCount: 2`, no Steps)
 and opens it for editing immediately.
 [LoopPreview.tsx](../src/domains/steps/loop/LoopPreview.tsx) renders a Loop as
-an always-editable `repeatCount` field on its header card, above a
-permanently-expanded body holding a second, nested `StepList` for its Steps.
+a translucent container whose header holds the `repeatCount` stepper (− / +,
+never below 1), above a permanently-expanded body holding a second, nested
+`StepList` for its Steps (an empty body shows a dashed drop zone).
 That nested list never sets `allowLoop` — Loops can't contain Loops — and has
 no add row of its own: Steps only ever populate a Loop's body by being dragged
 into it. Two `SortableList` capabilities (see
@@ -149,22 +154,43 @@ Steps repeated `repeatCount` times, so the player itself never needs to know
 about Loops as a distinct concept during playback — and walks through that list
 one `StepView` at a time.
 
-Alongside the current Step, three floating controls are always present:
-**Back** (bottom-left, exits to the home screen), and **Previous**/**Next**
-(bottom-right; Previous is hidden on the first Step). Next doubles as the
-"skip" affordance described in [vision.md](vision.md) — it forces the current
-Step to end immediately, the same way a Countdown's timer elapsing or a
-Pause's tap does. Passing the last Step navigates back to the home screen
-automatically, with no intermediate "sequence complete" screen.
+The screen is laid out top to bottom as: a header (**Back**, which exits to the
+home screen, and the Sequence's name), a progress bar of how far through the
+flattened Steps playback is, the current Step, a controls row, and an "À suivre"
+card previewing the next Step (title, plus its duration for a Countdown; hidden
+on the last Step). The controls row is **Previous** (hidden on the first Step),
+a large central button, and **Next**. Next doubles as the "skip" affordance
+described in [vision.md](vision.md) — it forces the current Step to end
+immediately, the same way a Countdown's timer elapsing or a Pause's tap does.
+The central button is pause/resume for a Countdown (the paused state lives in
+`SequenceView` and is passed down to `CountdownView`, and reset whenever the
+Step changes) and "continue" for a Pause. Passing the last Step navigates back
+to the home screen automatically, with no intermediate "sequence complete"
+screen.
 
-`CountdownView` shows a circular progress ring around an mm:ss clock, and a
-pause/resume button that freezes the ring and blinks the clock while paused.
-Its timer is driven by comparing `Date.now()` against a recorded start time on
+The playback screen is exactly one viewport tall and never scrolls (`Page`'s
+`fullscreen` mode; only viewports shorter than 600px fall back to scrolling),
+down to an iPhone SE's 375x667. To make that hold, the "À suivre" card has a
+fixed height (its title is clamped to two lines), so the Step area above it
+never changes size from one Step to the next.
+
+`CountdownView` shows a circular progress ring around an mm:ss clock, which
+freezes the ring and blinks while paused. The Step area is a size container
+laid out as a `1fr / ring / 1fr` grid: the title is centered in the top row (between the
+progress bar and the ring) and the ring sits in the middle row, so the ring never
+moves whatever the title's length.
+The ring is centered on the *screen*, not just on the Step area: since more
+chrome sits below the Step area than above it, `SequenceView` exposes the
+difference as `--stage-bias`, and the area is stretched down by that amount
+(negative bottom margin, behind the controls) so its center is the screen's
+center. The ring's diameter is the smallest of 280px, the area's width, and
+what fits between the screen's center and the controls, so it shrinks on short
+screens. Its timer is driven by comparing `Date.now()` against a recorded start time on
 every `requestAnimationFrame` tick, rather than counting `setTimeout` firings —
 this keeps it accurate (no drift, no stalling) even if the tab is throttled in
 the background, at the cost of only updating when a frame is actually painted.
-`PauseView` fills the full screen as its tap target and shows a "next" icon to
-hint that tapping advances.
+`PauseView` fills the available space as its tap target — tapping anywhere
+advances, the same as the central "continue" button.
 
 `SequenceView` also holds a screen wake lock for as long as it's mounted, via
 [useWakeLock.ts](../src/domains/sequence/useWakeLock.ts): it requests one on
@@ -202,8 +228,12 @@ fixtures object itself is never mutated across resets).
 A separate `settings` slice
 ([settingsSlice.ts](../src/data/settings/settingsSlice.ts)), persisted the
 same way via [localStorageSettings.ts](../src/data/localStorageSettings.ts),
-holds the one `soundMuted` flag — toggled by the "Couper les sons" checkbox
-at the top of the Settings page.
+holds the one `soundMuted` flag — toggled by the "Couper les sons" switch.
+
+The Settings page is organised as titled groups of white cards, each row a
+round icon plus a label: a "Sons" group (the mute switch), a "Données" group
+(Export, Import) and, on its own, a Reset row in the action color. Rows are
+plain buttons (or, for the switch, a label), so they stack uniformly.
 
 ### Not done
 

@@ -1,12 +1,15 @@
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import LoopIcon from "@mui/icons-material/Loop";
-import { MouseEvent, useRef } from "react";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { useRef } from "react";
 import classNames from "classnames";
 import { getUI } from "../../../data/informations";
 import { Loop, Step } from "../../../data/sequences/sequencesSlice";
 import { SortableEdge } from "../../ui/sortableList/useSortableList";
 import { StepList } from "../common/StepList";
-import { StepPreview } from "../common/StepPreview";
 
+import components from "../../../styles/Components.module.scss";
 import stepPreviewStyles from "../common/StepPreview.module.scss";
 import styles from "./LoopPreview.module.scss";
 
@@ -18,39 +21,46 @@ type Props = {
   isHovered?: boolean;
 };
 
-const stopPropagation = (e: MouseEvent) => e.stopPropagation();
-
-// A Loop is always fully expanded — its dashed body is a permanent drop target (see StepList),
-// not something to collapse. repeatCount is a plain always-editable field on the solid header
-// card above it; Steps only ever arrive in the body by being dragged in, so there's no add row.
+// A Loop is always fully expanded — its body is a permanent drop target (see StepList), not
+// something to collapse. repeatCount is edited with a stepper in the header; Steps only ever
+// arrive in the body by being dragged in, so there's no add row.
 export const LoopPreview = ({ loop, onChange, onEscapeStep, edgeAction, isHovered }: Props) => {
   const envelopeRef = useRef<HTMLDivElement>(null);
-  const { loopRepeatCountLabel } = getUI();
+  const { loopRepeatCountLabel, loopRepeatLessLabel, loopRepeatMoreLabel } = getUI();
+
+  const setRepeatCount = (repeatCount: number) => onChange({ ...loop, repeatCount: Math.max(1, repeatCount) });
 
   return (
-    <div className={styles.loopWrapper}>
-      <StepPreview icon={<LoopIcon />} edgeAction={edgeAction} className={styles.loopHeader}>
-        <label className={stepPreviewStyles.durationField} onClick={stopPropagation}>
-          <span className={stepPreviewStyles.secondaryText}>{loopRepeatCountLabel}</span>
-          <input
-            type="number"
-            min={1}
-            className={stepPreviewStyles.durationInput}
-            value={loop.repeatCount}
-            onChange={(e) => onChange({ ...loop, repeatCount: Number(e.target.value) })}
-          />
-        </label>
-      </StepPreview>
+    <div ref={envelopeRef} className={classNames(styles.loop, isHovered && styles.loopHovered)}>
+      <div className={styles.header}>
+        <div className={styles.headerTitle}>
+          <LoopIcon />
+          <span>{loopRepeatCountLabel}</span>
+        </div>
+        <div className={styles.stepper}>
+          <button type="button" className={components.ghost} onClick={() => setRepeatCount(loop.repeatCount - 1)} aria-label={loopRepeatLessLabel}>
+            <RemoveIcon />
+          </button>
+          <span className={styles.count}>{loop.repeatCount}</span>
+          <button type="button" className={components.ghost} onClick={() => setRepeatCount(loop.repeatCount + 1)} aria-label={loopRepeatMoreLabel}>
+            <AddIcon />
+          </button>
+        </div>
+      </div>
 
       {/* Loops can't contain Loops (see concepts.md), so this nested StepList never sets
           allowLoop — the resulting items are always Steps despite the shared SequenceItem[] type. */}
-      <div ref={envelopeRef} className={classNames(styles.loopBody, isHovered && styles.loopBodyHovered)}>
+      <div className={classNames(styles.body, loop.steps.length === 0 && styles.bodyEmpty)}>
         <StepList
           items={loop.steps}
           onChange={(steps) => onChange({ ...loop, steps: steps as Step[] })}
           containerRef={envelopeRef}
           onEscapeItem={(item) => onEscapeStep(item as Step)}
         />
+      </div>
+
+      <div className={classNames(stepPreviewStyles.deleteOverlay, styles.deleteOverlay, edgeAction === "right" && stepPreviewStyles.deleteOverlayVisible)}>
+        <DeleteIcon />
       </div>
     </div>
   );

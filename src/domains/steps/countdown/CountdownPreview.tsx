@@ -14,10 +14,8 @@ type Props = {
 };
 
 export const CountdownPreview = ({ step, elevated, edgeAction, onClick }: Props) => (
-  <StepPreview icon={<TimerIcon />} elevated={elevated} edgeAction={edgeAction} onClick={onClick}>
-    <div className={stepPreviewStyles.previewFields}>
-      <span>{step.title}</span>
-      <span className={stepPreviewStyles.secondaryText}>{durationLabel(step.duration)}</span>
-    </div>
+  <StepPreview icon={<TimerIcon />} filledIcon elevated={elevated} edgeAction={edgeAction} onClick={onClick}>
+    <span className={stepPreviewStyles.title}>{step.title}</span>
+    <span className={stepPreviewStyles.chip}>{durationLabel(step.duration)}</span>
   </StepPreview>
 );

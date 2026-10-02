@@ -1,29 +1,47 @@
 @use "/src/styles/settings";
 
+// The Step area is a size container: the ring is sized from its height (so it shrinks on short
+// screens) and sits in the middle row of a 1fr / ring / 1fr grid, which keeps it vertically
+// centered whatever the title's height. minmax(0, …) stops a tall title from growing its row.
+// The negative bottom margin (--stage-bias, set by SequenceView) stretches the area down behind
+// the controls so its center is the screen's center; the empty last row never overlaps them.
 .countdown {
+  container-type: size;
+
   display: grid;
-  grid-template-rows: 1fr 200px 1fr;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
   justify-items: center;
 
   flex: 1;
+  min-height: 0;
   width: 100%;
+  margin-bottom: calc(-1 * var(--stage-bias, 0px));
   text-align: center;
 }
 
-.titleZone {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
+// Centered in the top row, i.e. between the progress bar and the ring.
+.title {
   align-self: center;
-  width: 100%;
+
+  margin: 0;
+  padding: 0 settings.gap(0.5);
+
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+
+  // Short screens (iPhone SE and below): a smaller title keeps three lines clear of the ring.
+  @media (max-height: 740px) {
+    font-size: 1.5rem;
+  }
 }
 
 .progress {
+  container-type: inline-size;
   position: relative;
 
-  width: 200px;
-  height: 200px;
+  // The last term keeps the ring clear of the controls, which sit below the stretched area's real bottom.
+  width: min(280px, 100cqw, calc(100cqh - 2 * var(--stage-bias, 0px) - 24px));
+  aspect-ratio: 1;
 }
 
 .progressSvg {
@@ -35,14 +53,14 @@
 
 .progressTrack {
   fill: none;
-  stroke: rgba(settings.$color-primary, 0.15);
-  stroke-width: 12;
+  stroke: rgba(settings.$color-primary, 0.16);
+  stroke-width: 14;
 }
 
 .progressBar {
   fill: none;
-  stroke: white;
-  stroke-width: 12;
+  stroke: settings.$color-primary;
+  stroke-width: 14;
   stroke-linecap: round;
 }
 
@@ -54,9 +72,11 @@
   justify-content: center;
   align-items: center;
 
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: white;
+  font-size: 30cqw;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: settings.$color-text;
 }
 
 .blinking {
@@ -67,13 +87,4 @@
   50% {
     opacity: 0;
   }
-}
-
-.toggleZone {
-  display: flex;
-  justify-content: center;
-
-  align-self: start;
-  width: 100%;
-  padding-top: settings.gap();
 }

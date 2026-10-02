@@ -37,16 +37,11 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   itself mid-way through — see
   [concepts.md](concepts.md#current-implementation-status).
 - **Sound per Step**: a short beep plays whenever a Step ends (Countdown
-  elapsing, a Pause tap, or Next), and a Settings checkbox mutes it — see
+  elapsing, a Pause tap, or Next), and a Settings switch mutes it — see
   [concepts.md](concepts.md#current-implementation-status).
 
 ## Desired features
 
-- **Improve the Settings page UI**: the page is currently a flat stack of a
-  checkbox and CTA buttons (Export, Import, Reset) under the title — no
-  visual hierarchy, no grouping, no indication of what each one does beyond
-  its label. Worth a proper design pass once more Settings entries land,
-  rather than growing the same flat stack indefinitely.
 - **Sound customization, in Settings**: let the user pick which sound plays
   per Step, instead of the one built-in beep.
 

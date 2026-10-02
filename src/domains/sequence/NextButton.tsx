@@ -11,7 +11,7 @@ export const NextButton = ({ onClick }: Props) => {
   const { next } = getUI();
 
   return (
-    <button type="button" className={components.round} onClick={onClick} aria-label={next}>
+    <button type="button" className={components.ghostLarge} onClick={onClick} aria-label={next}>
       <SkipNextIcon />
     </button>
   );

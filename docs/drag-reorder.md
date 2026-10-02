@@ -114,7 +114,7 @@ dragged into or out of a Loop in [StepList](../src/domains/steps/common/StepList
   `pointermove` checks the dragged item's position against each other row for
   which `isDropTarget(item)` is `true`; landing inside one sets
   `entry.isHovered` on that row (so it can render hover feedback — see
-  [LoopPreview](../src/domains/steps/loop/LoopPreview.tsx)'s dashed body).
+  [LoopPreview](../src/domains/steps/loop/LoopPreview.tsx)'s highlighted container).
   Releasing there calls `onDropInto(draggedId, targetId)`, which — like
   `onEdgeAction` — returns a `boolean`: `true` means it took ownership of the
   item (StepList removes it from the flat list and appends it to the target

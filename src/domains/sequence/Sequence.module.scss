@@ -1,5 +1,20 @@
 @use "sass:color";
 @use "/src/styles/settings";
+@use "/src/styles/0-settings/fonts";
+
+.homeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: settings.gap();
+
+  min-height: 56px;
+  margin-bottom: settings.gap(1.5);
+
+  h1 {
+    margin: 0;
+  }
+}
 
 .list {
   margin: 0;
@@ -16,29 +31,51 @@ input.nameInput {
   display: block;
   width: 100%;
 
-  margin: settings.gap() 0;
-  padding: 0 0 settings.gap(0.5);
+  margin: 0;
+  padding: settings.gap(0.25) 0 settings.gap(0.5);
   border: none;
-  border-bottom: settings.border-width() solid settings.$color-input-border;
+  border-bottom: 2px solid settings.$color-primary;
   border-radius: 0;
   background-color: transparent;
 
-  font-size: 1.5rem;
+  @include fonts.font("title");
+  font-size: 1.625rem;
+  letter-spacing: -0.01em;
+  color: settings.$color-title;
+
+  &::placeholder {
+    color: rgba(settings.$color-title, 0.5);
+  }
 
   &:focus {
-    border-bottom-color: settings.$color-input-border-focus;
+    border-bottom-color: settings.$color-primary;
     background-color: transparent;
     outline: none;
     box-shadow: none;
   }
 }
 
+.totalDuration {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin: settings.gap(0.5) 0 settings.gap();
+
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(settings.$color-primary, 0.85);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 .card {
   position: relative;
 
-  height: 120px;
-
-  border-radius: settings.card-radius();
+  border-radius: 20px;
   background-color: white;
   box-shadow: settings.$light-box-shadow;
 }
@@ -51,9 +88,10 @@ input.nameInput {
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  gap: 0.25em;
+  gap: 6px;
 
-  padding: settings.gap();
+  // Right padding keeps the text clear of the play button laid over the card's right edge.
+  padding: 18px 90px 18px 20px;
 
   color: inherit;
   text-decoration: none;
@@ -61,15 +99,32 @@ input.nameInput {
 }
 
 .cardTitleText {
-  font-weight: 600;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: settings.$color-primary;
 }
 
 .cardDuration {
-  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
   color: settings.$color-text-secondary;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
-.stretchedLink {
+// Stretches the title link's click area over the whole card; the play button, later in the
+// DOM, paints above it.
+.cardTitle::after {
+  content: "";
+
   position: absolute;
   inset: 0;
 }
@@ -85,7 +140,7 @@ input.nameInput {
 
   padding: 0 settings.gap();
 
-  border-radius: settings.card-radius() 0 0 settings.card-radius();
+  border-radius: 20px 0 0 20px;
   background-color: settings.$color-action;
   color: white;
 
@@ -99,18 +154,12 @@ input.nameInput {
 
 .play {
   position: absolute;
-  right: settings.gap(0.5);
-  bottom: settings.gap(0.5);
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
 
   background-color: settings.$color-action;
-
-  &:active {
-    background-color: color.adjust(settings.$color-action, $lightness: -10%);
-  }
-}
-
-.actionButton {
-  background-color: settings.$color-action;
+  box-shadow: none;
 
   &:active {
     background-color: color.adjust(settings.$color-action, $lightness: -10%);

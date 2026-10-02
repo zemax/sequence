@@ -1,11 +1,134 @@
 @use "/src/styles/settings";
 
-.controls {
-  position: fixed;
-  z-index: 1;
-  bottom: settings.gap();
-  right: settings.gap();
-
+.view {
   display: flex;
-  gap: settings.gap(0.5);
+  flex-flow: column nowrap;
+
+  // Space taken above and below the Step area, from the screen's edges (page padding included).
+  // Their difference is how far the Step area's own center sits above the screen's center —
+  // CountdownView cancels it so its ring lands on the screen's exact vertical center.
+  --chrome-top: calc(#{settings.gap(1.25)} + 48px + #{settings.gap()} + 6px);
+  --chrome-bottom: calc(76px + #{settings.gap()} + 80px + #{settings.gap(0.75)} + #{settings.gap(1.25)});
+  --stage-bias: max(0px, calc(var(--chrome-bottom) - var(--chrome-top)));
+
+  flex: 1;
+  min-height: 0;
+  padding-bottom: settings.gap(0.75);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: settings.gap(0.75);
+
+  height: 48px;
+}
+
+.sequenceName {
+  flex: 1;
+  min-width: 0;
+
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: rgba(settings.$color-primary, 0.9);
+}
+
+.headerSpacer {
+  flex-shrink: 0;
+  width: 48px;
+}
+
+.progress {
+  height: 6px;
+  margin-top: settings.gap();
+  border-radius: 3px;
+  background-color: rgba(settings.$color-primary, 0.18);
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 3px;
+  background-color: settings.$color-primary;
+
+  transition: width 0.3s ease;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: settings.gap(1.5);
+
+  height: 76px;
+}
+
+.sideSpacer {
+  width: settings.$icon-size;
+  height: settings.$icon-size;
+}
+
+.upNext {
+  display: flex;
+  align-items: center;
+  gap: settings.gap(0.75);
+
+  box-sizing: border-box;
+  // Fixed height (title clamped to two lines) so the Step area above — and the ring centered in
+  // it — never moves from one Step to the next.
+  height: 80px;
+  margin-top: settings.gap();
+  padding: 0 16px 0 18px;
+
+  border-radius: 18px;
+  background-color: white;
+  box-shadow: settings.$light-box-shadow;
+}
+
+.upNextHidden {
+  visibility: hidden;
+}
+
+.upNextText {
+  flex: 1;
+  min-width: 0;
+}
+
+.upNextLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: settings.$color-text-secondary;
+}
+
+.upNextTitle {
+  margin-top: 2px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: settings.$color-primary;
+}
+
+.chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+
+  border-radius: 999px;
+  background-color: settings.$color-chip-soft;
+
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: settings.$color-text;
 }
