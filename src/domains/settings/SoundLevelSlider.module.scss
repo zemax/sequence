@@ -1,0 +1,116 @@
+@use "/src/styles/settings";
+
+$thumb-size: 28px;
+$rail-height: 6px;
+$tick-size: 12px;
+
+.slider {
+  transition: opacity 0.2s ease;
+}
+
+.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+// The hit area: tall enough for a finger, with the horizontal inset of half a thumb so the
+// thumb at either end stays inside it. Dragging sideways is ours; vertical scroll still works.
+.control {
+  display: flex;
+  align-items: center;
+
+  height: 44px;
+  padding: 0 calc($thumb-size / 2);
+
+  touch-action: pan-y;
+  user-select: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid settings.$color-primary;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+.track {
+  position: relative;
+
+  flex: 1;
+  height: $rail-height;
+}
+
+.rail,
+.fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: $rail-height;
+  border-radius: $rail-height * 0.5;
+}
+
+.rail {
+  width: 100%;
+  background-color: rgba(settings.$color-primary, 0.18);
+}
+
+.fill {
+  background-color: settings.$color-primary;
+  transition: width 0.12s ease;
+}
+
+.tick {
+  position: absolute;
+  top: 50%;
+
+  width: $tick-size;
+  height: $tick-size;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+
+  background-color: white;
+  border: 2px solid rgba(settings.$color-primary, 0.3);
+  box-sizing: border-box;
+
+  transition: border-color 0.12s ease;
+}
+
+.tickReached {
+  border-color: settings.$color-primary;
+}
+
+.thumb {
+  position: absolute;
+  top: 50%;
+
+  width: $thumb-size;
+  height: $thumb-size;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+
+  background-color: settings.$color-primary;
+  border: 4px solid white;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(settings.$color-ink, 0.35);
+
+  transition: left 0.12s ease;
+}
+
+.captions {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: settings.$color-text-secondary;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill,
+  .thumb,
+  .tick {
+    transition: none;
+  }
+}

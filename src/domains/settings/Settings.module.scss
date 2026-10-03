@@ -55,6 +55,24 @@ h2.groupTitle {
   }
 }
 
+// A row holding a control of its own (not a single tap target): same padding as .row.
+.sliderRow {
+  padding: 10px 16px 10px 12px;
+
+  border-top: 1px solid rgba(settings.$color-primary, 0.1);
+}
+
+.sliderHeader {
+  display: flex;
+  align-items: center;
+  gap: settings.gap(0.75);
+
+  min-height: 40px;
+
+  font-weight: 600;
+  color: settings.$color-primary;
+}
+
 .icon {
   display: flex;
   justify-content: center;

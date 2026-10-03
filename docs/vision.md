@@ -36,14 +36,14 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   app requests a wake lock (Screen Wake Lock API) so the device doesn't lock
   itself mid-way through — see
   [concepts.md](concepts.md#current-implementation-status).
-- **Sound per Step**: a short beep plays whenever a Step ends (Countdown
-  elapsing, a Pause tap, or Next), and a Settings switch mutes it — see
+- **Sound per Step**: a short sound plays whenever a Step ends (Countdown
+  elapsing, a Pause tap, or Next). A Settings switch mutes it, and a slider
+  picks one of four sounds, from the discreet default to a loud alarm — see
   [concepts.md](concepts.md#current-implementation-status).
 
 ## Desired features
 
-- **Sound customization, in Settings**: let the user pick which sound plays
-  per Step, instead of the one built-in beep.
+None at the moment.
 
 ## Non-goals
 

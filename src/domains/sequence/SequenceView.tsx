@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { getUI } from "../../data/informations";
 import { Sequence } from "../../data/sequences/sequencesSlice";
-import { selectSoundMuted } from "../../data/settings/settingsSlice";
+import { selectSoundLevel, selectSoundMuted } from "../../data/settings/settingsSlice";
 import { BackButton } from "../ui/components/Back/Back";
 import { StepView } from "../steps/common/StepView";
 import { flattenPlayback } from "./flattenPlayback";
@@ -29,6 +29,7 @@ export const SequenceView = ({ sequence }: Props) => {
   const [paused, setPaused] = useState(false);
   const navigate = useNavigate();
   const soundMuted = useSelector(selectSoundMuted);
+  const soundLevel = useSelector(selectSoundLevel);
   const { pause: pauseLabel, resume: resumeLabel, next: nextLabel, progressLabel } = getUI();
 
   useWakeLock();
@@ -52,7 +53,7 @@ export const SequenceView = ({ sequence }: Props) => {
 
   const goTo = (target: (i: number) => number) => {
     if (!soundMuted) {
-      playStepEndSound();
+      playStepEndSound(soundLevel);
     }
     setPaused(false);
     setIndex(target);

@@ -1,4 +1,5 @@
 import DownloadIcon from "@mui/icons-material/Download";
+import GraphicEqIcon from "@mui/icons-material/GraphicEq";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import UploadIcon from "@mui/icons-material/Upload";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
@@ -8,8 +9,9 @@ import { ChangeEvent, useRef } from "react";
 import { useSelector } from "react-redux";
 import { getUI } from "../../data/informations";
 import { Sequence, resetSequences, selectSequences, setSequences } from "../../data/sequences/sequencesSlice";
-import { selectSoundMuted, setSoundMuted } from "../../data/settings/settingsSlice";
+import { SOUND_LEVEL_COUNT, selectSoundLevel, selectSoundMuted, setSoundLevel, setSoundMuted } from "../../data/settings/settingsSlice";
 import store from "../../data/store";
+import { SoundLevelSlider } from "./SoundLevelSlider";
 
 import styles from "./Settings.module.scss";
 
@@ -19,6 +21,7 @@ export const Settings = () => {
     settingsSoundsTitle,
     settingsDataTitle,
     settingsPlaySounds,
+    settingsSoundLevel,
     settingsExport,
     settingsImport,
     settingsImportConfirm,
@@ -28,6 +31,7 @@ export const Settings = () => {
   } = getUI();
   const sequences = useSelector(selectSequences);
   const soundMuted = useSelector(selectSoundMuted);
+  const soundLevel = useSelector(selectSoundLevel);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
@@ -86,6 +90,22 @@ export const Settings = () => {
               onChange={(e) => store.dispatch(setSoundMuted(!e.target.checked))}
             />
           </label>
+
+          <div className={styles.sliderRow}>
+            <div className={styles.sliderHeader}>
+              <span className={styles.icon}>
+                <GraphicEqIcon />
+              </span>
+              <span className={styles.label}>{settingsSoundLevel}</span>
+            </div>
+            <SoundLevelSlider
+              value={soundLevel}
+              count={SOUND_LEVEL_COUNT}
+              label={settingsSoundLevel}
+              disabled={soundMuted}
+              onChange={(level) => store.dispatch(setSoundLevel(level))}
+            />
+          </div>
         </div>
       </section>
 

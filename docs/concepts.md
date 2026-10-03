@@ -217,10 +217,12 @@ non-visible document, low battery mode, etc.) are swallowed silently —
 playback works the same either way, it just risks the screen sleeping.
 
 Every time a Step ends — a Countdown elapsing, a Pause tap, or Next —
-`SequenceView`'s `goToNext` plays a short synthesized beep via
-[playStepEndSound.ts](../src/domains/sequence/playStepEndSound.ts) (a plain
-Web Audio oscillator, no audio asset to ship), unless the `soundMuted`
-setting (see Data & Settings below) is on. Browsers keep a new `AudioContext`
+`SequenceView`'s `goToNext` plays a short synthesized sound via
+[playStepEndSound.ts](../src/domains/sequence/playStepEndSound.ts) (plain Web
+Audio oscillators, no audio asset to ship), unless the `soundMuted` setting (see
+Data & Settings below) is on. There are four sounds, picked by the `soundLevel`
+setting: 1 is the discreet single beep, 2 a two-note chime, 3 a louder
+three-note triangle melody and 4 a square-wave triple-beep alarm. Browsers keep a new `AudioContext`
 suspended unless it is created or resumed during a user gesture — which a
 countdown ending by itself never is, and the first beep would be silent — so
 `SequenceView` creates it as soon as playback starts (and on every pointer
@@ -248,12 +250,20 @@ fixtures object itself is never mutated across resets).
 A separate `settings` slice
 ([settingsSlice.ts](../src/data/settings/settingsSlice.ts)), persisted the
 same way via [localStorageSettings.ts](../src/data/localStorageSettings.ts),
-holds the one `soundMuted` flag. The "Jouer les sons" switch shows it inverted
-(on = sounds play), and its speaker icon follows the state: a speaker when
-sounds are on, a crossed-out one when muted. The flag itself stays `soundMuted`
-so values already persisted on devices keep working.
+holds two values: the `soundMuted` flag and the `soundLevel` (1 to 4, default
+1). The "Jouer les sons" switch shows `soundMuted` inverted (on = sounds play),
+and its speaker icon follows the state: a speaker when sounds are on, a
+crossed-out one when muted. The flag itself stays `soundMuted` so values already
+persisted on devices keep working; `loadSettings` fills in a missing or
+out-of-range `soundLevel` for the same reason.
+
+Below the switch, [SoundLevelSlider.tsx](../src/domains/settings/SoundLevelSlider.tsx)
+picks the level: a bar with four graduations and a thumb that snaps to the
+nearest one while it is dragged (or tapped, or moved with the arrow keys), and
+that plays the sound of each level as the thumb lands on it, so the user hears
+what they choose. It is dimmed and inert while sounds are muted.
 
 The Settings page is organised as titled groups of white cards, each row a
-round icon plus a label: a "Sons" group (the mute switch), a "Données" group
+round icon plus a label: a "Sons" group (the mute switch and the sound level slider), a "Données" group
 (Export, Import) and, on its own, a Reset row in the action color. Rows are
 plain buttons (or, for the switch, a label), so they stack uniformly.
