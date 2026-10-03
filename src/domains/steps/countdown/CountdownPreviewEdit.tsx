@@ -20,7 +20,7 @@ export const CountdownPreviewEdit = ({ step, onChange, edgeAction, onClick }: Pr
   const { stepTitleLabel, stepDurationLabel } = getUI();
 
   return (
-    <StepPreview icon={<TimerIcon />} filledIcon edgeAction={edgeAction} onClick={onClick}>
+    <StepPreview icon={<TimerIcon />} edgeAction={edgeAction} onClick={onClick}>
       <div className={stepPreviewStyles.editFields}>
         <input
           type="text"

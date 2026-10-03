@@ -7,7 +7,6 @@ import styles from "./StepPreview.module.scss";
 
 type Props = {
   icon: ReactNode;
-  filledIcon?: boolean;
   elevated?: boolean;
   edgeAction?: SortableEdge | null;
   onClick?: () => void;
@@ -17,9 +16,9 @@ type Props = {
 
 // Generic visual shell for a step's preview — extended by CountdownPreview/PausePreview
 // (and their editable counterparts, CountdownPreviewEdit/PausePreviewEdit).
-export const StepPreview = ({ icon, filledIcon, elevated, edgeAction, onClick, className, children }: Props) => (
+export const StepPreview = ({ icon, elevated, edgeAction, onClick, className, children }: Props) => (
   <div className={classNames(styles.stepPreview, elevated && styles.elevated, className)} onClick={onClick}>
-    <span className={classNames(styles.icon, filledIcon && styles.iconFilled)}>{icon}</span>
+    <span className={styles.icon}>{icon}</span>
     <span className={styles.content}>{children}</span>
     <div className={classNames(styles.deleteOverlay, edgeAction === "right" && styles.deleteOverlayVisible)}>
       <DeleteIcon />
