@@ -13,7 +13,7 @@ import { durationLabel } from "../steps/common/durationLabel";
 import { StepView } from "../steps/common/StepView";
 import { flattenSequenceItems } from "./flattenSequenceItems";
 import { NextButton } from "./NextButton";
-import { playStepEndSound } from "./playStepEndSound";
+import { playStepEndSound, unlockStepEndSound } from "./playStepEndSound";
 import { PreviousButton } from "./PreviousButton";
 import { useWakeLock } from "./useWakeLock";
 
@@ -32,6 +32,8 @@ export const SequenceView = ({ sequence }: Props) => {
   const { pause: pauseLabel, resume: resumeLabel, next: nextLabel, progressLabel, upNextLabel } = getUI();
 
   useWakeLock();
+
+  useEffect(unlockStepEndSound, []);
 
   const steps = sequence ? flattenSequenceItems(sequence.items) : [];
   const step = steps[index];
@@ -62,7 +64,7 @@ export const SequenceView = ({ sequence }: Props) => {
   const progress = Math.round(((index + 1) / steps.length) * 100);
 
   return (
-    <div className={styles.view}>
+    <div className={styles.view} onPointerDown={unlockStepEndSound}>
       <div className={styles.header}>
         <BackButton />
         <div className={styles.sequenceName}>{sequence.name}</div>

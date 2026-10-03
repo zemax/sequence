@@ -204,7 +204,11 @@ Every time a Step ends — a Countdown elapsing, a Pause tap, or Next —
 `SequenceView`'s `goToNext` plays a short synthesized beep via
 [playStepEndSound.ts](../src/domains/sequence/playStepEndSound.ts) (a plain
 Web Audio oscillator, no audio asset to ship), unless the `soundMuted`
-setting (see Data & Settings below) is on.
+setting (see Data & Settings below) is on. Browsers keep a new `AudioContext`
+suspended unless it is created or resumed during a user gesture — which a
+countdown ending by itself never is, and the first beep would be silent — so
+`SequenceView` creates it as soon as playback starts (and on every pointer
+down), and the beep resumes it before sounding if it is still suspended.
 
 ### Data & Settings — done
 
