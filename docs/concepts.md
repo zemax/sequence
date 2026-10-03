@@ -115,7 +115,7 @@ Sequence's `name`, and delegates its `items` to
 [StepList.tsx](../src/domains/steps/common/StepList.tsx), which handles adding
 Steps or Loops, editing an existing item in place (tapping a `<Type>Preview`
 swaps it for its `<Type>PreviewEdit`), deleting an item by dragging it to the
-screen edge, and reordering items by dragging — all via the same
+screen edge (after a "Supprimer ?" confirmation), and reordering items by dragging — all via the same
 [SortableList](../src/domains/ui/sortableList) used for Sequences on the home
 screen (see [drag-reorder.md](drag-reorder.md)).
 
@@ -243,7 +243,10 @@ its data from [fixtures/examples.json](../src/data/fixtures/examples.json)).
 top of that: **Export** downloads all Sequences as a single JSON file
 (the raw `Sequence[]` array, no envelope); **Import** reads a JSON file,
 confirms with the user, then replaces the entire local Sequence list with
-its contents (`setSequences`) — there is no merge option; **Reset** confirms,
+its contents (`setSequences`) — there is no merge option; **Reset** asks "Réinitialiser ?" in the same small
+[ConfirmDialog](../src/domains/ui/components/ConfirmDialog/ConfirmDialog.tsx) used
+for deletions (X cancels, check confirms), with a line explaining the consequences
+under the title (the dialog takes an optional `message`),
 then restores `initialSequences` (`resetSequences`, deep-cloned so the
 fixtures object itself is never mutated across resets).
 

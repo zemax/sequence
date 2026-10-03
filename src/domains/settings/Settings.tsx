@@ -5,12 +5,13 @@ import UploadIcon from "@mui/icons-material/Upload";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import classNames from "classnames";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { getUI } from "../../data/informations";
 import { Sequence, resetSequences, selectSequences, setSequences } from "../../data/sequences/sequencesSlice";
 import { SOUND_LEVEL_COUNT, selectSoundLevel, selectSoundMuted, setSoundLevel, setSoundMuted } from "../../data/settings/settingsSlice";
 import store from "../../data/store";
+import { ConfirmDialog } from "../ui/components/ConfirmDialog/ConfirmDialog";
 import { SoundLevelSlider } from "./SoundLevelSlider";
 
 import styles from "./Settings.module.scss";
@@ -27,12 +28,14 @@ export const Settings = () => {
     settingsImportConfirm,
     settingsImportInvalid,
     settingsReset,
+    confirmResetTitle,
     settingsResetConfirm,
   } = getUI();
   const sequences = useSelector(selectSequences);
   const soundMuted = useSelector(selectSoundMuted);
   const soundLevel = useSelector(selectSoundLevel);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [confirmingReset, setConfirmingReset] = useState(false);
 
   const handleExport = () => {
     const blob = new Blob([JSON.stringify(sequences, null, 2)], { type: "application/json" });
@@ -64,11 +67,6 @@ export const Settings = () => {
     }
   };
 
-  const handleReset = () => {
-    if (window.confirm(settingsResetConfirm)) {
-      store.dispatch(resetSequences());
-    }
-  };
 
   return (
     <>
@@ -131,7 +129,7 @@ export const Settings = () => {
 
       <section className={styles.group}>
         <div className={styles.card}>
-          <button type="button" className={classNames(styles.row, styles.danger)} onClick={handleReset}>
+          <button type="button" className={classNames(styles.row, styles.danger)} onClick={() => setConfirmingReset(true)}>
             <span className={styles.icon}>
               <RestartAltIcon />
             </span>
@@ -139,6 +137,18 @@ export const Settings = () => {
           </button>
         </div>
       </section>
+
+      {confirmingReset && (
+        <ConfirmDialog
+          title={confirmResetTitle}
+          message={settingsResetConfirm}
+          onCancel={() => setConfirmingReset(false)}
+          onConfirm={() => {
+            store.dispatch(resetSequences());
+            setConfirmingReset(false);
+          }}
+        />
+      )}
     </>
   );
 };

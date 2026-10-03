@@ -103,6 +103,20 @@ This is why SequenceList's handler returns `false` for `"left"`: it only
 deletes on `"right"`, so releasing on the left settles the item back in
 place like a normal aborted drag, instead of leaving it stranded.
 
+Both lists use a 40px margin, and neither deletes right away: the handler stores
+the id and returns `"hold"`, and a small "Supprimer ?" dialog
+([ConfirmDialog](../src/domains/ui/components/ConfirmDialog/ConfirmDialog.tsx):
+X cancels, check confirms) decides.
+
+`"hold"` is a third answer next to `true` and `false`: the drag is over and
+the list does not reorder, but the item **stays exactly where it was dropped**
+(same offset, tilt, lift and trash feedback) instead of resetting. It stays
+held for as long as the list's `holdId` option names it — the caller passes
+the id it is waiting on (here the pending-delete id). When `holdId` stops
+naming the item, the list releases it: if it is still there (the user
+cancelled) it settles back to its slot with the usual animation; if it has
+been removed (the user confirmed) there is nothing left to animate.
+
 ## Nesting: dropping one item onto another, and escaping a container
 
 Beyond plain reordering, two more opt-in behaviors — both used to let a Step be

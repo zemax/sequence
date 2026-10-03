@@ -19,6 +19,11 @@ const DRAG_ACTIVATION_PX = 20;
 
 export type SortableEdge = "left" | "right";
 
+// What an edge action decided: `true` — the item is gone, nothing left to animate; `false` —
+// declined; "hold" — the item stays exactly where it was dropped (offset, tilt, delete feedback)
+// until the list's `holdId` option stops naming it, then it settles back (or is simply gone).
+export type EdgeActionResult = boolean | "hold";
+
 type DragState = {
   id: string;
   startX: number;
@@ -32,6 +37,14 @@ type DragState = {
   edgeAction: SortableEdge | null;
   hoveredTargetId: string | null;
   escapedContainer: boolean;
+};
+
+type HeldItem = {
+  id: string;
+  offsetX: number;
+  offsetY: number;
+  tilt: number;
+  edge: SortableEdge;
 };
 
 type PendingCardSettle = {
@@ -66,7 +79,9 @@ export type SortableListOptions<T> = {
   paddingX?: number;
   paddingY?: number;
   edgeActionThreshold?: number;
-  onEdgeAction?: (id: string, edge: SortableEdge) => boolean;
+  onEdgeAction?: (id: string, edge: SortableEdge) => EdgeActionResult;
+  // The id of the item a "hold" edge action is waiting on (e.g. while a confirmation is open).
+  holdId?: string | null;
   // Lets other rows in the same list act as drop targets — e.g. dragging a Step onto a Loop
   // row nests it there instead of just reordering. Checked after edgeAction, before a normal
   // reorder. See docs/drag-reorder.md.
@@ -98,6 +113,7 @@ export const useSortableList = <T,>(
     paddingY = 0,
     edgeActionThreshold,
     onEdgeAction,
+    holdId = null,
     isDropTarget,
     onDropInto,
     containerRef,
@@ -112,6 +128,7 @@ export const useSortableList = <T,>(
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [edgeAction, setEdgeAction] = useState<SortableEdge | null>(null);
   const [hoveredTargetId, setHoveredTargetId] = useState<string | null>(null);
+  const [held, setHeld] = useState<HeldItem | null>(null);
 
   const dragState = useRef<DragState | null>(null);
   const elevationTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -185,6 +202,17 @@ export const useSortableList = <T,>(
     animateTransform(item, `rotate(${itemTilt}deg)`);
     scheduleElevationClear();
   };
+
+  // A held item goes back to its slot as soon as nothing is waiting on it any more (a cancelled
+  // confirmation). If it was removed meanwhile there is no row left and this only clears state.
+  useLayoutEffect(() => {
+    if (held && holdId !== held.id) {
+      settleDraggedItemInPlace(held.id, held.offsetX, held.offsetY, held.tilt);
+      scheduleElevationClear();
+      setHeld(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [held, holdId]);
 
   const tiltTick = () => {
     const drag = dragState.current;
@@ -282,8 +310,13 @@ export const useSortableList = <T,>(
     if (drag) {
       // Each of these, if it applies, is presumed to fully own the item's fate (moved
       // elsewhere or removed) — nothing left to animate here, unlike reorder/settle below.
+      const edgeResult = drag.edgeAction !== null ? (onEdgeAction?.(drag.id, drag.edgeAction) ?? false) : false;
+      if (edgeResult === "hold" && drag.edgeAction !== null) {
+        setHeld({ id: drag.id, offsetX: drag.offsetX, offsetY: drag.offsetY, tilt: drag.tilt, edge: drag.edgeAction });
+      }
+
       const handled =
-        (drag.edgeAction !== null && (onEdgeAction?.(drag.id, drag.edgeAction) ?? false)) ||
+        edgeResult !== false ||
         (drag.hoveredTargetId !== null && (onDropInto?.(drag.id, drag.hoveredTargetId) ?? false)) ||
         (drag.escapedContainer && (onEscapeContainer?.(drag.id) ?? false));
 
@@ -427,13 +460,15 @@ export const useSortableList = <T,>(
   const getItemProps = (item: T, index: number): SortableEntry => {
     const id = getId(item);
     const isDragging = id === dragId;
+    const isHeld = held?.id === id;
     const isElevated = id === elevatedId;
 
     return {
-      isDragging,
-      isHovered: !isDragging && id === hoveredTargetId,
+      // A held item keeps looking dragged — same lift, offset, tilt and delete feedback.
+      isDragging: isDragging || isHeld,
+      isHovered: !isDragging && !isHeld && id === hoveredTargetId,
       showDropIndicatorBefore: indicatorIndex === index,
-      edgeAction: isDragging ? edgeAction : null,
+      edgeAction: isDragging ? edgeAction : isHeld ? held.edge : null,
       rowProps: {
         ref: (el) => {
           if (el) {
@@ -443,7 +478,11 @@ export const useSortableList = <T,>(
           }
         },
         className: classNames(styles.row, isElevated && styles.rowElevated),
-        style: isDragging ? { transform: `translate(${dragOffset.x}px, ${dragOffset.y}px)` } : undefined,
+        style: isDragging
+          ? { transform: `translate(${dragOffset.x}px, ${dragOffset.y}px)` }
+          : isHeld
+            ? { transform: `translate(${held.offsetX}px, ${held.offsetY}px)` }
+            : undefined,
       },
       itemProps: {
         ref: (el) => {
@@ -454,7 +493,7 @@ export const useSortableList = <T,>(
           }
         },
         className: styles.item,
-        style: isDragging ? { transform: `rotate(${tilt}deg)` } : undefined,
+        style: isDragging ? { transform: `rotate(${tilt}deg)` } : isHeld ? { transform: `rotate(${held.tilt}deg)` } : undefined,
         onPointerDown: (e) => handlePointerDown(id, index, e),
         onContextMenu: (e) => e.preventDefault(),
       },

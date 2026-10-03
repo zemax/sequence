@@ -1,6 +1,7 @@
 import { RefObject, useState } from "react";
 import { getUI } from "../../../data/informations";
 import { SequenceItem, isLoop } from "../../../data/sequences/sequencesSlice";
+import { ConfirmDialog } from "../../ui/components/ConfirmDialog/ConfirmDialog";
 import { SortableList } from "../../ui/sortableList/SortableList";
 import { SortableItem } from "../../ui/sortableList/SortableItem";
 import { SortableEntry } from "../../ui/sortableList/useSortableList";
@@ -17,7 +18,7 @@ import { emptyStep } from "./emptyStep";
 
 import styles from "./StepList.module.scss";
 
-const DELETE_EDGE_THRESHOLD_PX = 20;
+const DELETE_EDGE_THRESHOLD_PX = 40;
 
 type Props = {
   items: SequenceItem[];
@@ -36,7 +37,8 @@ type Props = {
 // (nested lists only) — see docs/drag-reorder.md.
 export const StepList = ({ items, onChange, allowLoop = false, containerRef, onEscapeItem }: Props) => {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const { addStepLabel } = getUI();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const { addStepLabel, confirmDeleteTitle } = getUI();
 
   const addItem = (item: SequenceItem) => {
     onChange([...items, item]);
@@ -110,12 +112,13 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
         paddingX={8}
         paddingY={8}
         edgeActionThreshold={DELETE_EDGE_THRESHOLD_PX}
+        holdId={pendingDeleteId}
         onEdgeAction={(id, edge) => {
           if (edge !== "right") {
             return false;
           }
-          removeItem(id);
-          return true;
+          setPendingDeleteId(id);
+          return "hold";
         }}
         isDropTarget={allowLoop ? isLoop : undefined}
         onDropInto={
@@ -155,6 +158,17 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
           </SortableItem>
         )}
       </SortableList>
+
+      {pendingDeleteId && (
+        <ConfirmDialog
+          title={confirmDeleteTitle}
+          onCancel={() => setPendingDeleteId(null)}
+          onConfirm={() => {
+            removeItem(pendingDeleteId);
+            setPendingDeleteId(null);
+          }}
+        />
+      )}
 
       {/* A Loop's own nested list (identified by containerRef being set) has no add row —
           Steps only ever arrive there by being dragged in. */}
