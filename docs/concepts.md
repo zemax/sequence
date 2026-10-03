@@ -228,7 +228,10 @@ fixtures object itself is never mutated across resets).
 A separate `settings` slice
 ([settingsSlice.ts](../src/data/settings/settingsSlice.ts)), persisted the
 same way via [localStorageSettings.ts](../src/data/localStorageSettings.ts),
-holds the one `soundMuted` flag — toggled by the "Couper les sons" switch.
+holds the one `soundMuted` flag. The "Jouer les sons" switch shows it inverted
+(on = sounds play), and its speaker icon follows the state: a speaker when
+sounds are on, a crossed-out one when muted. The flag itself stays `soundMuted`
+so values already persisted on devices keep working.
 
 The Settings page is organised as titled groups of white cards, each row a
 round icon plus a label: a "Sons" group (the mute switch), a "Données" group

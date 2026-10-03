@@ -2,6 +2,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import UploadIcon from "@mui/icons-material/Upload";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import classNames from "classnames";
 import { ChangeEvent, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -17,7 +18,7 @@ export const Settings = () => {
     settings,
     settingsSoundsTitle,
     settingsDataTitle,
-    settingsMuteSounds,
+    settingsPlaySounds,
     settingsExport,
     settingsImport,
     settingsImportConfirm,
@@ -74,15 +75,15 @@ export const Settings = () => {
         <div className={styles.card}>
           <label className={styles.row}>
             <span className={styles.icon}>
-              <VolumeOffIcon />
+              {soundMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
             </span>
-            <span className={styles.label}>{settingsMuteSounds}</span>
+            <span className={styles.label}>{settingsPlaySounds}</span>
             <input
               type="checkbox"
               role="switch"
               className={styles.switch}
-              checked={soundMuted}
-              onChange={(e) => store.dispatch(setSoundMuted(e.target.checked))}
+              checked={!soundMuted}
+              onChange={(e) => store.dispatch(setSoundMuted(!e.target.checked))}
             />
           </label>
         </div>

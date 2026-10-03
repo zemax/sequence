@@ -26,7 +26,7 @@ export const getUI = () => ({
 
   settingsSoundsTitle: "Sons",
   settingsDataTitle: "Données",
-  settingsMuteSounds: "Couper les sons",
+  settingsPlaySounds: "Jouer les sons",
   settingsExport: "Exporter les séquences",
   settingsImport: "Importer des séquences",
   settingsImportConfirm: "Cela remplacera toutes les séquences actuelles par celles du fichier importé. Continuer ?",
