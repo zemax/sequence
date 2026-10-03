@@ -1,5 +1,8 @@
 # Sequence
 
+**The app is ready to use at [https://zemax.github.io/sequence/](https://zemax.github.io/sequence/)** —
+no installation needed, and it can be added to a phone's home screen.
+
 Sequence is a personal, installable web application for building and running
 **Sequences**: ordered lists of full-screen **Steps** (e.g. a countdown timer),
 which can be grouped into **Loops** to repeat a set of Steps a given number of
