@@ -1,30 +1,7 @@
 @use "/src/styles/settings";
 
-// The Step area is a size container: the ring is sized from its height (so it shrinks on short
-// screens) and sits in the middle row of a 1fr / ring / 1fr grid, which keeps it vertically
-// centered whatever the title's height. minmax(0, …) stops a tall title from growing its row.
-// The negative bottom margin (--stage-bias, set by SequenceView) stretches the area down behind
-// the controls so its center is the screen's center; the empty last row never overlaps them.
-.countdown {
-  container-type: size;
-
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
-  justify-items: center;
-
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  margin-bottom: calc(-1 * var(--stage-bias, 0px));
-  text-align: center;
-}
-
-// Centered in the top row, i.e. between the progress bar and the ring.
 .title {
-  align-self: center;
-
   margin: 0;
-  padding: 0 settings.gap(0.5);
 
   font-size: 1.75rem;
   letter-spacing: -0.01em;
@@ -39,8 +16,7 @@
   container-type: inline-size;
   position: relative;
 
-  // The last term keeps the ring clear of the controls, which sit below the stretched area's real bottom.
-  width: min(280px, 100cqw, calc(100cqh - 2 * var(--stage-bias, 0px) - 24px));
+  width: var(--ring-size);
   aspect-ratio: 1;
 }
 

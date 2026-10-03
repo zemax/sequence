@@ -1,4 +1,4 @@
-import { SequenceItem, Step, isLoop } from "../../data/sequences/sequencesSlice";
+import { SequenceItem, Step } from "../../data/sequences/sequencesSlice";
+import { flattenPlayback } from "./flattenPlayback";
 
-export const flattenSequenceItems = (items: SequenceItem[]): Step[] =>
-  items.flatMap((item) => (isLoop(item) ? Array.from({ length: item.repeatCount }, () => item.steps).flat() : [item]));
+export const flattenSequenceItems = (items: SequenceItem[]): Step[] => flattenPlayback(items).map((entry) => entry.step);

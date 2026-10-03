@@ -2,9 +2,9 @@
 
 .pause {
   display: flex;
-  flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+
   flex: 1;
   width: 100%;
   padding: 0 settings.gap(0.5);
@@ -23,4 +23,8 @@
 
   font-size: 1.75rem;
   letter-spacing: -0.01em;
+
+  @media (max-height: 740px) {
+    font-size: 1.5rem;
+  }
 }

@@ -1,19 +1,58 @@
 @use "/src/styles/settings";
 
 .view {
-  display: flex;
-  flex-flow: column nowrap;
+  // Sizes shared with the Step area and the bottom card; see StepStage.module.scss and
+  // docs/concepts.md (Playback) for how they fix the ring's size and position.
+  --controls-gap: 28px;
+  --controls-height: 76px;
+  --upnext-height: 80px;
+  --upnext-lines: 2;
+  --loop-row-height: 44px;
+  --card-slot: var(--upnext-height);
 
   // Space taken above and below the Step area, from the screen's edges (page padding included).
-  // Their difference is how far the Step area's own center sits above the screen's center —
-  // CountdownView cancels it so its ring lands on the screen's exact vertical center.
+  // Their difference is how far the Step area's own center sits above the screen's center — the
+  // Step area cancels it so its ring lands on the screen's exact vertical center.
   --chrome-top: calc(#{settings.gap(1.25)} + 48px + #{settings.gap()} + 6px);
-  --chrome-bottom: calc(76px + #{settings.gap()} + 80px + #{settings.gap(0.75)} + #{settings.gap(1.25)});
+  --chrome-bottom: calc(var(--card-slot) + #{settings.gap(0.75)} + #{settings.gap(0.75)} + #{settings.gap(1.25)});
   --stage-bias: max(0px, calc(var(--chrome-bottom) - var(--chrome-top)));
+
+  display: flex;
+  flex-flow: column nowrap;
 
   flex: 1;
   min-height: 0;
   padding-bottom: settings.gap(0.75);
+}
+
+// The card slot always has room for the loop header when the Sequence has a Loop, so the Step
+// area never changes size from one Step to the next, in or out of a Loop.
+.withLoop {
+  --card-slot: calc(var(--upnext-height) + var(--loop-row-height));
+}
+
+// Short screens (iPhone SE and below): everything below the ring tightens up.
+@media (max-height: 740px) {
+  .view {
+    --controls-gap: 20px;
+    --controls-height: 64px;
+    --upnext-height: 68px;
+    --upnext-lines: 1;
+  }
+
+  .controls > button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .controls > button:nth-child(2) {
+    width: 64px;
+    height: 64px;
+  }
+
+  .sideSpacer {
+    width: 48px;
+  }
 }
 
 .header {
@@ -59,76 +98,19 @@
 }
 
 .controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: settings.gap(1.5);
-
-  height: 76px;
+  display: contents;
 }
 
 .sideSpacer {
   width: settings.$icon-size;
-  height: settings.$icon-size;
+  height: 1px;
 }
 
-.upNext {
+// Bottom-aligned, so a card without a loop header shrinks upward and leaves the gap above it.
+.cardSlot {
   display: flex;
-  align-items: center;
-  gap: settings.gap(0.75);
+  align-items: flex-end;
 
-  box-sizing: border-box;
-  // Fixed height (title clamped to two lines) so the Step area above — and the ring centered in
-  // it — never moves from one Step to the next.
-  height: 80px;
-  margin-top: settings.gap();
-  padding: 0 16px 0 18px;
-
-  border-radius: 18px;
-  background-color: white;
-  box-shadow: settings.$light-box-shadow;
-}
-
-.upNextHidden {
-  visibility: hidden;
-}
-
-.upNextText {
-  flex: 1;
-  min-width: 0;
-}
-
-.upNextLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: settings.$color-text-secondary;
-}
-
-.upNextTitle {
-  margin-top: 2px;
-
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: settings.$color-primary;
-}
-
-.chip {
-  flex-shrink: 0;
-  padding: 6px 12px;
-
-  border-radius: 999px;
-  background-color: settings.$color-chip-soft;
-
-  font-size: 0.9375rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: settings.$color-text;
+  height: var(--card-slot);
+  margin-top: settings.gap(0.75);
 }

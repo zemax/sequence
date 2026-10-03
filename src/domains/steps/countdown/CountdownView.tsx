@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
+import { StepStage } from "../common/StepStage";
 import { CountdownStep } from "./CountdownStep";
 
 import styles from "./CountdownView.module.scss";
@@ -8,6 +9,7 @@ type Props = {
   step: CountdownStep;
   paused: boolean;
   onDone: () => void;
+  children: ReactNode;
 };
 
 const RADIUS = 126;
@@ -19,7 +21,7 @@ const formatClock = (totalSeconds: number): string => {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 };
 
-export const CountdownView = ({ step, paused, onDone }: Props) => {
+export const CountdownView = ({ step, paused, onDone, children }: Props) => {
   const durationMs = step.duration * 1000;
 
   const [remainingMs, setRemainingMs] = useState(durationMs);
@@ -70,23 +72,25 @@ export const CountdownView = ({ step, paused, onDone }: Props) => {
   const progress = durationMs > 0 ? remainingMs / durationMs : 0;
 
   return (
-    <div className={styles.countdown}>
-      <h1 className={styles.title}>{step.title}</h1>
-
-      <div className={styles.progress}>
-        <svg viewBox="0 0 280 280" className={styles.progressSvg}>
-          <circle cx="140" cy="140" r={RADIUS} className={styles.progressTrack} />
-          <circle
-            cx="140"
-            cy="140"
-            r={RADIUS}
-            className={styles.progressBar}
-            strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={CIRCUMFERENCE * (1 - progress)}
-          />
-        </svg>
-        <span className={classNames(styles.clock, paused && styles.blinking)}>{formatClock(remainingSeconds)}</span>
-      </div>
-    </div>
+    <StepStage
+      title={<h1 className={styles.title}>{step.title}</h1>}
+      ring={
+        <div className={styles.progress}>
+          <svg viewBox="0 0 280 280" className={styles.progressSvg}>
+            <circle cx="140" cy="140" r={RADIUS} className={styles.progressTrack} />
+            <circle
+              cx="140"
+              cy="140"
+              r={RADIUS}
+              className={styles.progressBar}
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={CIRCUMFERENCE * (1 - progress)}
+            />
+          </svg>
+          <span className={classNames(styles.clock, paused && styles.blinking)}>{formatClock(remainingSeconds)}</span>
+        </div>
+      }
+      controls={children}
+    />
   );
 };

@@ -149,48 +149,64 @@ into the parent list, right after that Loop (`containerRef`/
 
 [SequenceView.tsx](../src/domains/sequence/SequenceView.tsx) is the full-screen
 player, routed at `/sequence/view/:id`. It flattens a Sequence's `items` into a
-single ordered list of Steps up front — a `Loop` expands into its contained
-Steps repeated `repeatCount` times, so the player itself never needs to know
-about Loops as a distinct concept during playback — and walks through that list
-one `StepView` at a time.
+single ordered list of entries up front
+([flattenPlayback.ts](../src/domains/sequence/flattenPlayback.ts)) — a `Loop`
+expands into its contained Steps repeated `repeatCount` times — and walks
+through that list one `StepView` at a time. Each entry coming from a Loop
+remembers which iteration it belongs to and the index where the whole Loop
+ends (`exitIndex`), which is all the player needs to show "Boucle · 2/4" and to
+skip the rest of the Loop.
 
 The screen is laid out top to bottom as: a header (**Back**, which exits to the
 home screen, and the Sequence's name), a progress bar of how far through the
-flattened Steps playback is, the current Step, a controls row, and an "À suivre"
-card previewing the next Step (title, plus its duration for a Countdown; hidden
-on the last Step). The controls row is **Previous** (hidden on the first Step),
-a large central button, and **Next**. Next doubles as the "skip" affordance
-described in [vision.md](vision.md) — it forces the current Step to end
-immediately, the same way a Countdown's timer elapsing or a Pause's tap does.
-The central button is pause/resume for a Countdown (the paused state lives in
-`SequenceView` and is passed down to `CountdownView`, and reset whenever the
-Step changes) and "continue" for a Pause. Passing the last Step navigates back
-to the home screen automatically, with no intermediate "sequence complete"
-screen.
+flattened Steps playback is, the current Step, its controls, and a card at the
+bottom ([UpNextCard.tsx](../src/domains/sequence/UpNextCard.tsx)). The controls
+are **Previous** (hidden on the first Step), a large central button, and
+**Next**. Next doubles as the "skip" affordance described in
+[vision.md](vision.md) — it forces the current Step to end immediately, the
+same way a Countdown's timer elapsing or a Pause's tap does. The central button
+is pause/resume for a Countdown (the paused state lives in `SequenceView` and is
+passed down to `CountdownView`, and reset whenever the Step changes) and
+"continue" for a Pause. Passing the last Step navigates back to the home screen
+automatically, with no intermediate "sequence complete" screen.
+
+The bottom card previews the next Step ("À suivre": title, plus its duration for
+a Countdown; no row on the last Step). While a Loop is playing, the card gains a
+header with the iteration ("Boucle · 2/4") and **Passer la boucle**, which jumps
+straight to the entry after the Loop (the sound plays as for any Step end; if the
+Loop was the end of the Sequence, playback finishes).
 
 The playback screen is exactly one viewport tall and never scrolls (`Page`'s
 `fullscreen` mode; only viewports shorter than 600px fall back to scrolling),
-down to an iPhone SE's 375x667. To make that hold, the "À suivre" card has a
-fixed height (its title is clamped to two lines), so the Step area above it
-never changes size from one Step to the next.
+down to an iPhone SE's 375x667. Every Step type lays itself out with
+[StepStage.tsx](../src/domains/steps/common/StepStage.tsx): a size container
+holding a `1fr / ring / 1fr` grid, with the title centered in the top row
+(between the progress bar and the ring), the ring in the middle row and the
+controls in the bottom row, starting a fixed gap under the ring. The ring row
+has the same height for a Step without a ring (`PauseView`, whose title spans
+the top two rows), so the controls sit at the same place on every Step.
 
-`CountdownView` shows a circular progress ring around an mm:ss clock, which
-freezes the ring and blinks while paused. The Step area is a size container
-laid out as a `1fr / ring / 1fr` grid: the title is centered in the top row (between the
-progress bar and the ring) and the ring sits in the middle row, so the ring never
-moves whatever the title's length.
 The ring is centered on the *screen*, not just on the Step area: since more
 chrome sits below the Step area than above it, `SequenceView` exposes the
 difference as `--stage-bias`, and the area is stretched down by that amount
-(negative bottom margin, behind the controls) so its center is the screen's
+(negative bottom margin, behind the card) so its center is the screen's
 center. The ring's diameter is the smallest of 280px, the area's width, and
-what fits between the screen's center and the controls, so it shrinks on short
-screens. Its timer is driven by comparing `Date.now()` against a recorded start time on
+what leaves room for the controls and the card below it, so it shrinks on short
+screens (to about 160px on a 375x667 screen when the Sequence contains a Loop,
+about 250px when it doesn't). The card's slot is bottom-aligned and has a fixed
+height — large enough for the Loop header whenever the Sequence has any Loop —
+so the Step area never changes size from one Step to the next, in or out of a
+Loop; outside a Loop the card simply gets shorter and leaves a gap above it.
+Below 740px of height, the controls, the card's title (one line instead of two)
+and the Step title all tighten up.
+
+`CountdownView`'s ring surrounds an mm:ss clock, which freezes the ring and
+blinks while paused. Its timer is driven by comparing `Date.now()` against a recorded start time on
 every `requestAnimationFrame` tick, rather than counting `setTimeout` firings —
 this keeps it accurate (no drift, no stalling) even if the tab is throttled in
 the background, at the cost of only updating when a frame is actually painted.
-`PauseView` fills the available space as its tap target — tapping anywhere
-advances, the same as the central "continue" button.
+`PauseView`'s title area is its tap target — tapping it advances, the same as
+the central "continue" button.
 
 `SequenceView` also holds a screen wake lock for as long as it's mounted, via
 [useWakeLock.ts](../src/domains/sequence/useWakeLock.ts): it requests one on
@@ -241,9 +257,3 @@ The Settings page is organised as titled groups of white cards, each row a
 round icon plus a label: a "Sons" group (the mute switch), a "Données" group
 (Export, Import) and, on its own, a Reset row in the action color. Rows are
 plain buttons (or, for the switch, a label), so they stack uniformly.
-
-### Not done
-
-- **Skip a Loop entirely** (per [vision.md](vision.md)) — since Loops are
-  flattened before playback starts, the player has no notion of "the current
-  loop" to skip past; Next only ever advances one Step at a time.

@@ -21,8 +21,8 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
 - **Pause / Resume**: while a Sequence is playing, the user can pause a
   Countdown Step's timer and resume it later from the same point.
 - **Skip**: a "Next" control always lets the user skip the current Step and
-  move on. Skipping *the current Loop entirely* still isn't possible — see
-  [concepts.md](concepts.md#current-implementation-status).
+  move on, and inside a Loop a "Passer la boucle" control skips the rest of the
+  Loop — see [concepts.md](concepts.md#current-implementation-status).
 - **Local persistence**: Sequence data is saved to `localStorage` on every
   change and reloaded on startup, so it survives a reload or app restart —
   see [concepts.md](concepts.md#current-implementation-status).

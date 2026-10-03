@@ -37,6 +37,7 @@ export const getUI = () => ({
   nameLabel: "Nom de la séquence",
   totalDurationLabel: "Durée totale",
   upNextLabel: "À suivre",
+  skipLoopLabel: "Passer la boucle",
   progressLabel: "Progression de la séquence",
   addStepLabel: "Ajouter",
 
@@ -52,6 +53,8 @@ export const getUI = () => ({
   defaultSequenceName: "Ma séquence",
   countdownDefaultTitle: "Compte à rebours",
   pauseDefaultTitle: "Appuyez pour continuer",
+
+  loopProgressLabel: (iteration: number, repeatCount: number) => `Boucle · ${iteration}/${repeatCount}`,
 
   durationLabel: (minutes: number, seconds: number) => {
     const parts = [];

@@ -9,12 +9,12 @@ import { getUI } from "../../data/informations";
 import { Sequence } from "../../data/sequences/sequencesSlice";
 import { selectSoundMuted } from "../../data/settings/settingsSlice";
 import { BackButton } from "../ui/components/Back/Back";
-import { durationLabel } from "../steps/common/durationLabel";
 import { StepView } from "../steps/common/StepView";
-import { flattenSequenceItems } from "./flattenSequenceItems";
+import { flattenPlayback } from "./flattenPlayback";
 import { NextButton } from "./NextButton";
 import { playStepEndSound, unlockStepEndSound } from "./playStepEndSound";
 import { PreviousButton } from "./PreviousButton";
+import { UpNextCard } from "./UpNextCard";
 import { useWakeLock } from "./useWakeLock";
 
 import components from "../../styles/Components.module.scss";
@@ -29,15 +29,16 @@ export const SequenceView = ({ sequence }: Props) => {
   const [paused, setPaused] = useState(false);
   const navigate = useNavigate();
   const soundMuted = useSelector(selectSoundMuted);
-  const { pause: pauseLabel, resume: resumeLabel, next: nextLabel, progressLabel, upNextLabel } = getUI();
+  const { pause: pauseLabel, resume: resumeLabel, next: nextLabel, progressLabel } = getUI();
 
   useWakeLock();
 
   useEffect(unlockStepEndSound, []);
 
-  const steps = sequence ? flattenSequenceItems(sequence.items) : [];
-  const step = steps[index];
-  const nextStep = steps[index + 1];
+  const entries = sequence ? flattenPlayback(sequence.items) : [];
+  const entry = entries[index];
+  const step = entry?.step;
+  const nextStep = entries[index + 1]?.step;
 
   useEffect(() => {
     if (sequence && !step) {
@@ -49,22 +50,25 @@ export const SequenceView = ({ sequence }: Props) => {
     return null;
   }
 
-  const goToNext = () => {
+  const goTo = (target: (i: number) => number) => {
     if (!soundMuted) {
       playStepEndSound();
     }
     setPaused(false);
-    setIndex((i) => i + 1);
+    setIndex(target);
   };
+  const goToNext = () => goTo((i) => i + 1);
+  const skipLoop = () => entry.loop && goTo(() => entry.loop!.exitIndex);
   const goToPrevious = () => {
     setPaused(false);
     setIndex((i) => i - 1);
   };
 
-  const progress = Math.round(((index + 1) / steps.length) * 100);
+  const progress = Math.round(((index + 1) / entries.length) * 100);
+  const hasLoop = entries.some((e) => e.loop);
 
   return (
-    <div className={styles.view} onPointerDown={unlockStepEndSound}>
+    <div className={classNames(styles.view, hasLoop && styles.withLoop)} onPointerDown={unlockStepEndSound}>
       <div className={styles.header}>
         <BackButton />
         <div className={styles.sequenceName}>{sequence.name}</div>
@@ -82,37 +86,29 @@ export const SequenceView = ({ sequence }: Props) => {
         <div className={styles.progressBar} style={{ width: `${progress}%` }} />
       </div>
 
-      <StepView key={index} step={step} paused={paused} onDone={goToNext} />
+      <StepView key={index} step={step} paused={paused} onDone={goToNext}>
+        <div className={styles.controls}>
+          {index > 0 ? <PreviousButton onClick={goToPrevious} /> : <span className={styles.sideSpacer} />}
+          {step.type === "countdown" ? (
+            <button
+              type="button"
+              className={components.actionLarge}
+              onClick={() => setPaused((p) => !p)}
+              aria-label={paused ? resumeLabel : pauseLabel}
+            >
+              {paused ? <PlayArrowIcon /> : <PauseIcon />}
+            </button>
+          ) : (
+            <button type="button" className={components.actionLarge} onClick={goToNext} aria-label={nextLabel}>
+              <SkipNextIcon />
+            </button>
+          )}
+          <NextButton onClick={goToNext} />
+        </div>
+      </StepView>
 
-      <div className={styles.controls}>
-        {index > 0 ? <PreviousButton onClick={goToPrevious} /> : <span className={styles.sideSpacer} />}
-        {step.type === "countdown" ? (
-          <button
-            type="button"
-            className={components.actionLarge}
-            onClick={() => setPaused((p) => !p)}
-            aria-label={paused ? resumeLabel : pauseLabel}
-          >
-            {paused ? <PlayArrowIcon /> : <PauseIcon />}
-          </button>
-        ) : (
-          <button type="button" className={components.actionLarge} onClick={goToNext} aria-label={nextLabel}>
-            <SkipNextIcon />
-          </button>
-        )}
-        <NextButton onClick={goToNext} />
-      </div>
-
-      <div className={classNames(styles.upNext, !nextStep && styles.upNextHidden)}>
-        {nextStep && (
-          <>
-            <div className={styles.upNextText}>
-              <div className={styles.upNextLabel}>{upNextLabel}</div>
-              <div className={styles.upNextTitle}>{nextStep.title}</div>
-            </div>
-            {nextStep.type === "countdown" && <div className={styles.chip}>{durationLabel(nextStep.duration)}</div>}
-          </>
-        )}
+      <div className={styles.cardSlot}>
+        <UpNextCard nextStep={nextStep} loop={entry.loop} onSkipLoop={skipLoop} />
       </div>
     </div>
   );
