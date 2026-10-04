@@ -1,10 +1,12 @@
-import { RefObject, useState } from "react";
+import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { getUI } from "../../../data/informations";
 import { SequenceItem, isLoop } from "../../../data/sequences/sequencesSlice";
 import { ConfirmDialog } from "../../ui/components/ConfirmDialog/ConfirmDialog";
+import { animateTransform } from "../../ui/sortableList/animateTransform";
+import { layoutTop } from "../../ui/sortableList/layoutTop";
 import { SortableList } from "../../ui/sortableList/SortableList";
 import { SortableItem } from "../../ui/sortableList/SortableItem";
-import { SortableEntry } from "../../ui/sortableList/useSortableList";
+import { DroppedGeometry, IncomingRow, SortableEntry } from "../../ui/sortableList/useSortableList";
 import { CountdownButton } from "../countdown/CountdownButton";
 import { CountdownPreview } from "../countdown/CountdownPreview";
 import { CountdownPreviewEdit } from "../countdown/CountdownPreviewEdit";
@@ -28,16 +30,34 @@ type Props = {
   // that envelope's bounds, and onEscapeItem is called (with the item already removed from
   // `items`) once a drag carries it past those bounds — the caller decides where it goes.
   containerRef?: RefObject<Element | null>;
-  onEscapeItem?: (item: SequenceItem) => void;
+  onEscapeItem?: (item: SequenceItem, clientY: number, dropped: DroppedGeometry) => void;
+  onEscapePointer?: (clientY: number | null) => void;
 };
 
 // Renders a reorderable, editable list of Steps (and, when allowLoop, Loops). Used both for a
 // Sequence's own top-level items and, nested, for a Loop's own steps. Steps move in/out of a
 // Loop by being dragged onto it (allowLoop lists only) or dragged past its envelope bounds
 // (nested lists only) — see docs/drag-reorder.md.
-export const StepList = ({ items, onChange, allowLoop = false, containerRef, onEscapeItem }: Props) => {
+export const StepList = ({ items, onChange, allowLoop = false, containerRef, onEscapeItem, onEscapePointer }: Props) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [escapeDropIndex, setEscapeDropIndex] = useState<number | null>(null);
+  const incomingRef = useRef<IncomingRow | null>(null);
+
+  // Read during render, before React updates the DOM, so the add row can slide from its old position.
+  const addRowRef = useRef<HTMLDivElement>(null);
+  const previousItems = useRef(items);
+  const previousAddRowTop = addRowRef.current ? addRowRef.current.getBoundingClientRect().top + window.scrollY : null;
+  useLayoutEffect(() => {
+    const addRow = addRowRef.current;
+    if (addRow && previousAddRowTop !== null && previousItems.current !== items) {
+      const offset = previousAddRowTop - layoutTop(addRow);
+      if (Math.abs(offset) > 0.5) {
+        animateTransform(addRow, `translateY(${offset}px)`);
+      }
+    }
+    previousItems.current = items;
+  });
   const { addStepLabel, confirmDeleteTitle } = getUI();
 
   const addItem = (item: SequenceItem) => {
@@ -76,12 +96,13 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
           onChange={updateItem}
           edgeAction={entry.edgeAction}
           isHovered={entry.isHovered}
-          onEscapeStep={(step) => {
+          onEscapeHover={setEscapeDropIndex}
+          onEscapeStep={(step, index, dropped) => {
+            incomingRef.current = { id: step.id, ...dropped };
             const loopIndex = items.findIndex((i) => i.id === item.id);
-            const updatedLoop = { ...item, steps: item.steps.filter((s) => s.id !== step.id) };
             const next = [...items];
-            next[loopIndex] = updatedLoop;
-            next.splice(loopIndex + 1, 0, step);
+            next[loopIndex] = { ...item, steps: item.steps.filter((s) => s.id !== step.id) };
+            next.splice(index, 0, step);
             onChange(next);
           }}
         />
@@ -136,16 +157,19 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
             : undefined
         }
         containerRef={containerRef}
+        onEscapePointer={onEscapePointer}
+        externalDropIndex={escapeDropIndex}
+        incomingRef={incomingRef}
         onEscapeContainer={
           onEscapeItem
-            ? (id) => {
+            ? (id, clientY, dropped) => {
                 const item = items.find((i) => i.id === id);
                 if (!item) {
                   return false;
                 }
                 onChange(items.filter((i) => i.id !== id));
                 setEditingId((current) => (current === id ? null : current));
-                onEscapeItem(item);
+                onEscapeItem(item, clientY, dropped);
                 return true;
               }
             : undefined
@@ -173,7 +197,7 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
       {/* A Loop's own nested list (identified by containerRef being set) has no add row —
           Steps only ever arrive there by being dragged in. */}
       {!containerRef && (
-        <div className={styles.addStepRow}>
+        <div ref={addRowRef} className={styles.addStepRow}>
           <span>{addStepLabel}</span>
           <CountdownButton onClick={() => addItem(emptyStep("countdown"))} />
           <PauseButton onClick={() => addItem(emptyStep("pause"))} />

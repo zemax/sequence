@@ -24,6 +24,9 @@ export const SortableList = <T,>({
   onDropInto,
   containerRef,
   onEscapeContainer,
+  onEscapePointer,
+  externalDropIndex,
+  incomingRef,
   className,
   children,
 }: Props<T>) => {
@@ -37,6 +40,9 @@ export const SortableList = <T,>({
     onDropInto,
     containerRef,
     onEscapeContainer,
+    onEscapePointer,
+    externalDropIndex,
+    incomingRef,
   });
 
   return (

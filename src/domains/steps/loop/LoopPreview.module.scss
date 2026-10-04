@@ -18,6 +18,22 @@
   border-color: settings.$color-action;
 }
 
+.loopEscaping {
+  border-style: dashed;
+  border-color: settings.$color-action;
+}
+
+.insertBar {
+  position: absolute;
+  left: settings.gap(0.75);
+  right: settings.gap(0.75);
+  bottom: 4px;
+
+  height: 4px;
+  border-radius: 2px;
+  background-color: settings.$color-action;
+}
+
 .header {
   display: flex;
   align-items: center;

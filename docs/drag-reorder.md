@@ -17,7 +17,10 @@ library — built directly on Pointer Events.
   to flat when movement stops — a "natural" pick-up feel rather than a rigid
   ghost image.
 - **A drop indicator shows where it will land**, and only appears when dropping
-  now would actually change the order.
+  now would actually change the order. The position is read from the rows
+  themselves — the number of other rows whose middle is above the pointer — not
+  from a fixed slot height, because rows can have very different heights (a Loop
+  is far taller than a Step).
 - **Releasing settles the item smoothly** into its final position — from
   wherever it currently is, not from a snap-back to its original slot — while
   other items slide into their new places (a FLIP animation). Releasing without
@@ -140,14 +143,50 @@ dragged into or out of a Loop in [StepList](../src/domains/steps/common/StepList
   `StepList` (the one rendering its `steps`) passes the Loop's own envelope
   `<div>` as `containerRef`; once a drag's pointer crosses outside that
   rect, `escapedContainer` is armed, and releasing calls
-  `onEscapeContainer(id)` — StepList's handler removes the Step from the
-  Loop and re-inserts it into the parent list right after the Loop. Same
+  `onEscapeContainer(id, clientY)` — StepList's handler removes the Step from
+  the Loop and inserts it into the parent list at the position given by the
+  pointer's `clientY` (above, below or between any of the parent's rows, the
+  Loop included), computed the same way as a normal drop position. Same
   `boolean` contract as the other two: `false` means decline and fall
   through to a normal reorder/settle.
+
+While dragging, each of these shows where the item will land, and only one
+cue is shown at a time. Hovering a drop target (`entry.isHovered`) makes
+[LoopPreview](../src/domains/steps/loop/LoopPreview.tsx) highlight the Loop and
+draw a bar at the end of its list, and the list hides its own reorder indicator.
+Escaping a container is reported through `onEscapePointer(clientY | null)` on
+every move outside it: the Loop's border turns dashed, the nested list hides its
+own reorder indicator, and the parent list shows its regular drop indicator at
+the landing position (`externalDropIndex`) until the pointer comes back inside.
 
 Both checks run in `onPointerUp` alongside `onEdgeAction`, in the order
 edge action → drop-into → escape-container → plain reorder — the first one
 that returns `true` wins, and none of them fire while not dragging.
+
+When rows move after a drop (reorder, a Step entering or leaving a Loop), they
+slide from their previous position. Two details keep that start position right:
+
+- It is the position of the row's visible block, not of its `<li>`: the drop
+  indicator lives inside the `<li>`, above the block, so using the `<li>` made a
+  row that had just been the drop target start 12px too high.
+- It is measured relative to the list itself, not to the page. When a Step
+  leaves a Loop and lands above it, the whole Loop moves down; a nested list
+  measuring against the page would see its rows move too and compensate for it a
+  second time, on top of the Loop's own slide, so its remaining Steps would start
+  far too high.
+
+A Step released outside its Loop is a new row in the parent list, so it would
+appear instantly in its final slot while the Loop, still at its previous
+position, slides down underneath it. Instead the nested list hands the parent
+where the row was released (`DroppedGeometry`, through `incomingRef`), and the
+parent slides the new row from there to its slot, lifted above the other rows,
+like a normal reorder.
+
+A Loop also animates its own height when a Step is added to or removed from it,
+so the rows below it don't jump. The "Ajouter" row under the list is not a
+sortable row, so `StepList` slides it the same way when the list changes: it
+reads where the row is during render (before React updates the DOM) and eases it
+from there.
 
 One consequence of nesting a `SortableList` inside another list's item (a
 Loop's body sits inside the outer list's `<li>`): a `pointerdown` on a row of

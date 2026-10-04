@@ -9,15 +9,20 @@ import {
 } from "react";
 import classNames from "classnames";
 
+import { REORDER_TRANSITION_MS, animateTransform } from "./animateTransform";
+import { layoutTop } from "./layoutTop";
+
 import styles from "./SortableList.module.scss";
 
 const MAX_TILT = 10;
 const TILT_FACTOR = 1.2;
 const TILT_LERP = 0.25;
-const REORDER_TRANSITION_MS = 250;
 const DRAG_ACTIVATION_PX = 20;
 
 export type SortableEdge = "left" | "right";
+
+export type DroppedGeometry = { top: number; left: number; tilt: number };
+export type IncomingRow = DroppedGeometry & { id: string };
 
 // "hold": the item stays where it was dropped until the `holdId` option stops naming it.
 export type EdgeActionResult = boolean | "hold";
@@ -26,7 +31,7 @@ type DragState = {
   id: string;
   startX: number;
   startY: number;
-  slotHeight: number;
+  lastY: number;
   originalIndex: number;
   dropIndex: number;
   offsetX: number;
@@ -88,7 +93,10 @@ export type SortableListOptions<T> = {
   // list's own bounds) — e.g. a Loop's own nested list uses this to eject a Step dragged out
   // past the Loop's envelope. Checked after edgeAction, before a normal reorder.
   containerRef?: RefObject<Element | null>;
-  onEscapeContainer?: (id: string) => boolean;
+  onEscapeContainer?: (id: string, clientY: number, dropped: DroppedGeometry) => boolean;
+  incomingRef?: RefObject<IncomingRow | null>;
+  onEscapePointer?: (clientY: number | null) => void;
+  externalDropIndex?: number | null;
 };
 
 export type SortableEntry = {
@@ -115,6 +123,9 @@ export const useSortableList = <T,>(
     onDropInto,
     containerRef,
     onEscapeContainer,
+    onEscapePointer,
+    externalDropIndex = null,
+    incomingRef,
   }: SortableListOptions<T> = {},
 ) => {
   const [dragId, setDragId] = useState<string | null>(null);
@@ -126,6 +137,7 @@ export const useSortableList = <T,>(
   const [edgeAction, setEdgeAction] = useState<SortableEdge | null>(null);
   const [hoveredTargetId, setHoveredTargetId] = useState<string | null>(null);
   const [held, setHeld] = useState<HeldItem | null>(null);
+  const [escaped, setEscaped] = useState(false);
 
   const dragState = useRef<DragState | null>(null);
   const elevationTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -143,24 +155,11 @@ export const useSortableList = <T,>(
   const rowPositions = useRef(new Map<string, number>());
   const pendingCardSettle = useRef<PendingCardSettle | null>(null);
 
-  // Page coordinates. layoutTop ignores transforms; visualTop includes them (a just-dropped row
-  // is still where the pointer left it).
-  const layoutTop = (row: HTMLElement) => {
-    let top = 0;
-    for (let node: HTMLElement | null = row; node; node = node.offsetParent as HTMLElement | null) {
-      top += node.offsetTop;
-    }
-    return top;
-  };
-  const visualTop = (row: HTMLElement) => row.getBoundingClientRect().top + window.scrollY;
-
-  const animateTransform = (el: HTMLElement, fromTransform: string) => {
-    el.style.transition = "none";
-    el.style.transform = fromTransform;
-    el.getBoundingClientRect(); // force the browser to commit the starting transform first
-    el.style.transition = `transform ${REORDER_TRANSITION_MS}ms ease`;
-    el.style.transform = "";
-  };
+  // Relative to the list: a nested list must not see its parent move, or it compensates it twice.
+  // Measured on the visible block, not the <li>: the drop indicator sits inside the <li>.
+  const listTop = (row: HTMLElement) => layoutTop(row.parentElement as HTMLElement);
+  const blockTop = (id: string, row: HTMLElement) => layoutTop(itemRefs.current.get(id) ?? row) - listTop(row);
+  const visualTop = (row: HTMLElement) => row.getBoundingClientRect().top + window.scrollY - listTop(row);
 
   const scheduleElevationClear = () => {
     clearTimeout(elevationTimeout.current);
@@ -171,8 +170,24 @@ export const useSortableList = <T,>(
   // instead of applied immediately on drop — doing it before the move cuts it short.
   useLayoutEffect(() => {
     rowRefs.current.forEach((row, id) => {
-      const newTop = layoutTop(row);
+      const newTop = blockTop(id, row);
       const pending = pendingCardSettle.current;
+      const incoming = incomingRef?.current;
+
+      if (incoming && incoming.id === id) {
+        const rect = row.getBoundingClientRect();
+        animateTransform(row, `translate(${incoming.left - rect.left}px, ${incoming.top - rect.top}px)`);
+        const item = itemRefs.current.get(id);
+        if (item) {
+          animateTransform(item, `rotate(${incoming.tilt}deg)`);
+        }
+        setElevatedId(id);
+        scheduleElevationClear();
+
+        (incomingRef as { current: IncomingRow | null }).current = null;
+        rowPositions.current.set(id, newTop);
+        return;
+      }
 
       if (pending && pending.id === id) {
         const previousTop = rowPositions.current.get(id) ?? newTop;
@@ -206,7 +221,7 @@ export const useSortableList = <T,>(
 
   const recordRowPositions = () => {
     rowRefs.current.forEach((row, id) => {
-      rowPositions.current.set(id, layoutTop(row));
+      rowPositions.current.set(id, blockTop(id, row));
     });
   };
 
@@ -283,6 +298,10 @@ export const useSortableList = <T,>(
       rafId.current = null;
     }
 
+    if (dragState.current?.escapedContainer) {
+      onEscapePointer?.(null);
+    }
+    setEscaped(false);
     dragState.current = null;
     setDragId(null);
     setDragOriginalIndex(null);
@@ -304,8 +323,17 @@ export const useSortableList = <T,>(
     setDragOffset({ x: drag.offsetX, y: drag.offsetY });
     pointerX.current = e.clientX;
 
-    const slotOffset = Math.round((e.clientY - drag.startY) / drag.slotHeight);
-    const nextDropIndex = Math.max(0, Math.min(items.length - 1, drag.originalIndex + slotOffset));
+    drag.lastY = e.clientY;
+
+    // Read from the rows: they have different heights (a Loop is far taller than a Step).
+    let nextDropIndex = 0;
+    for (const item of items) {
+      const otherId = getId(item);
+      const rect = otherId !== drag.id ? rowRefs.current.get(otherId)?.getBoundingClientRect() : undefined;
+      if (rect && e.clientY > rect.top + rect.height / 2) {
+        nextDropIndex++;
+      }
+    }
     drag.dropIndex = nextDropIndex;
     setDropIndex(nextDropIndex);
 
@@ -342,10 +370,24 @@ export const useSortableList = <T,>(
 
     if (containerRef) {
       const containerRect = containerRef.current?.getBoundingClientRect();
-      drag.escapedContainer = containerRect
+      const nowEscaped = containerRect
         ? e.clientX < containerRect.left || e.clientX > containerRect.right || e.clientY < containerRect.top || e.clientY > containerRect.bottom
         : false;
+      if (nowEscaped) {
+        onEscapePointer?.(e.clientY);
+      } else if (drag.escapedContainer) {
+        onEscapePointer?.(null);
+      }
+      if (nowEscaped !== drag.escapedContainer) {
+        setEscaped(nowEscaped);
+      }
+      drag.escapedContainer = nowEscaped;
     }
+  };
+
+  const droppedGeometry = (drag: DragState): DroppedGeometry => {
+    const rect = rowRefs.current.get(drag.id)?.getBoundingClientRect();
+    return { top: rect?.top ?? 0, left: rect?.left ?? 0, tilt: drag.tilt };
   };
 
   const onPointerUp = () => {
@@ -361,7 +403,7 @@ export const useSortableList = <T,>(
       const handled =
         edgeResult !== false ||
         (drag.hoveredTargetId !== null && (onDropInto?.(drag.id, drag.hoveredTargetId) ?? false)) ||
-        (drag.escapedContainer && (onEscapeContainer?.(drag.id) ?? false));
+        (drag.escapedContainer && (onEscapeContainer?.(drag.id, drag.lastY, droppedGeometry(drag)) ?? false));
 
       if (!handled) {
         if (drag.dropIndex !== drag.originalIndex) {
@@ -405,14 +447,12 @@ export const useSortableList = <T,>(
     if (item) {
       item.style.transition = "none";
     }
-    const rect = row.getBoundingClientRect();
-    const marginBottom = parseFloat(getComputedStyle(row).marginBottom || "0");
 
     dragState.current = {
       id,
       startX,
       startY,
-      slotHeight: rect.height + marginBottom,
+      lastY: startY,
       originalIndex: index,
       dropIndex: index,
       offsetX: 0,
@@ -493,12 +533,13 @@ export const useSortableList = <T,>(
   };
 
   // onReorder removes then re-inserts, so a forward move shifts the visual anchor by one.
-  const indicatorIndex =
-    dragId !== null && dropIndex !== null && dragOriginalIndex !== null && dropIndex !== dragOriginalIndex
+  const ownIndicatorIndex =
+    dragId !== null && hoveredTargetId === null && !escaped && dropIndex !== null && dragOriginalIndex !== null && dropIndex !== dragOriginalIndex
       ? dropIndex >= dragOriginalIndex
         ? dropIndex + 1
         : dropIndex
       : null;
+  const indicatorIndex = externalDropIndex ?? ownIndicatorIndex;
 
   const getItemProps = (item: T, index: number): SortableEntry => {
     const id = getId(item);

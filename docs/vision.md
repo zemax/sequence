@@ -46,19 +46,23 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   120 ms each), by transparency — see
   [concepts.md](concepts.md#current-implementation-status).
 
+- **Clear drag cues around Loops**: while a Step is dragged, a single cue shows
+  where it lands — the Loop highlighted with an insertion bar when dropping into
+  it, a dashed Loop with a bar below it when taking the Step out — see
+  [drag-reorder.md](drag-reorder.md).
+
 ## Desired features
 
-- **Look into a native duration picker**: check whether a duration selector
-  built into the browser could replace the plain number input (in seconds) used
-  today, and whether it is good enough on phones, where the app is meant to run.
+- **Look into a better duration picker**: the plain number input (in seconds)
+  stays for now. A native control was investigated and ruled out: browsers have
+  no duration control (`type="duration"` does not exist), and `type="time"` is a
+  time of day, shown as AM/PM depending on the device locale, whose phone pickers
+  (iOS, Android) only offer hours and minutes, losing the seconds the app needs.
 - **Delete by dragging to a "Supprimer" zone at the top**: instead of dragging
   an item to the right edge of the screen, a "Supprimer" zone would appear at the
   top of the screen while an item is being dragged, and dropping the item on it
   would delete it (confirmation included), like removing an icon on Android.
   This would replace the current right-edge deletion for Sequences and Steps.
-- **Better visual cues while dragging Steps**: make it clearer where a dragged
-  Step will land — in particular around Loops: dropping it into a Loop, between
-  two of its Steps, or back out of the Loop into the Sequence.
 
 ## Non-goals
 
