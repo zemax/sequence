@@ -6,7 +6,6 @@
   font-size: 1.75rem;
   letter-spacing: -0.01em;
 
-  // Short screens (iPhone SE and below): a smaller title keeps three lines clear of the ring.
   @media (max-height: 740px) {
     font-size: 1.5rem;
   }

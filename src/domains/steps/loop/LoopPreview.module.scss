@@ -70,8 +70,7 @@
   color: settings.$color-text;
 }
 
-// Each Step row already carries its own margin-bottom (see SortableList.module.scss); the
-// last one's is cancelled so the container's own padding is the only space under the list.
+// Rows carry their own margin-bottom; the last one's is cancelled so the container padding is the only gap.
 .body {
   margin-top: settings.gap(0.5);
 
@@ -84,7 +83,6 @@
   }
 }
 
-// A permanently visible drop zone, so an empty Loop still shows where Steps can be dropped.
 .bodyEmpty {
   min-height: 56px;
 

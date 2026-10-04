@@ -32,8 +32,7 @@ function webManifest(): Plugin {
         icons: [
           { src: `${basePath}/favicons/android-chrome-192x192.png`, sizes: "192x192", type: "image/png" },
           { src: `${basePath}/favicons/android-chrome-512x512.png`, sizes: "512x512", type: "image/png" },
-          // Full-bleed squares (no rounded corners) for Android's adaptive-icon masks; the content
-          // stays inside the central safe zone, so any mask shape leaves the icon edge to edge.
+          // Full-bleed squares for Android's adaptive-icon masks.
           { src: `${basePath}/favicons/maskable-192x192.png`, sizes: "192x192", type: "image/png", purpose: "maskable" },
           { src: `${basePath}/favicons/maskable-512x512.png`, sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],

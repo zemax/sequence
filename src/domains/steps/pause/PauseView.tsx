@@ -10,7 +10,6 @@ type Props = {
   children: ReactNode;
 };
 
-// The title area is the tap target; the controls under it work on their own.
 export const PauseView = ({ step, onDone, children }: Props) => (
   <StepStage
     title={

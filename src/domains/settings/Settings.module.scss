@@ -4,7 +4,6 @@
   margin-top: settings.gap(1.5);
 }
 
-// Small caps label above a card, like the "À suivre" label of the playback screen.
 h2.groupTitle {
   margin: 0 0 settings.gap(0.5) settings.gap(0.25);
 
@@ -24,7 +23,6 @@ h2.groupTitle {
   box-shadow: settings.$light-box-shadow;
 }
 
-// Either a <button> or a <label> wrapping a switch: same look, so rows stack uniformly.
 .row {
   display: flex;
   align-items: center;
@@ -55,7 +53,6 @@ h2.groupTitle {
   }
 }
 
-// A row holding a control of its own (not a single tap target): same padding as .row.
 .sliderRow {
   padding: 10px 16px 10px 12px;
 

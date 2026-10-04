@@ -19,9 +19,7 @@ const DRAG_ACTIVATION_PX = 20;
 
 export type SortableEdge = "left" | "right";
 
-// What an edge action decided: `true` — the item is gone, nothing left to animate; `false` —
-// declined; "hold" — the item stays exactly where it was dropped (offset, tilt, delete feedback)
-// until the list's `holdId` option stops naming it, then it settles back (or is simply gone).
+// "hold": the item stays where it was dropped until the `holdId` option stops naming it.
 export type EdgeActionResult = boolean | "hold";
 
 type DragState = {
@@ -80,7 +78,6 @@ export type SortableListOptions<T> = {
   paddingY?: number;
   edgeActionThreshold?: number;
   onEdgeAction?: (id: string, edge: SortableEdge) => EdgeActionResult;
-  // The id of the item a "hold" edge action is waiting on (e.g. while a confirmation is open).
   holdId?: string | null;
   // Lets other rows in the same list act as drop targets — e.g. dragging a Step onto a Loop
   // row nests it there instead of just reordering. Checked after edgeAction, before a normal
@@ -146,9 +143,8 @@ export const useSortableList = <T,>(
   const rowPositions = useRef(new Map<string, number>());
   const pendingCardSettle = useRef<PendingCardSettle | null>(null);
 
-  // Page coordinates, so scrolling between two renders isn't mistaken for a row moving.
-  // layoutTop ignores transforms (a row mid-animation still reports where it belongs);
-  // visualTop includes them (a row just dropped is still where the pointer left it).
+  // Page coordinates. layoutTop ignores transforms; visualTop includes them (a just-dropped row
+  // is still where the pointer left it).
   const layoutTop = (row: HTMLElement) => {
     let top = 0;
     for (let node: HTMLElement | null = row; node; node = node.offsetParent as HTMLElement | null) {
@@ -203,10 +199,8 @@ export const useSortableList = <T,>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
-  // A row can change size without this list rendering at all — a Loop's own nested list
-  // expanding one of its Steps into its edit form grows the Loop's row, and pushes every row
-  // below it down. Re-record every position whenever any row's size changes, so the FLIP never
-  // compares against positions from before such a shift.
+  // A row can resize without this list rendering (a Loop's nested list expanding a Step):
+  // re-record positions whenever any row resizes, or the FLIP compares against stale ones.
   const resizeObserver = useRef<ResizeObserver | null>(null);
   const observedRows = useRef(new WeakSet<HTMLElement>());
 
@@ -225,8 +219,7 @@ export const useSortableList = <T,>(
     observedRows.current.add(row);
   };
 
-  // Also (re)observes the rows already mounted: development's double-invoked effects disconnect
-  // the observer without re-running the refs.
+  // Re-observes mounted rows: dev's double-invoked effects disconnect without re-running refs.
   useLayoutEffect(() => {
     rowRefs.current.forEach(observeRow);
 
@@ -238,10 +231,8 @@ export const useSortableList = <T,>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // The FLIP above compares against the positions of the previous render. They have to be
-  // recorded after every render, not just when `items` changes: otherwise a layout shift that
-  // isn't a reorder (a row expanding into its edit form) leaves them stale, and the next edit
-  // is mistaken for a move — the rows below jump to their old spot, then slide back.
+  // Recorded after every render: a layout shift that isn't a reorder (a row expanding into its
+  // edit form) would otherwise be mistaken for a move on the next edit.
   useLayoutEffect(recordRowPositions);
 
   const settleDraggedItemInPlace = (id: string, offsetX: number, offsetY: number, itemTilt: number) => {
@@ -256,8 +247,7 @@ export const useSortableList = <T,>(
     scheduleElevationClear();
   };
 
-  // A held item goes back to its slot as soon as nothing is waiting on it any more (a cancelled
-  // confirmation). If it was removed meanwhile there is no row left and this only clears state.
+  // Release a held item once nothing waits on it: it settles back, or is already gone.
   useLayoutEffect(() => {
     if (held && holdId !== held.id) {
       settleDraggedItemInPlace(held.id, held.offsetX, held.offsetY, held.tilt);
@@ -517,7 +507,6 @@ export const useSortableList = <T,>(
     const isElevated = id === elevatedId;
 
     return {
-      // A held item keeps looking dragged — same lift, offset, tilt and delete feedback.
       isDragging: isDragging || isHeld,
       isHovered: !isDragging && !isHeld && id === hoveredTargetId,
       showDropIndicatorBefore: indicatorIndex === index,

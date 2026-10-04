@@ -13,8 +13,7 @@ $tick-size: 12px;
   pointer-events: none;
 }
 
-// The hit area: tall enough for a finger, with the horizontal inset of half a thumb so the
-// thumb at either end stays inside it. Dragging sideways is ours; vertical scroll still works.
+// Inset of half a thumb keeps the thumb inside the hit area at either end; vertical scroll still works.
 .control {
   display: flex;
   align-items: center;

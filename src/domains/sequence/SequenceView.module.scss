@@ -1,8 +1,6 @@
 @use "/src/styles/settings";
 
 .view {
-  // Sizes shared with the Step area and the bottom card; see StepStage.module.scss and
-  // docs/concepts.md (Playback) for how they fix the ring's size and position.
   --controls-gap: 28px;
   --controls-height: 76px;
   --upnext-height: 80px;
@@ -10,9 +8,7 @@
   --loop-row-height: 44px;
   --card-slot: var(--upnext-height);
 
-  // Space taken above and below the Step area, from the screen's edges (page padding included).
-  // Their difference is how far the Step area's own center sits above the screen's center — the
-  // Step area cancels it so its ring lands on the screen's exact vertical center.
+  // --stage-bias: how far the Step area's center sits above the screen's center (see StepStage).
   --chrome-top: calc(#{settings.gap(1.25)} + 48px + #{settings.gap()} + 6px);
   --chrome-bottom: calc(var(--card-slot) + #{settings.gap(0.75)} + #{settings.gap(0.75)} + #{settings.gap(1.25)});
   --stage-bias: max(0px, calc(var(--chrome-bottom) - var(--chrome-top)));
@@ -25,13 +21,11 @@
   padding-bottom: settings.gap(0.75);
 }
 
-// The card slot always has room for the loop header when the Sequence has a Loop, so the Step
-// area never changes size from one Step to the next, in or out of a Loop.
+// Reserves room for the loop header, so the Step area keeps its size in and out of a Loop.
 .withLoop {
   --card-slot: calc(var(--upnext-height) + var(--loop-row-height));
 }
 
-// Short screens (iPhone SE and below): everything below the ring tightens up.
 @media (max-height: 740px) {
   .view {
     --controls-gap: 20px;
@@ -106,7 +100,6 @@
   height: 1px;
 }
 
-// Bottom-aligned, so a card without a loop header shrinks upward and leaves the gap above it.
 .cardSlot {
   display: flex;
   align-items: flex-end;

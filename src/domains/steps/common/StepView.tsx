@@ -7,7 +7,6 @@ type Props = {
   step: Step;
   paused: boolean;
   onDone: () => void;
-  // The playback controls, laid out by the Step's own stage right under its ring.
   children: ReactNode;
 };
 

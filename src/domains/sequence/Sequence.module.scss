@@ -90,7 +90,6 @@ input.nameInput {
   justify-content: flex-start;
   gap: 6px;
 
-  // Right padding keeps the text clear of the play button laid over the card's right edge.
   padding: 18px 90px 18px 20px;
 
   color: inherit;
@@ -120,8 +119,7 @@ input.nameInput {
   }
 }
 
-// Stretches the title link's click area over the whole card; the play button, later in the
-// DOM, paints above it.
+// Stretches the title link over the whole card; the play button, later in the DOM, paints above it.
 .cardTitle::after {
   content: "";
 

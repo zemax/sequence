@@ -19,8 +19,7 @@ const stopPropagation = (e: MouseEvent) => e.stopPropagation();
 export const CountdownPreviewEdit = ({ step, onChange, edgeAction, onClick }: Props) => {
   const { stepTitleLabel, stepDurationLabel } = getUI();
 
-  // The field's own text, apart from step.duration: a controlled number input bound straight to
-  // the number turns an emptied field back into "0", which then can't be deleted.
+  // Own text state: binding the input to the number turns an emptied field back into 0.
   const [durationText, setDurationText] = useState(String(step.duration));
 
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {

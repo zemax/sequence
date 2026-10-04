@@ -58,7 +58,6 @@
   }
 }
 
-// Outlined, translucent round button for secondary controls (back, settings, previous, next).
 .ghost {
   @extend .round;
 
@@ -82,7 +81,6 @@
   height: icons.$icon-size;
 }
 
-// The one accent-colored control of a screen (play, pause/resume, save).
 .action {
   @extend .round;
 
@@ -106,7 +104,6 @@
   }
 }
 
-// Pill-shaped button carrying a label next to its icon.
 .extended {
   @extend .round;
 

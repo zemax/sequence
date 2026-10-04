@@ -13,8 +13,6 @@ type Props = {
   onSkipLoop: () => void;
 };
 
-// The card at the bottom of the player: inside a Loop, its header shows which iteration is
-// playing and lets the user skip the rest of the Loop; below it, the Step coming next.
 export const UpNextCard = ({ nextStep, loop, onSkipLoop }: Props) => {
   const { upNextLabel, skipLoopLabel, loopProgressLabel } = getUI();
 

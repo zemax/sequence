@@ -21,9 +21,6 @@ type Props = {
   isHovered?: boolean;
 };
 
-// A Loop is always fully expanded — its body is a permanent drop target (see StepList), not
-// something to collapse. repeatCount is edited with a stepper in the header; Steps only ever
-// arrive in the body by being dragged in, so there's no add row.
 export const LoopPreview = ({ loop, onChange, onEscapeStep, edgeAction, isHovered }: Props) => {
   const envelopeRef = useRef<HTMLDivElement>(null);
   const { loopRepeatCountLabel, loopRepeatLessLabel, loopRepeatMoreLabel } = getUI();

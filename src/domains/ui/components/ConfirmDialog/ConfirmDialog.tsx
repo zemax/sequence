@@ -8,14 +8,11 @@ import styles from "./ConfirmDialog.module.scss";
 
 type Props = {
   title: string;
-  // Optional explanation shown under the title.
   message?: string;
   onConfirm: () => void;
   onCancel: () => void;
 };
 
-// A small question dialog ("Supprimer ?", "Réinitialiser ?"…): X cancels, check confirms. Escape or a
-// tap on the backdrop cancels too.
 export const ConfirmDialog = ({ title, message, onConfirm, onCancel }: Props) => {
   const { cancel, confirm } = getUI();
   const cancelRef = useRef<HTMLButtonElement>(null);

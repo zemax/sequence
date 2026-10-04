@@ -15,8 +15,7 @@
   background-image: linear-gradient(180deg, settings.$color-background-gradient-start 0%, settings.$color-background-gradient-end 100%);
 }
 
-// Exactly one screen tall, never scrolling; the floor only lets very short viewports (landscape
-// phones) scroll rather than crush the content.
+// Exactly one screen tall; very short viewports (landscape phones) scroll instead of crushing the content.
 .pageFullscreen {
   height: 100vh;
   height: 100dvh;
@@ -34,7 +33,6 @@
   padding: settings.gap(1.25);
 }
 
-// Leaves room under the content for the floating action button(s) so they never cover it.
 .mainWithFloating {
   padding-bottom: calc(#{settings.gap(3)} + #{settings.$icon-size});
 }

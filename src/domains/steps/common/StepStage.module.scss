@@ -1,7 +1,5 @@
-// The Step area is a size container whose center is the screen's center (--stage-bias, set by
-// SequenceView, stretches it down behind the bottom card). Inside, a 1fr / ring / 1fr grid keeps
-// the ring vertically centered whatever the title's height, and the controls start a fixed gap
-// under it. The ring shrinks until ring + controls fit between the screen's center and the card.
+// Size container centered on the screen (--stage-bias, set by SequenceView). The ring shrinks until
+// ring + controls fit above the bottom card.
 .stage {
   container-type: size;
   display: grid;
@@ -28,7 +26,6 @@
   justify-items: center;
 }
 
-// Centered in the top row, i.e. between the progress bar and the ring.
 .title {
   grid-row: 1;
   align-self: center;
@@ -36,7 +33,6 @@
   padding: 0 8px;
 }
 
-// A Step without a ring lets its title span the ring row too, still clear of the controls.
 .noRing .title {
   grid-row: 1 / 3;
   align-self: stretch;

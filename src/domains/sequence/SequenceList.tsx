@@ -31,7 +31,6 @@ export const SequenceList = () => {
           if (edge !== "right") {
             return false;
           }
-          // The deletion itself waits for the user's confirmation; the card stays where it was dropped.
           setPendingDeleteId(id);
           return "hold";
         }}

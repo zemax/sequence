@@ -13,7 +13,7 @@ export const loadSettings = (): Settings | undefined => {
       return undefined;
     }
 
-    // Values saved by an older version may lack newer fields, or hold something out of range.
+    // Older saved values may lack newer fields or hold out-of-range ones.
     const { soundMuted, soundLevel } = parsed;
     return {
       soundMuted: typeof soundMuted === "boolean" ? soundMuted : initialSettings.soundMuted,

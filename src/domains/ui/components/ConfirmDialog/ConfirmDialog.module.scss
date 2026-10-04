@@ -11,7 +11,6 @@
 
   padding: settings.gap(1.25);
 
-  // Same frosted white as a Loop's container in the editor, plus a blur of what is behind.
   background-color: rgba(white, 0.32);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);

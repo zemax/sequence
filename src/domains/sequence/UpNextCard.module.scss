@@ -65,7 +65,6 @@
   align-items: center;
   gap: settings.gap(0.75);
 
-  // Fixed height (title clamped), so the card's size only depends on whether it has a loop row.
   height: var(--upnext-height, 80px);
 }
 

@@ -4,7 +4,6 @@ export const SOUND_LEVEL_COUNT = 4;
 
 export interface Settings {
   soundMuted: boolean;
-  // 1 (the discreet default beep) to SOUND_LEVEL_COUNT (the loudest alarm).
   soundLevel: number;
 }
 

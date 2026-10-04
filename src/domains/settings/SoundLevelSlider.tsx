@@ -13,8 +13,6 @@ type Props = {
   label: string;
 };
 
-// A stepped slider: the thumb only ever sits on one of `count` graduations, snapping to the
-// nearest one while dragged, and the sound of a level plays each time the thumb lands on it.
 export const SoundLevelSlider = ({ value, count, onChange, disabled, label }: Props) => {
   const { settingsSoundLevelMin, settingsSoundLevelMax, settingsSoundLevelValue } = getUI();
   const trackRef = useRef<HTMLDivElement>(null);
