@@ -43,7 +43,22 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
 
 ## Desired features
 
-None at the moment.
+- **Bug — the duration field always shows a leading zero**: when editing a
+  Countdown's duration, the number input keeps a `0` at the start and it can't
+  be deleted (the field coerces an emptied value back to `0`). The field should
+  let the user clear it and type a fresh value.
+- **Look into a native duration picker**: check whether a duration selector
+  built into the browser could replace the plain number input (in seconds) used
+  today, and whether it is good enough on phones, where the app is meant to run.
+- **Delete by dragging to a "Supprimer" zone at the top**: instead of dragging
+  an item to the right edge of the screen, a "Supprimer" zone would appear at the
+  top of the screen while an item is being dragged, and dropping the item on it
+  would delete it (confirmation included), like removing an icon on Android.
+  This would replace the current right-edge deletion for Sequences and Steps.
+- **Quick fade transitions between screens**: navigating from one screen to
+  another (list, editor, player, settings) should cross-fade quickly by
+  transparency — the old screen fading out and the new one fading in — instead
+  of switching instantly.
 
 ## Non-goals
 
