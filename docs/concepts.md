@@ -145,6 +145,15 @@ dragging a Step in a Loop's body out past the Loop's own bounds ejects it back
 into the parent list, right after that Loop (`containerRef`/
 `onEscapeContainer`).
 
+### Navigation — done
+
+[ScreenTransition.tsx](../src/domains/ui/components/ScreenTransition/ScreenTransition.tsx)
+wraps the routes in `App.tsx`. When the path changes it keeps rendering the
+current screen for about 120 ms while fading it out, then renders the new one
+(passing the displayed location to `Routes`) and fades it in. The gradient
+background belongs to the wrapper, not to `Page`, so it stays put and only the
+content fades. With `prefers-reduced-motion` the swap is immediate.
+
 ### Playback — done
 
 [SequenceView.tsx](../src/domains/sequence/SequenceView.tsx) is the full-screen

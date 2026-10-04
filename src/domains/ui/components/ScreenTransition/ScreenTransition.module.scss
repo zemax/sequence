@@ -1,0 +1,32 @@
+@use "/src/styles/settings";
+
+$fade: 120ms;
+
+.background {
+  min-height: 100vh;
+
+  background-color: settings.$color-background-default;
+  background-image: linear-gradient(180deg, settings.$color-background-gradient-start 0%, settings.$color-background-gradient-end 100%);
+}
+
+.screen {
+  animation: fade-in $fade ease-out;
+  transition: opacity $fade ease-in;
+}
+
+.leaving {
+  opacity: 0;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen {
+    animation: none;
+    transition: none;
+  }
+}

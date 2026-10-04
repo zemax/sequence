@@ -41,6 +41,11 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   picks one of four sounds, from the discreet default to a loud alarm — see
   [concepts.md](concepts.md#current-implementation-status).
 
+- **Quick fade between screens**: navigating between the list, the editor, the
+  player and Settings fades the current screen out and the next one in (about
+  120 ms each), by transparency — see
+  [concepts.md](concepts.md#current-implementation-status).
+
 ## Desired features
 
 - **Look into a native duration picker**: check whether a duration selector
@@ -51,10 +56,9 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   top of the screen while an item is being dragged, and dropping the item on it
   would delete it (confirmation included), like removing an icon on Android.
   This would replace the current right-edge deletion for Sequences and Steps.
-- **Quick fade transitions between screens**: navigating from one screen to
-  another (list, editor, player, settings) should cross-fade quickly by
-  transparency — the old screen fading out and the new one fading in — instead
-  of switching instantly.
+- **Better visual cues while dragging Steps**: make it clearer where a dragged
+  Step will land — in particular around Loops: dropping it into a Loop, between
+  two of its Steps, or back out of the Loop into the Sequence.
 
 ## Non-goals
 

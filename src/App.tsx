@@ -8,6 +8,7 @@ import { SequenceCreatePage } from "./routes/SequenceCreatePage";
 import { SequenceEditPage } from "./routes/SequenceEditPage";
 import { SequenceViewPage } from "./routes/SequenceViewPage";
 import { SettingsPage } from "./routes/SettingsPage";
+import { ScreenTransition } from "./domains/ui/components/ScreenTransition/ScreenTransition";
 
 export const App = () => {
   useEffect(() => {
@@ -20,13 +21,17 @@ export const App = () => {
   return (
     <Provider store={store}>
       <HashRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/sequence/create" element={<SequenceCreatePage />} />
-          <Route path="/sequence/edit/:id" element={<SequenceEditPage />} />
-          <Route path="/sequence/view/:id" element={<SequenceViewPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-        </Routes>
+        <ScreenTransition>
+          {(location) => (
+            <Routes location={location}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/sequence/create" element={<SequenceCreatePage />} />
+              <Route path="/sequence/edit/:id" element={<SequenceEditPage />} />
+              <Route path="/sequence/view/:id" element={<SequenceViewPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
+          )}
+        </ScreenTransition>
       </HashRouter>
     </Provider>
   );

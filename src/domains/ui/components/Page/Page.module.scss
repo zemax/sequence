@@ -11,8 +11,6 @@
   overflow-x: hidden;
 
   color: settings.$color-text;
-  background-color: settings.$color-background-default;
-  background-image: linear-gradient(180deg, settings.$color-background-gradient-start 0%, settings.$color-background-gradient-end 100%);
 }
 
 // Exactly one screen tall; very short viewports (landscape phones) scroll instead of crushing the content.
