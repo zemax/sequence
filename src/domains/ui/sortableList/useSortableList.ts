@@ -146,6 +146,18 @@ export const useSortableList = <T,>(
   const rowPositions = useRef(new Map<string, number>());
   const pendingCardSettle = useRef<PendingCardSettle | null>(null);
 
+  // Page coordinates, so scrolling between two renders isn't mistaken for a row moving.
+  // layoutTop ignores transforms (a row mid-animation still reports where it belongs);
+  // visualTop includes them (a row just dropped is still where the pointer left it).
+  const layoutTop = (row: HTMLElement) => {
+    let top = 0;
+    for (let node: HTMLElement | null = row; node; node = node.offsetParent as HTMLElement | null) {
+      top += node.offsetTop;
+    }
+    return top;
+  };
+  const visualTop = (row: HTMLElement) => row.getBoundingClientRect().top + window.scrollY;
+
   const animateTransform = (el: HTMLElement, fromTransform: string) => {
     el.style.transition = "none";
     el.style.transform = fromTransform;
@@ -163,7 +175,7 @@ export const useSortableList = <T,>(
   // instead of applied immediately on drop — doing it before the move cuts it short.
   useLayoutEffect(() => {
     rowRefs.current.forEach((row, id) => {
-      const newTop = row.getBoundingClientRect().top;
+      const newTop = layoutTop(row);
       const pending = pendingCardSettle.current;
 
       if (pending && pending.id === id) {
@@ -190,6 +202,47 @@ export const useSortableList = <T,>(
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
+
+  // A row can change size without this list rendering at all — a Loop's own nested list
+  // expanding one of its Steps into its edit form grows the Loop's row, and pushes every row
+  // below it down. Re-record every position whenever any row's size changes, so the FLIP never
+  // compares against positions from before such a shift.
+  const resizeObserver = useRef<ResizeObserver | null>(null);
+  const observedRows = useRef(new WeakSet<HTMLElement>());
+
+  const recordRowPositions = () => {
+    rowRefs.current.forEach((row, id) => {
+      rowPositions.current.set(id, layoutTop(row));
+    });
+  };
+
+  const observeRow = (row: HTMLElement) => {
+    if (typeof ResizeObserver === "undefined" || observedRows.current.has(row)) {
+      return;
+    }
+    resizeObserver.current ??= new ResizeObserver(recordRowPositions);
+    resizeObserver.current.observe(row);
+    observedRows.current.add(row);
+  };
+
+  // Also (re)observes the rows already mounted: development's double-invoked effects disconnect
+  // the observer without re-running the refs.
+  useLayoutEffect(() => {
+    rowRefs.current.forEach(observeRow);
+
+    return () => {
+      resizeObserver.current?.disconnect();
+      resizeObserver.current = null;
+      observedRows.current = new WeakSet();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // The FLIP above compares against the positions of the previous render. They have to be
+  // recorded after every render, not just when `items` changes: otherwise a layout shift that
+  // isn't a reorder (a row expanding into its edit form) leaves them stale, and the next edit
+  // is mistaken for a move — the rows below jump to their old spot, then slide back.
+  useLayoutEffect(recordRowPositions);
 
   const settleDraggedItemInPlace = (id: string, offsetX: number, offsetY: number, itemTilt: number) => {
     const row = rowRefs.current.get(id);
@@ -324,7 +377,7 @@ export const useSortableList = <T,>(
         if (drag.dropIndex !== drag.originalIndex) {
           const row = rowRefs.current.get(drag.id);
           if (row) {
-            rowPositions.current.set(drag.id, row.getBoundingClientRect().top);
+            rowPositions.current.set(drag.id, visualTop(row));
           }
           pendingCardSettle.current = { id: drag.id, offsetX: drag.offsetX, tilt: drag.tilt };
           onReorder(drag.id, drag.dropIndex);
@@ -473,6 +526,7 @@ export const useSortableList = <T,>(
         ref: (el) => {
           if (el) {
             rowRefs.current.set(id, el);
+            observeRow(el);
           } else {
             rowRefs.current.delete(id);
           }

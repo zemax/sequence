@@ -43,10 +43,6 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
 
 ## Desired features
 
-- **Bug — the duration field always shows a leading zero**: when editing a
-  Countdown's duration, the number input keeps a `0` at the start and it can't
-  be deleted (the field coerces an emptied value back to `0`). The field should
-  let the user clear it and type a fresh value.
 - **Look into a native duration picker**: check whether a duration selector
   built into the browser could replace the plain number input (in seconds) used
   today, and whether it is good enough on phones, where the app is meant to run.

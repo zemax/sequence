@@ -1,5 +1,5 @@
 import TimerIcon from "@mui/icons-material/TimerOutlined";
-import { MouseEvent } from "react";
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { getUI } from "../../../data/informations";
 import { SortableEdge } from "../../ui/sortableList/useSortableList";
 import { StepPreview } from "../common/StepPreview";
@@ -19,6 +19,20 @@ const stopPropagation = (e: MouseEvent) => e.stopPropagation();
 export const CountdownPreviewEdit = ({ step, onChange, edgeAction, onClick }: Props) => {
   const { stepTitleLabel, stepDurationLabel } = getUI();
 
+  // The field's own text, apart from step.duration: a controlled number input bound straight to
+  // the number turns an emptied field back into "0", which then can't be deleted.
+  const [durationText, setDurationText] = useState(String(step.duration));
+
+  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    setDurationText(text);
+
+    const duration = Number(text);
+    if (text !== "" && Number.isFinite(duration) && duration >= 0) {
+      onChange({ ...step, duration: Math.floor(duration) });
+    }
+  };
+
   return (
     <StepPreview icon={<TimerIcon />} edgeAction={edgeAction} onClick={onClick}>
       <div className={stepPreviewStyles.editFields}>
@@ -34,9 +48,13 @@ export const CountdownPreviewEdit = ({ step, onChange, edgeAction, onClick }: Pr
           <span className={stepPreviewStyles.secondaryText}>{stepDurationLabel}</span>
           <input
             type="number"
+            min={0}
+            inputMode="numeric"
             className={stepPreviewStyles.durationInput}
-            value={step.duration}
-            onChange={(e) => onChange({ ...step, duration: Number(e.target.value) })}
+            value={durationText}
+            onChange={handleDurationChange}
+            onFocus={(e) => e.target.select()}
+            onBlur={() => setDurationText(String(step.duration))}
           />
         </label>
       </div>
