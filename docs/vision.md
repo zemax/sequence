@@ -51,6 +51,11 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   it, a dashed Loop with a bar below it when taking the Step out — see
   [drag-reorder.md](drag-reorder.md).
 
+- **Delete by dragging to a "Supprimer" zone**: a zone appears at the bottom of the
+  screen while an item is dragged, and dropping the item on it deletes it
+  (confirmation included), like removing an icon on Android — see
+  [drag-reorder.md](drag-reorder.md).
+
 ## Desired features
 
 - **Look into a better duration picker**: the plain number input (in seconds)
@@ -58,11 +63,6 @@ running **Sequences** — see [concepts.md](concepts.md) for the full domain mod
   no duration control (`type="duration"` does not exist), and `type="time"` is a
   time of day, shown as AM/PM depending on the device locale, whose phone pickers
   (iOS, Android) only offer hours and minutes, losing the seconds the app needs.
-- **Delete by dragging to a "Supprimer" zone at the top**: instead of dragging
-  an item to the right edge of the screen, a "Supprimer" zone would appear at the
-  top of the screen while an item is being dragged, and dropping the item on it
-  would delete it (confirmation included), like removing an icon on Android.
-  This would replace the current right-edge deletion for Sequences and Steps.
 
 ## Non-goals
 

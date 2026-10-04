@@ -1,5 +1,3 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import classNames from "classnames";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { moveSequence, removeSequence, selectSequences } from "../../data/sequences/sequencesSlice";
@@ -12,8 +10,6 @@ import { SequencePreview } from "./SequencePreview";
 
 import styles from "./Sequence.module.scss";
 
-const DELETE_EDGE_THRESHOLD_PX = 40;
-
 export const SequenceList = () => {
   const { confirmDeleteTitle } = getUI();
   const sequences = useSelector(selectSequences);
@@ -25,12 +21,8 @@ export const SequenceList = () => {
         items={sequences}
         getId={(sequence) => sequence.id}
         onReorder={(id, toIndex) => store.dispatch(moveSequence({ id, toIndex }))}
-        edgeActionThreshold={DELETE_EDGE_THRESHOLD_PX}
         holdId={pendingDeleteId}
-        onEdgeAction={(id, edge) => {
-          if (edge !== "right") {
-            return false;
-          }
+        onDelete={(id) => {
           setPendingDeleteId(id);
           return "hold";
         }}
@@ -41,9 +33,6 @@ export const SequenceList = () => {
         {(sequence, entry) => (
           <SortableItem key={sequence.id} entry={entry} className={styles.card} draggingClassName={styles.cardDragging}>
             <SequencePreview sequence={sequence} />
-            <div className={classNames(styles.deleteOverlay, entry.edgeAction === "right" && styles.deleteOverlayVisible)}>
-              <DeleteIcon />
-            </div>
           </SortableItem>
         )}
       </SortableList>

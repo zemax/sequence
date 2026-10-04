@@ -1,7 +1,6 @@
 import TimerIcon from "@mui/icons-material/TimerOutlined";
 import { ChangeEvent, MouseEvent, useState } from "react";
 import { getUI } from "../../../data/informations";
-import { SortableEdge } from "../../ui/sortableList/useSortableList";
 import { StepPreview } from "../common/StepPreview";
 import { CountdownStep } from "./CountdownStep";
 
@@ -10,13 +9,12 @@ import stepPreviewStyles from "../common/StepPreview.module.scss";
 type Props = {
   step: CountdownStep;
   onChange: (step: CountdownStep) => void;
-  edgeAction?: SortableEdge | null;
   onClick?: () => void;
 };
 
 const stopPropagation = (e: MouseEvent) => e.stopPropagation();
 
-export const CountdownPreviewEdit = ({ step, onChange, edgeAction, onClick }: Props) => {
+export const CountdownPreviewEdit = ({ step, onChange, onClick }: Props) => {
   const { stepTitleLabel, stepDurationLabel } = getUI();
 
   // Own text state: binding the input to the number turns an emptied field back into 0.
@@ -33,7 +31,7 @@ export const CountdownPreviewEdit = ({ step, onChange, edgeAction, onClick }: Pr
   };
 
   return (
-    <StepPreview icon={<TimerIcon />} edgeAction={edgeAction} onClick={onClick}>
+    <StepPreview icon={<TimerIcon />} onClick={onClick}>
       <div className={stepPreviewStyles.editFields}>
         <input
           type="text"

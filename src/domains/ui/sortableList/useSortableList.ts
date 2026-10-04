@@ -18,8 +18,7 @@ const MAX_TILT = 10;
 const TILT_FACTOR = 1.2;
 const TILT_LERP = 0.25;
 const DRAG_ACTIVATION_PX = 20;
-
-export type SortableEdge = "left" | "right";
+const DELETE_ZONE_REACH = 24;
 
 export type DroppedGeometry = { top: number; left: number; width: number; tilt: number };
 export type IncomingRow = DroppedGeometry & { id: string };
@@ -27,7 +26,7 @@ export type IncomingRow = DroppedGeometry & { id: string };
 type HoveredTarget = { id: string; index: number };
 
 // "hold": the item stays where it was dropped until the `holdId` option stops naming it.
-export type EdgeActionResult = boolean | "hold";
+export type DeleteResult = boolean | "hold";
 
 type DragState = {
   id: string;
@@ -39,7 +38,7 @@ type DragState = {
   offsetX: number;
   offsetY: number;
   tilt: number;
-  edgeAction: SortableEdge | null;
+  overDeleteZone: boolean;
   hovered: HoveredTarget | null;
   escapedContainer: boolean;
 };
@@ -49,7 +48,6 @@ type HeldItem = {
   offsetX: number;
   offsetY: number;
   tilt: number;
-  edge: SortableEdge;
 };
 
 type PendingCardSettle = {
@@ -83,17 +81,17 @@ export type SortableItemProps = {
 export type SortableListOptions<T> = {
   paddingX?: number;
   paddingY?: number;
-  edgeActionThreshold?: number;
-  onEdgeAction?: (id: string, edge: SortableEdge) => EdgeActionResult;
+  deleteZoneRef?: RefObject<HTMLElement | null>;
+  onDelete?: (id: string) => DeleteResult;
   holdId?: string | null;
   // Lets other rows in the same list act as drop targets — e.g. dragging a Step onto a Loop
-  // row nests it there instead of just reordering. Checked after edgeAction, before a normal
+  // row nests it there instead of just reordering. Checked after the delete zone, before a normal
   // reorder. See docs/drag-reorder.md.
   isDropTarget?: (item: T) => boolean;
   onDropInto?: (draggedId: string, targetId: string, index: number, dropped: DroppedGeometry) => boolean;
   // Lets this list detect the dragged item leaving some ancestor container's bounds (not the
   // list's own bounds) — e.g. a Loop's own nested list uses this to eject a Step dragged out
-  // past the Loop's envelope. Checked after edgeAction, before a normal reorder.
+  // past the Loop's envelope. Checked after the delete zone, before a normal reorder.
   containerRef?: RefObject<Element | null>;
   onEscapeContainer?: (id: string, clientY: number, dropped: DroppedGeometry) => boolean;
   incomingRef?: RefObject<IncomingRow | null>;
@@ -106,7 +104,6 @@ export type SortableEntry = {
   isHovered: boolean;
   dropIntoIndex: number | null;
   showDropIndicatorBefore: boolean;
-  edgeAction: SortableEdge | null;
   rowProps: SortableRowProps;
   itemProps: SortableItemProps;
 };
@@ -119,8 +116,8 @@ export const useSortableList = <T,>(
   {
     paddingX = 0,
     paddingY = 0,
-    edgeActionThreshold,
-    onEdgeAction,
+    deleteZoneRef,
+    onDelete,
     holdId = null,
     isDropTarget,
     onDropInto,
@@ -137,7 +134,7 @@ export const useSortableList = <T,>(
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [tilt, setTilt] = useState(0);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
-  const [edgeAction, setEdgeAction] = useState<SortableEdge | null>(null);
+  const [overDeleteZone, setOverDeleteZone] = useState(false);
   const [hovered, setHovered] = useState<HoveredTarget | null>(null);
   const [held, setHeld] = useState<HeldItem | null>(null);
   const [escaped, setEscaped] = useState(false);
@@ -297,6 +294,7 @@ export const useSortableList = <T,>(
   };
 
   const endDrag = () => {
+    suppressNextClick();
     window.removeEventListener("pointermove", onPointerMove);
     window.removeEventListener("pointerup", onPointerUp);
     window.removeEventListener("pointercancel", onPointerCancel);
@@ -315,7 +313,7 @@ export const useSortableList = <T,>(
     setDragOffset({ x: 0, y: 0 });
     setTilt(0);
     setDropIndex(null);
-    setEdgeAction(null);
+    setOverDeleteZone(false);
     setHovered(null);
   };
 
@@ -344,16 +342,18 @@ export const useSortableList = <T,>(
     drag.dropIndex = nextDropIndex;
     setDropIndex(nextDropIndex);
 
-    const nextEdgeAction =
-      edgeActionThreshold === undefined
-        ? null
-        : e.clientX < edgeActionThreshold
-          ? "left"
-          : window.innerWidth - e.clientX < edgeActionThreshold
-            ? "right"
-            : null;
-    drag.edgeAction = nextEdgeAction;
-    setEdgeAction(nextEdgeAction);
+    const zone = deleteZoneRef?.current;
+    const nowOverDeleteZone =
+      !!zone &&
+      e.clientX > zone.offsetLeft - DELETE_ZONE_REACH &&
+      e.clientX < zone.offsetLeft + zone.offsetWidth + DELETE_ZONE_REACH &&
+      e.clientY > zone.offsetTop - DELETE_ZONE_REACH &&
+      e.clientY < zone.offsetTop + zone.offsetHeight + DELETE_ZONE_REACH;
+    if (nowOverDeleteZone && !drag.overDeleteZone) {
+      navigator.vibrate?.(10);
+    }
+    drag.overDeleteZone = nowOverDeleteZone;
+    setOverDeleteZone(nowOverDeleteZone);
 
     if (isDropTarget) {
       let nextHovered: HoveredTarget | null = null;
@@ -376,13 +376,16 @@ export const useSortableList = <T,>(
           break;
         }
       }
+      if (nowOverDeleteZone) {
+        nextHovered = null;
+      }
       drag.hovered = nextHovered;
       setHovered((current) => (current?.id === nextHovered?.id && current?.index === nextHovered?.index ? current : nextHovered));
     }
 
     if (containerRef) {
       const containerRect = containerRef.current?.getBoundingClientRect();
-      const nowEscaped = containerRect
+      const nowEscaped = containerRect && !nowOverDeleteZone
         ? e.clientX < containerRect.left || e.clientX > containerRect.right || e.clientY < containerRect.top || e.clientY > containerRect.bottom
         : false;
       if (nowEscaped) {
@@ -407,13 +410,13 @@ export const useSortableList = <T,>(
     if (drag) {
       // Each of these, if it applies, is presumed to fully own the item's fate (moved
       // elsewhere or removed) — nothing left to animate here, unlike reorder/settle below.
-      const edgeResult = drag.edgeAction !== null ? (onEdgeAction?.(drag.id, drag.edgeAction) ?? false) : false;
-      if (edgeResult === "hold" && drag.edgeAction !== null) {
-        setHeld({ id: drag.id, offsetX: drag.offsetX, offsetY: drag.offsetY, tilt: drag.tilt, edge: drag.edgeAction });
+      const deleteResult = drag.overDeleteZone ? (onDelete?.(drag.id) ?? false) : false;
+      if (deleteResult === "hold") {
+        setHeld({ id: drag.id, offsetX: drag.offsetX, offsetY: drag.offsetY, tilt: drag.tilt });
       }
 
       const handled =
-        edgeResult !== false ||
+        deleteResult !== false ||
         (drag.hovered !== null && (onDropInto?.(drag.id, drag.hovered.id, drag.hovered.index, droppedGeometry(drag)) ?? false)) ||
         (drag.escapedContainer && (onEscapeContainer?.(drag.id, drag.lastY, droppedGeometry(drag)) ?? false));
 
@@ -449,10 +452,11 @@ export const useSortableList = <T,>(
       window.removeEventListener("click", handler, true);
     };
     window.addEventListener("click", handler, true);
+    // A touch drag is not followed by a click: without this the next, unrelated tap would be eaten.
+    setTimeout(() => window.removeEventListener("click", handler, true), 150);
   };
 
   const startDrag = (row: HTMLLIElement, id: string, index: number, startX: number, startY: number) => {
-    suppressNextClick();
     navigator.vibrate?.(15);
     const item = itemRefs.current.get(id);
     row.style.transition = "none";
@@ -470,7 +474,7 @@ export const useSortableList = <T,>(
       offsetX: 0,
       offsetY: 0,
       tilt: 0,
-      edgeAction: null,
+      overDeleteZone: false,
       hovered: null,
       escapedContainer: false,
     };
@@ -546,7 +550,7 @@ export const useSortableList = <T,>(
 
   // onReorder removes then re-inserts, so a forward move shifts the visual anchor by one.
   const ownIndicatorIndex =
-    dragId !== null && hovered === null && !escaped && dropIndex !== null && dragOriginalIndex !== null && dropIndex !== dragOriginalIndex
+    dragId !== null && hovered === null && !escaped && !overDeleteZone && dropIndex !== null && dragOriginalIndex !== null && dropIndex !== dragOriginalIndex
       ? dropIndex >= dragOriginalIndex
         ? dropIndex + 1
         : dropIndex
@@ -564,7 +568,6 @@ export const useSortableList = <T,>(
       isHovered: !isDragging && !isHeld && id === hovered?.id,
       dropIntoIndex: !isDragging && !isHeld && id === hovered?.id ? hovered.index : null,
       showDropIndicatorBefore: indicatorIndex === index,
-      edgeAction: isDragging ? edgeAction : isHeld ? held.edge : null,
       rowProps: {
         ref: (el) => {
           if (el) {
@@ -589,7 +592,7 @@ export const useSortableList = <T,>(
             itemRefs.current.delete(id);
           }
         },
-        className: styles.item,
+        className: classNames(styles.item, (isDragging ? overDeleteZone : isHeld) && styles.overDeleteZone),
         style: isDragging ? { transform: `rotate(${tilt}deg)` } : isHeld ? { transform: `rotate(${held.tilt}deg)` } : undefined,
         onPointerDown: (e) => handlePointerDown(id, index, e),
         onContextMenu: (e) => e.preventDefault(),
@@ -600,5 +603,7 @@ export const useSortableList = <T,>(
   return {
     getItemProps,
     showTrailingDropIndicator: indicatorIndex === items.length,
+    dragging: dragId !== null,
+    overDeleteZone,
   };
 };

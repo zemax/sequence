@@ -114,8 +114,9 @@ in `steps/pause/`).
 Sequence's `name`, and delegates its `items` to
 [StepList.tsx](../src/domains/steps/common/StepList.tsx), which handles adding
 Steps or Loops, editing an existing item in place (tapping a `<Type>Preview`
-swaps it for its `<Type>PreviewEdit`), deleting an item by dragging it to the
-screen edge (after a "Supprimer ?" confirmation), and reordering items by dragging — all via the same
+swaps it for its `<Type>PreviewEdit`), deleting an item by dragging it onto the
+"Supprimer" zone that appears at the bottom of the screen (after a "Supprimer ?"
+confirmation), and reordering items by dragging — all via the same
 [SortableList](../src/domains/ui/sortableList) used for Sequences on the home
 screen (see [drag-reorder.md](drag-reorder.md)).
 
@@ -256,6 +257,7 @@ its contents (`setSequences`) — there is no merge option; **Reset** asks "Réi
 [ConfirmDialog](../src/domains/ui/components/ConfirmDialog/ConfirmDialog.tsx) used
 for deletions (X cancels, check confirms), with a line explaining the consequences
 under the title (the dialog takes an optional `message`),
+and fades and scales in and out in about 120 ms (its callbacks run once the fade-out ends, since the caller unmounts it),
 then restores `initialSequences` (`resetSequences`, deep-cloned so the
 fixtures object itself is never mutated across resets).
 

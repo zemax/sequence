@@ -1,16 +1,14 @@
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import LoopIcon from "@mui/icons-material/Loop";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { getUI } from "../../../data/informations";
 import { Loop, Step } from "../../../data/sequences/sequencesSlice";
-import { DroppedGeometry, IncomingRow, SortableEdge } from "../../ui/sortableList/useSortableList";
+import { DroppedGeometry, IncomingRow } from "../../ui/sortableList/useSortableList";
 import { StepList } from "../common/StepList";
 
 import components from "../../../styles/Components.module.scss";
-import stepPreviewStyles from "../common/StepPreview.module.scss";
 import styles from "./LoopPreview.module.scss";
 
 const HEIGHT_TRANSITION_MS = 250;
@@ -20,13 +18,12 @@ type Props = {
   onChange: (loop: Loop) => void;
   onEscapeStep: (step: Step, index: number, dropped: DroppedGeometry) => void;
   onEscapeHover: (index: number | null) => void;
-  edgeAction?: SortableEdge | null;
   isHovered?: boolean;
   dropIndex?: number | null;
   incomingRef: RefObject<IncomingRow | null>;
 };
 
-export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, edgeAction, isHovered, dropIndex, incomingRef }: Props) => {
+export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, isHovered, dropIndex, incomingRef }: Props) => {
   const envelopeRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const bodyHeight = useRef<number | null>(null);
@@ -110,11 +107,6 @@ export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, edgeA
             onEscapeHover(clientY === null ? null : parentDropIndexAt(clientY));
           }}
         />
-      </div>
-
-
-      <div className={classNames(stepPreviewStyles.deleteOverlay, styles.deleteOverlay, edgeAction === "right" && stepPreviewStyles.deleteOverlayVisible)}>
-        <DeleteIcon />
       </div>
     </div>
   );

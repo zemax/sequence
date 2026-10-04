@@ -16,6 +16,7 @@ export const getUI = () => ({
   sequences: "Séquences",
   newSequence: "Nouvelle séquence",
   back: "Retour",
+  deleteZoneLabel: "Supprimer",
   confirmDeleteTitle: "Supprimer ?",
   confirmResetTitle: "Réinitialiser ?",
   cancel: "Annuler",

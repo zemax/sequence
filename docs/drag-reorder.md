@@ -81,39 +81,40 @@ matters when an item packs its own interactive controls close to an edge
 press on that control could rack up more than 20px of incidental movement
 and arm a drag instead of hitting the button.
 
-## Edge actions: dragging to the side of the viewport
+## Delete zone: dragging to the bottom of the screen
 
-Besides reordering, a drag can also trigger a one-off action by carrying the
-item to the edge of the *viewport* (not the list) — e.g. dragging far enough
-right to delete it, the way [SequenceList](../src/domains/sequence/SequenceList.tsx)
-does. This is opt-in via `edgeActionThreshold` (a pixel distance from
-`window`'s left/right edge) and `onEdgeAction(id, edge)`, both left unset by
-default (the feature is entirely inert unless both are supplied).
+Besides reordering, a drag can delete the item by carrying it into a
+"Supprimer" zone that slides in from the bottom of the screen while something is
+being dragged, like removing an icon on Android. It is opt-in: passing
+`onDelete(id)` to [`SortableList`](../src/domains/ui/sortableList/SortableList.tsx)
+makes it render a [`DeleteZone`](../src/domains/ui/sortableList/DeleteZone.tsx)
+(through a portal on `document.body`, so ancestors' transforms can't offset its
+`position: fixed`) and hand it to the hook as `deleteZoneRef`.
 
-While dragging, every `pointermove` compares the pointer's `clientX` against
-`window.innerWidth`; crossing into either margin sets `entry.edgeAction` to
-`"left"` or `"right"` (`null` otherwise, and always `null` while not
-dragging) so the item being dragged can render whatever feedback makes sense
-(SequenceList overlays a trash icon — see [SequenceList.tsx](../src/domains/sequence/SequenceList.tsx)).
+The zone is a floating pill centered above the bottom edge: translucent white with
+an action-colored outline at rest, filled with the action color (and slightly
+larger) when the item is over it, and drawn below the dragged row (the lifted row
+has a higher `z-index`). Every `pointermove` checks whether the pointer is within
+the pill's box (`offsetLeft`/`offsetTop`/`offsetWidth`/`offsetHeight`, which ignore
+its slide-in transform), widened by 24px so a finger doesn't need to be exact.
+Over the zone, the dragged item is dimmed (`overDeleteZone` class), the other
+cues (drop indicator, hovered Loop, escape) are suppressed, and a short vibration
+confirms it where supported. While anything is dragged, `SortableList` sets
+`data-dragging` on `<body>`, which hides the floating buttons (`.floating`) so
+they don't sit next to the zone.
 
-`onEdgeAction` **returns a `boolean`**: `true` means it acted on this edge
-(the item is presumed to be leaving the list, e.g. deleted) and skips the
-normal reorder/settle logic entirely — there's nothing left to animate back
-into place. `false` means it declined (wrong edge, or this list doesn't
-support an action there), and release falls through to the usual
-reorder-or-settle behavior exactly as if `edgeAction` had never been set.
-This is why SequenceList's handler returns `false` for `"left"`: it only
-deletes on `"right"`, so releasing on the left settles the item back in
-place like a normal aborted drag, instead of leaving it stranded.
+`onDelete` **returns a `DeleteResult`**: `true` means the item is gone, so the
+normal reorder/settle is skipped; `false` declines and release falls through to
+the usual behavior as if the zone had never been reached.
 
-Both lists use a 40px margin, and neither deletes right away: the handler stores
-the id and returns `"hold"`, and a small "Supprimer ?" dialog
+Neither list deletes right away: the handler stores the id and returns `"hold"`,
+and a small "Supprimer ?" dialog
 ([ConfirmDialog](../src/domains/ui/components/ConfirmDialog/ConfirmDialog.tsx):
 X cancels, check confirms) decides.
 
 `"hold"` is a third answer next to `true` and `false`: the drag is over and
 the list does not reorder, but the item **stays exactly where it was dropped**
-(same offset, tilt, lift and trash feedback) instead of resetting. It stays
+(same offset, tilt and lift) instead of resetting. It stays
 held for as long as the list's `holdId` option names it — the caller passes
 the id it is waiting on (here the pending-delete id). When `holdId` stops
 naming the item, the list releases it: if it is still there (the user
@@ -136,7 +137,7 @@ dragged into or out of a Loop in [StepList](../src/domains/steps/common/StepList
   target's own rows (the first nested `<ul>`) whose middle is above it — and
   exposes it as `entry.dropIntoIndex`. Releasing there calls
   `onDropInto(draggedId, targetId, index, dropped)`, which — like
-  `onEdgeAction` — returns a `boolean`: `true` means it took ownership of the
+  `onDelete` — returns a `boolean`: `true` means it took ownership of the
   item (StepList removes it from the flat list and inserts it in the target
   Loop's `steps` at `index`), skipping the normal reorder/settle entirely;
   `false` falls through to a normal reorder, exactly as if nothing were hovered.
@@ -165,8 +166,8 @@ every move outside it: the Loop's border turns orange (solid, like when a Step i
 own reorder indicator, and the parent list shows its regular drop indicator at
 the landing position (`externalDropIndex`) until the pointer comes back inside.
 
-Both checks run in `onPointerUp` alongside `onEdgeAction`, in the order
-edge action → drop-into → escape-container → plain reorder — the first one
+Both checks run in `onPointerUp` alongside `onDelete`, in the order
+delete zone → drop-into → escape-container → plain reorder — the first one
 that returns `true` wins, and none of them fire while not dragging.
 
 When rows move after a drop (reorder, a Step entering or leaving a Loop), they
@@ -212,9 +213,8 @@ the Loop itself.
   onReorder={(id, toIndex) => dispatchYourReorderAction(id, toIndex)}
   paddingX={8} // optional; both default to 0 — see above
   paddingY={8}
-  edgeActionThreshold={100} // optional; see "Edge actions" above
-  onEdgeAction={(id, edge) => {
-    if (edge !== "right") return false; // let "left" settle back normally
+  onDelete={(id) => {
+    // optional; shows the delete zone while dragging — see "Delete zone" above
     dispatchYourDeleteAction(id);
     return true;
   }}
@@ -223,7 +223,6 @@ the Loop itself.
   {(item, entry) => (
     <SortableItem key={item.id} entry={entry} className={yourOwnItemStyles} draggingClassName={yourOwnDraggingStyles}>
       {/* your item's content */}
-      {entry.edgeAction === "right" && <YourOwnDeleteOverlay />}
     </SortableItem>
   )}
 </SortableList>

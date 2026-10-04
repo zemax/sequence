@@ -20,8 +20,6 @@ import { emptyStep } from "./emptyStep";
 
 import styles from "./StepList.module.scss";
 
-const DELETE_EDGE_THRESHOLD_PX = 40;
-
 type Props = {
   items: SequenceItem[];
   onChange: (items: SequenceItem[]) => void;
@@ -97,7 +95,7 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
         <LoopPreview
           loop={item}
           onChange={updateItem}
-          edgeAction={entry.edgeAction}
+         
           isHovered={entry.isHovered}
           dropIndex={entry.dropIntoIndex}
           incomingRef={loopIncomingRef}
@@ -116,16 +114,16 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
 
     if (editing) {
       return item.type === "countdown" ? (
-        <CountdownPreviewEdit step={item} onChange={updateItem} edgeAction={entry.edgeAction} onClick={onClick} />
+        <CountdownPreviewEdit step={item} onChange={updateItem} onClick={onClick} />
       ) : (
-        <PausePreviewEdit step={item} onChange={updateItem} edgeAction={entry.edgeAction} onClick={onClick} />
+        <PausePreviewEdit step={item} onChange={updateItem} onClick={onClick} />
       );
     }
 
     return item.type === "countdown" ? (
-      <CountdownPreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} onClick={onClick} />
+      <CountdownPreview step={item} elevated={entry.isDragging} onClick={onClick} />
     ) : (
-      <PausePreview step={item} elevated={entry.isDragging} edgeAction={entry.edgeAction} onClick={onClick} />
+      <PausePreview step={item} elevated={entry.isDragging} onClick={onClick} />
     );
   };
 
@@ -137,12 +135,8 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
         onReorder={moveItem}
         paddingX={8}
         paddingY={8}
-        edgeActionThreshold={DELETE_EDGE_THRESHOLD_PX}
         holdId={pendingDeleteId}
-        onEdgeAction={(id, edge) => {
-          if (edge !== "right") {
-            return false;
-          }
+        onDelete={(id) => {
           setPendingDeleteId(id);
           return "hold";
         }}
