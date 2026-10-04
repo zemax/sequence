@@ -2,11 +2,11 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LoopIcon from "@mui/icons-material/Loop";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { useLayoutEffect, useRef, useState } from "react";
+import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { getUI } from "../../../data/informations";
 import { Loop, Step } from "../../../data/sequences/sequencesSlice";
-import { DroppedGeometry, SortableEdge } from "../../ui/sortableList/useSortableList";
+import { DroppedGeometry, IncomingRow, SortableEdge } from "../../ui/sortableList/useSortableList";
 import { StepList } from "../common/StepList";
 
 import components from "../../../styles/Components.module.scss";
@@ -22,9 +22,11 @@ type Props = {
   onEscapeHover: (index: number | null) => void;
   edgeAction?: SortableEdge | null;
   isHovered?: boolean;
+  dropIndex?: number | null;
+  incomingRef: RefObject<IncomingRow | null>;
 };
 
-export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, edgeAction, isHovered }: Props) => {
+export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, edgeAction, isHovered, dropIndex, incomingRef }: Props) => {
   const envelopeRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const bodyHeight = useRef<number | null>(null);
@@ -101,6 +103,8 @@ export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, edgeA
           onChange={(steps) => onChange({ ...loop, steps: steps as Step[] })}
           containerRef={envelopeRef}
           onEscapeItem={(item, clientY, dropped) => onEscapeStep(item as Step, parentDropIndexAt(clientY), dropped)}
+          incomingDropIndex={dropIndex}
+          receivedRef={incomingRef}
           onEscapePointer={(clientY) => {
             setEscaping(clientY !== null);
             onEscapeHover(clientY === null ? null : parentDropIndexAt(clientY));
@@ -108,7 +112,6 @@ export const LoopPreview = ({ loop, onChange, onEscapeStep, onEscapeHover, edgeA
         />
       </div>
 
-      {isHovered && <div className={styles.insertBar} />}
 
       <div className={classNames(stepPreviewStyles.deleteOverlay, styles.deleteOverlay, edgeAction === "right" && stepPreviewStyles.deleteOverlayVisible)}>
         <DeleteIcon />

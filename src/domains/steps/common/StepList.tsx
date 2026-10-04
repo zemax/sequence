@@ -32,17 +32,20 @@ type Props = {
   containerRef?: RefObject<Element | null>;
   onEscapeItem?: (item: SequenceItem, clientY: number, dropped: DroppedGeometry) => void;
   onEscapePointer?: (clientY: number | null) => void;
+  incomingDropIndex?: number | null;
+  receivedRef?: RefObject<IncomingRow | null>;
 };
 
 // Renders a reorderable, editable list of Steps (and, when allowLoop, Loops). Used both for a
 // Sequence's own top-level items and, nested, for a Loop's own steps. Steps move in/out of a
 // Loop by being dragged onto it (allowLoop lists only) or dragged past its envelope bounds
 // (nested lists only) — see docs/drag-reorder.md.
-export const StepList = ({ items, onChange, allowLoop = false, containerRef, onEscapeItem, onEscapePointer }: Props) => {
+export const StepList = ({ items, onChange, allowLoop = false, containerRef, onEscapeItem, onEscapePointer, incomingDropIndex, receivedRef }: Props) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [escapeDropIndex, setEscapeDropIndex] = useState<number | null>(null);
   const incomingRef = useRef<IncomingRow | null>(null);
+  const loopIncomingRef = useRef<IncomingRow | null>(null);
 
   // Read during render, before React updates the DOM, so the add row can slide from its old position.
   const addRowRef = useRef<HTMLDivElement>(null);
@@ -96,6 +99,8 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
           onChange={updateItem}
           edgeAction={entry.edgeAction}
           isHovered={entry.isHovered}
+          dropIndex={entry.dropIntoIndex}
+          incomingRef={loopIncomingRef}
           onEscapeHover={setEscapeDropIndex}
           onEscapeStep={(step, index, dropped) => {
             incomingRef.current = { id: step.id, ...dropped };
@@ -144,22 +149,24 @@ export const StepList = ({ items, onChange, allowLoop = false, containerRef, onE
         isDropTarget={allowLoop ? isLoop : undefined}
         onDropInto={
           allowLoop
-            ? (draggedId, targetId) => {
+            ? (draggedId, targetId, index, dropped) => {
                 const dragged = items.find((i) => i.id === draggedId);
                 const target = items.find((i) => i.id === targetId);
                 if (!dragged || !target || isLoop(dragged) || !isLoop(target)) {
                   return false;
                 }
-                const next = items.filter((i) => i.id !== draggedId).map((i) => (i.id === targetId ? { ...target, steps: [...target.steps, dragged] } : i));
-                onChange(next);
+                const steps = [...target.steps];
+                steps.splice(index, 0, dragged);
+                loopIncomingRef.current = { id: draggedId, ...dropped };
+                onChange(items.filter((i) => i.id !== draggedId).map((i) => (i.id === targetId ? { ...target, steps } : i)));
                 return true;
               }
             : undefined
         }
         containerRef={containerRef}
         onEscapePointer={onEscapePointer}
-        externalDropIndex={escapeDropIndex}
-        incomingRef={incomingRef}
+        externalDropIndex={incomingDropIndex ?? escapeDropIndex}
+        incomingRef={receivedRef ?? incomingRef}
         onEscapeContainer={
           onEscapeItem
             ? (id, clientY, dropped) => {

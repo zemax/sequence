@@ -132,11 +132,14 @@ dragged into or out of a Loop in [StepList](../src/domains/steps/common/StepList
   which `isDropTarget(item)` is `true`; landing inside one sets
   `entry.isHovered` on that row (so it can render hover feedback — see
   [LoopPreview](../src/domains/steps/loop/LoopPreview.tsx)'s highlighted container).
-  Releasing there calls `onDropInto(draggedId, targetId)`, which — like
+  The hook also reads where in the target the pointer is — the number of the
+  target's own rows (the first nested `<ul>`) whose middle is above it — and
+  exposes it as `entry.dropIntoIndex`. Releasing there calls
+  `onDropInto(draggedId, targetId, index, dropped)`, which — like
   `onEdgeAction` — returns a `boolean`: `true` means it took ownership of the
-  item (StepList removes it from the flat list and appends it to the target
-  Loop's `steps`), skipping the normal reorder/settle entirely; `false` falls
-  through to a normal reorder, exactly as if nothing were hovered.
+  item (StepList removes it from the flat list and inserts it in the target
+  Loop's `steps` at `index`), skipping the normal reorder/settle entirely;
+  `false` falls through to a normal reorder, exactly as if nothing were hovered.
 - **`containerRef` / `onEscapeContainer`** let a list detect the dragged item
   leaving some *ancestor* element's bounds — not the list's own bounds, which
   is otherwise unbounded. This is for the reverse direction: a Loop's nested
@@ -153,9 +156,12 @@ dragged into or out of a Loop in [StepList](../src/domains/steps/common/StepList
 While dragging, each of these shows where the item will land, and only one
 cue is shown at a time. Hovering a drop target (`entry.isHovered`) makes
 [LoopPreview](../src/domains/steps/loop/LoopPreview.tsx) highlight the Loop and
-draw a bar at the end of its list, and the list hides its own reorder indicator.
+pass `entry.dropIntoIndex` to its nested list as `externalDropIndex`, so the
+regular drop indicator shows where the Step will land inside the Loop (also in an
+empty one), and the outer list hides its own reorder indicator. The dropped row
+then slides from where it was released to its slot, like a Step leaving a Loop.
 Escaping a container is reported through `onEscapePointer(clientY | null)` on
-every move outside it: the Loop's border turns dashed, the nested list hides its
+every move outside it: the Loop's border turns orange (solid, like when a Step is dropped into it), the nested list hides its
 own reorder indicator, and the parent list shows its regular drop indicator at
 the landing position (`externalDropIndex`) until the pointer comes back inside.
 
@@ -180,7 +186,9 @@ appear instantly in its final slot while the Loop, still at its previous
 position, slides down underneath it. Instead the nested list hands the parent
 where the row was released (`DroppedGeometry`, through `incomingRef`), and the
 parent slides the new row from there to its slot, lifted above the other rows,
-like a normal reorder.
+like a normal reorder. The slide is computed once every layout effect has run
+(an ancestor such as the Loop applies its own slide in the same commit), and the
+rows are aligned by their centers, since the same card is narrower inside a Loop.
 
 A Loop also animates its own height when a Step is added to or removed from it,
 so the rows below it don't jump. The "Ajouter" row under the list is not a
